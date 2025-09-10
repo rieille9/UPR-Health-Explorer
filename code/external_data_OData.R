@@ -58,6 +58,12 @@ theme_labels <- tribble(
 )
 
 
+# Human Development Index (HDI) ---------------------------------------
+HDI <- vroom::vroom(here("data", "HDR25_Composite_indices_complete_time_series.csv")) |> 
+  select(iso3, hdi_1990:hdi_2023) |> 
+  pivot_longer(cols = hdi_1990:hdi_2023, names_to = "year", values_to = "HDI") |> 
+  mutate(year = as.numeric(str_remove(year, "hdi_")))
+
 # World abortion laws -----------------------------------------------------
 # https://reproductiverights.org/maps/worlds-abortion-laws/
 
