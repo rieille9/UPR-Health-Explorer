@@ -53,6 +53,7 @@ app_theme <- bs_theme(
 
 # Switch to page_navbar for a top navigation bar
 ui <- page_navbar(
+  id = "main_navbar",
   theme = app_theme,
   # Rearrange the tags so the link only wraps the image
   title = span(
@@ -61,7 +62,11 @@ ui <- page_navbar(
       # target = "_blank",
       img(src = "logo_5.png", height = "40px", style = "margin-right:10px;")
     ),
-    " UPR Health Explorer" # text outside the link
+    actionLink(
+      inputId = "home_button",
+      label = "UPR Health Explorer",
+      style = "color: white; text-decoration: none; font-size: 1.125rem; background: none; border: none; padding: 0;"
+    )
   ),
   bg = "#1c164d",
   header = tags$head(
@@ -182,7 +187,8 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                          # ,padding = 0
                        )
                          )
-                       )),
+                       )
+           ),
            nav_panel(title = "CeHDI",
                      card(
                        card_header("Global Center for Health Diplomacy and Inclusion (CeHDI)"),
@@ -200,7 +206,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   ),
   
   ### UPR: Regional -----------------------
-  nav_panel(title = "UPR: Regional", icon = icon("globe-americas"),
+  nav_panel(title = "UPR: Region", icon = icon("globe-africa"),
             h2("UPR Recommendations: Regional View"),
             layout_columns(
               col_widths = c(8, 4),
@@ -245,7 +251,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   ),
   
   ### Maternal mortality -----------------------
-  nav_panel(title = "Maternal Mortality", icon = icon("female"),
+  nav_panel(title = "Maternal Mortality", icon = icon("person-pregnant"),
             h2("Maternal Mortality Ratio (MMR): Number of maternal deaths per 100,000 live births."),
             layout_columns(
               full_screen = TRUE,
@@ -286,7 +292,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   ),
   
   ### Family planning ------------------
-  nav_panel(title = "Family Planning", icon = icon("users"),
+  nav_panel(title = "Family Planning", icon = icon("people-group"),
             h2("Family Planning and Abortion"),
             layout_columns(
               full_screen = TRUE,
@@ -318,6 +324,15 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
 server <- function(input, output, session) {
   
   ## About page options ------------------------
+  
+  observeEvent(input$home_button, {
+    updateNavbarPage(
+      session = session,
+      inputId = "main_navbar",
+      selected = "Right to Health and the UPR" # The title of your first nav_panel
+    )
+  })
+  
   observeEvent(input$upr_image_expand, {
     showModal(modalDialog(
       title = "Graphical overview of the UPR process",

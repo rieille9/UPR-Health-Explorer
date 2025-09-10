@@ -4493,7 +4493,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "70ff1cdb6583c80f2285ada4f15eafd2"
+      "checksum": "6eaabda5b0fa3302c46e504ba574e09a"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -4505,7 +4505,7 @@
       "checksum": "03c5a1c6dbb4a93d26197945f81063a8"
     },
     "code/external_data_OData.R": {
-      "checksum": "f3105ce9c27881902c361a21583f1776"
+      "checksum": "5356ba09eddb116be189b626ff01f425"
     },
     "code/geo_code.R": {
       "checksum": "e732815c3bfe3ef592511c43c4a28e8c"
@@ -4654,6 +4654,9 @@
     "data/GBD/maternal_disorders/maternal_disorders_deaths_longitudinal.rds": {
       "checksum": "c40be0d271432272412d32e98b9069a3"
     },
+    "data/HDR25_Composite_indices_complete_time_series.csv": {
+      "checksum": "4026e513775f3431488a2d77bc6b6a1d"
+    },
     "data/NMIRF_status.csv": {
       "checksum": "c1e6c6a36ef7f3f1324b6d2966774bdf"
     },
@@ -4697,10 +4700,10 @@
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
     "www/custom_bslib.css": {
-      "checksum": "c7f23aa433ed4255f8c946ba2bba8ab7"
+      "checksum": "d221ec39fa67f5f802b49af32a057440"
     },
     "www/full_plot.png": {
-      "checksum": "bb6983b4e4cb126b4830d53a5e1b5eb1"
+      "checksum": "2c1fd0c995c998f621df6814359b40b1"
     },
     "www/logo_5.png": {
       "checksum": "ff8f04ba9185dde3ba807f748c32bd57"
