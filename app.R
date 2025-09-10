@@ -171,7 +171,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                        card_body(
                          layout_columns(
                            col_widths = c(11, 1),
-                         markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio over time:"),
+                         markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time:"),
                          actionLink(
                            inputId = "upr_analysis", # Give a unique ID to the link
                            label = img(
