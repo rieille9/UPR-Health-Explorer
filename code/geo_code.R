@@ -97,7 +97,7 @@ UN_official <- readxl::read_xlsx(here("data", "countries.xlsx")) |>
 
 # WHO regions
 who_regions <- read_csv(here("data", "who_regions.csv")) |> select(-country) |> 
-  add_row(iso3="GRL", WHO_region ="European Region (EUR)")
+  add_row(iso3="GRL", WHO_region ="European Region (EUR)") |> 
   mutate(WHO_region = factor(WHO_region,
                              levels = c("African Region (AFR)", 
                                         "Eastern Mediterranean Region (EMR)",
@@ -153,25 +153,28 @@ FCS_countries <- tibble("country" = state_geo_prep$country) |>
         "Zimbabwe") ~ "Institutional and social fragility",
       .default = "Other"
     ),
-    levels = c("Other", "Institutional and social fragility", "Conflict")))
+    levels = c("Institutional and social fragility", "Conflict")))
 
 # Regional partners ----
 ecsa_states <- read_csv(here("data", "ecsa_status.csv")) |> select(-country) |> 
   mutate(ECSA_status = factor(case_when(ECSA_status == "Member" ~ "ECSA-HC Member",
                                         ECSA_status == "Non-Member" ~ "ECSA-HC Regional Non-Member")))
 
-CARICOM <- read_csv(here("data", "CARICOM_status.csv")) |> select(-country) |> 
+CARICOM <- read_csv(here("data", "CARICOM_status.csv")) |> 
+  select(-country) |>
   mutate(status = factor(case_when(status == "Member State" ~ "CARICOM Member State",
                                    status == "Associate Member" ~ "CARICOM Associate Member"))) |> 
   rename(CARICOM_status = status) |> 
-  mutate(CARICOM_status=fct_relevel(CARICOM_status, "CARICOM Member State"))
+  mutate(CARICOM_status=fct_relevel(CARICOM_status, "CARICOM Member State")) |> 
+  filter(CARICOM_status == "CARICOM Member State") |> 
+  droplevels()
 
 South_Centre <- read_csv(here("data", "SouthCentre_status.csv")) |> select(-country) |> 
   mutate(SC_status = factor("South Centre Member State"))
 
 OACPS <- read_csv(here("data", "OACPS_status.csv")) |> select(-country) |> 
   mutate(OACPS_status = factor("OACPS Member State"),
-         region = factor(region)) |> 
+         region = factor(paste0("OACPS: ",region))) |> 
   rename(OACPS_region = region)
 
 COMESA <- read_csv(here("data", "COMESA_status.csv")) |> select(-country) |> 
@@ -193,7 +196,7 @@ state_geo <- left_join(state_geo_prep, UN_official, join_by(country == english_s
   left_join(CARICOM, join_by(iso3==iso3_code)) |> #mutate(CARICOM_status = fct_na_value_to_level(CARICOM_status, "Other")) |> 
   left_join(South_Centre, join_by(iso3==iso3_code)) |> #mutate(SC_status = fct_na_value_to_level(SC_status, "Other")) |> 
   left_join(OACPS, join_by(iso3==iso3_code)) |> #mutate(OACPS_status = fct_na_value_to_level(OACPS_status, "Other")) |> 
-  left_join(COMESA, join_by(iso3==iso3_code)) #|> mutate(COMESA_status = fct_na_value_to_level(COMESA_status, "Other"))
+  left_join(COMESA, join_by(iso3==iso3_code))  #|> mutate(COMESA_status = fct_na_value_to_level(COMESA_status, "Other"))
   
 
 saveRDS(state_geo, here("output", "state_geo_enhanced.rds"))

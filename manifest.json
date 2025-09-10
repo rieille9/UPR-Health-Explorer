@@ -563,7 +563,7 @@
         "Maintainer": "Carson Sievert <carson@posit.co>",
         "Repository": "CRAN",
         "Date/Publication": "2025-01-30 23:20:02 UTC",
-        "Built": "R 4.5.0; ; 2025-05-31 01:33:32 UTC; windows"
+        "Built": "R 4.5.1; ; 2025-09-02 09:41:09 UTC; windows"
       }
     },
     "cachem": {
@@ -2737,6 +2737,35 @@
         "Built": "R 4.5.0; ; 2025-06-16 02:31:50 UTC; windows"
       }
     },
+    "pdftools": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "pdftools",
+        "Type": "Package",
+        "Title": "Text Extraction, Rendering and Converting of PDF Documents",
+        "Version": "3.5.0",
+        "Authors@R": "person(\"Jeroen\", \"Ooms\", role = c(\"aut\", \"cre\"), email = \"jeroenooms@gmail.com\",\n      comment = c(ORCID = \"0000-0002-4035-0289\"))",
+        "Description": "Utilities based on 'libpoppler' <https://poppler.freedesktop.org> for extracting\n    text, fonts, attachments and metadata from a PDF file. Also supports high quality rendering\n    of PDF documents into PNG, JPEG, TIFF format, or into raw bitmap vectors for further \n    processing in R.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://ropensci.r-universe.dev/pdftools,\nhttps://docs.ropensci.org/pdftools/",
+        "BugReports": "https://github.com/ropensci/pdftools/issues",
+        "SystemRequirements": "Poppler C++ API: libpoppler-cpp-dev (deb) or\npoppler-cpp-devel (rpm), and poppler-data (rpm/deb) package.",
+        "Encoding": "UTF-8",
+        "Imports": "Rcpp (>= 0.12.12), qpdf",
+        "LinkingTo": "Rcpp",
+        "Suggests": "png, webp, tesseract, testthat",
+        "RoxygenNote": "7.2.3",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-03-03 13:55:55 UTC; jeroen",
+        "Author": "Jeroen Ooms [aut, cre] (<https://orcid.org/0000-0002-4035-0289>)",
+        "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-03-03 15:10:05 UTC",
+        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-09-02 09:29:41 UTC; windows",
+        "Archs": "x64"
+      }
+    },
     "pillar": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -3017,6 +3046,35 @@
         "Repository": "CRAN",
         "Date/Publication": "2025-02-05 18:00:01 UTC",
         "Built": "R 4.5.0; x86_64-w64-mingw32; 2025-05-31 01:33:38 UTC; windows",
+        "Archs": "x64"
+      }
+    },
+    "qpdf": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "qpdf",
+        "Type": "Package",
+        "Title": "Split, Combine and Compress PDF Files",
+        "Version": "1.4.1",
+        "Authors@R": "c(person(\"Jeroen\", \"Ooms\", role = c(\"aut\", \"cre\"), \n    email = \"jeroenooms@gmail.com\", comment = c(ORCID = \"0000-0002-4035-0289\")),\n        person(\"Ben\", \"Raymond\", role = \"ctb\"),\n        person(\"Jay Berkenbilt\", role = \"cph\", comment = \"Author of libqpdf\"))",
+        "Description": "Content-preserving transformations transformations of PDF files such \n    as split, combine, and compress. This package interfaces directly to the 'qpdf' \n    C++ library <https://qpdf.sourceforge.io/> and does not require any command \n    line utilities. Note that 'qpdf' does not read actual content from PDF files: \n    to extract text and data you need the 'pdftools' package.",
+        "License": "Apache License 2.0",
+        "URL": "https://docs.ropensci.org/qpdf/\nhttps://ropensci.r-universe.dev/qpdf",
+        "BugReports": "https://github.com/ropensci/qpdf/issues",
+        "Encoding": "UTF-8",
+        "Imports": "Rcpp, askpass, curl",
+        "LinkingTo": "Rcpp",
+        "RoxygenNote": "7.2.1",
+        "Suggests": "testthat",
+        "SystemRequirements": "libjpeg",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-06-30 11:12:14 UTC; jeroen",
+        "Author": "Jeroen Ooms [aut, cre] (ORCID: <https://orcid.org/0000-0002-4035-0289>),\n  Ben Raymond [ctb],\n  Jay Berkenbilt [cph] (Author of libqpdf)",
+        "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-07-02 09:40:02 UTC",
+        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-09-02 09:14:16 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -4462,6 +4520,12 @@
     "app.R": {
       "checksum": "8c91fab4e0090c81d8d76644a7512fce"
     },
+    "app_bslib.R": {
+      "checksum": "913a1513ebeece7f81e4d4ce6bb7200a"
+    },
+    "app2.R": {
+      "checksum": "f34eb7e7731b84d9eac7c66c6a1bfac0"
+    },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
@@ -4475,7 +4539,7 @@
       "checksum": "1c09c9887e1febaae62b9230563f5964"
     },
     "code/geo_code.R": {
-      "checksum": "1620dba0876a98d059d4ef883fd9726d"
+      "checksum": "e732815c3bfe3ef592511c43c4a28e8c"
     },
     "code/theme_labels.R": {
       "checksum": "978328eaecf9c92c0aaf0a32d3429bc5"
@@ -4652,10 +4716,10 @@
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
     "output/nearest_neighbors_list.rds": {
-      "checksum": "cb21ce7a63bf892c820b764feffde22f"
+      "checksum": "190c543a0ce246f987b1b140fadb60c3"
     },
     "output/state_geo_enhanced.rds": {
-      "checksum": "15d2942726a2b78557b457a96bd86021"
+      "checksum": "7fb5282bbb98fe728350b077686934eb"
     },
     "README.md": {
       "checksum": "2a1cd599cec6c94f1cff77792da68a58"
@@ -4663,8 +4727,17 @@
     "utils.R": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
+    "www/custom.css": {
+      "checksum": "2a6daf84b5c9fdf27e8a74e4eb8a502d"
+    },
+    "www/custom_bslib.css": {
+      "checksum": "c7f23aa433ed4255f8c946ba2bba8ab7"
+    },
     "www/full_plot.png": {
       "checksum": "bb6983b4e4cb126b4830d53a5e1b5eb1"
+    },
+    "www/logo_5.png": {
+      "checksum": "ff8f04ba9185dde3ba807f748c32bd57"
     },
     "www/UPR_pre_review.png": {
       "checksum": "bd5af095500eb28d1cb216ce533165e9"

@@ -1,0 +1,79 @@
+/* www/custom.css */
+
+/* Style the labels for input controls like selectInput */
+.sidebar label {
+  background-color: #1c164d; /* A slightly lighter shade than the sidebar */
+  color: #ffffff;
+  font-weight: bold;
+  padding: 5px 10px;
+  margin-top: 15px; /* Add some space above the title */
+  margin-bottom: 5px; /* Add some space between title and control */
+  width: 100%;
+  border-radius: 4px;
+  display: block; /* Ensure it takes the full width */
+}
+
+/* Style the header of the map card */
+.sidebar .card-header {
+  background-color: #2c247d;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Style the accordion button (Disclaimer title) */
+.sidebar .accordion-button {
+  background-color: #2c247d;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Style the accordion button when it's open */
+.sidebar .accordion-button:not(.collapsed) {
+  background-color: #3a3199; /* A bit lighter to show it's active */
+  color: #ffffff;
+}
+
+/* Remove the default blue glow on focus */
+.sidebar .accordion-button:focus {
+  box-shadow: none;
+  border-color: rgba(0,0,0,.125);
+}
+
+/* Change the accordion's expand/collapse arrow to be white */
+.sidebar .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+}
+
+/* ===== Main Panel Text Styles ===== */
+/* Targets the main content area of your pages */
+.tab-content .tab-pane {
+  color: #1c164d;
+}
+
+/* Also targets the main H2 title on each page */
+.tab-content .tab-pane h2 {
+  color: #1c164d;
+}
+
+.tab-content .tab-pane .card-header {
+  background-color: #1c164d;
+  color: #ffffff;
+}
+
+.tab-content .tab-pane .card-header {
+  background-color: #1c164d;
+  color: #ffffff;
+}
+
+/* navset tabs */
+.tab-content .tab-pane .nav-tabs .nav-link {
+  background-color: #1c164d; /* Light grey for inactive tabs */
+  color: #ffffff;           /* Dark grey text for inactive tabs */
+}
+.tab-content .tab-pane .nav-tabs .nav-link.active {
+  background-color: #f8f9fa; /* Theme color for the active tab */
+  color: #1c164d;           /* White text for the active tab */
+}
+.tab-content .tab-pane .nav-tabs .nav-link:hover:not(.active) {
+  background-color: #e9ecef; /* A slightly darker grey on hover */
+}
