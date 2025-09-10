@@ -3700,31 +3700,6 @@
         "Built": "R 4.5.0; ; 2025-05-31 01:43:25 UTC; windows"
       }
     },
-    "shinydashboard": {
-      "Source": "CRAN",
-      "Repository": "https://cran.rstudio.com",
-      "description": {
-        "Package": "shinydashboard",
-        "Title": "Create Dashboards with 'Shiny'",
-        "Version": "0.7.3",
-        "Authors@R": "c(\n    person(\"Winston\", \"Chang\", , \"winston@posit.co\", role = c(\"aut\", \"cre\")),\n    person(\"Barbara\", \"Borges Ribeiro\", role = \"aut\"),\n    person(, \"Posit Software, PBC\", role = \"cph\"),\n    person(, \"Almasaeed Studio\", role = c(\"ctb\", \"cph\"),\n           comment = \"AdminLTE theme for Bootstrap\"),\n    person(, \"Adobe Systems Incorporated\", role = c(\"ctb\", \"cph\"),\n           comment = \"Source Sans Pro font\")\n  )",
-        "Description": "Create dashboards with 'Shiny'. This package provides a theme\n    on top of 'Shiny', making it easy to create attractive dashboards.",
-        "License": "MIT + file LICENSE",
-        "URL": "https://rstudio.github.io/shinydashboard/,\nhttps://github.com/rstudio/shinydashboard",
-        "BugReports": "https://github.com/rstudio/shinydashboard/issues",
-        "Depends": "R (>= 3.0)",
-        "Imports": "htmltools (>= 0.2.6), promises, shiny (>= 1.0.0), utils",
-        "Encoding": "UTF-8",
-        "RoxygenNote": "7.3.2",
-        "NeedsCompilation": "no",
-        "Packaged": "2025-04-21 16:14:20 UTC; garrick",
-        "Author": "Winston Chang [aut, cre],\n  Barbara Borges Ribeiro [aut],\n  Posit Software, PBC [cph],\n  Almasaeed Studio [ctb, cph] (AdminLTE theme for Bootstrap),\n  Adobe Systems Incorporated [ctb, cph] (Source Sans Pro font)",
-        "Maintainer": "Winston Chang <winston@posit.co>",
-        "Repository": "CRAN",
-        "Date/Publication": "2025-04-21 21:30:02 UTC",
-        "Built": "R 4.5.1; ; 2025-09-02 09:57:30 UTC; windows"
-      }
-    },
     "snakecase": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -4518,13 +4493,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "8c91fab4e0090c81d8d76644a7512fce"
-    },
-    "app_bslib.R": {
       "checksum": "913a1513ebeece7f81e4d4ce6bb7200a"
-    },
-    "app2.R": {
-      "checksum": "f34eb7e7731b84d9eac7c66c6a1bfac0"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -4726,9 +4695,6 @@
     },
     "utils.R": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
-    },
-    "www/custom.css": {
-      "checksum": "2a6daf84b5c9fdf27e8a74e4eb8a502d"
     },
     "www/custom_bslib.css": {
       "checksum": "c7f23aa433ed4255f8c946ba2bba8ab7"
