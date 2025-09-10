@@ -61,7 +61,7 @@ ui <- page_navbar(
       # target = "_blank",
       img(src = "logo_5.png", height = "40px", style = "margin-right:10px;")
     ),
-    "UPR Health Explorer" # text outside the link
+    " UPR Health Explorer" # text outside the link
   ),
   bg = "#1c164d",
   header = tags$head(
@@ -140,7 +140,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                        card_header("The Universal Periodic Review (UPR)"),
                        card_body(
                          layout_columns(
-                           col_widths = c(11, 1),
+                           col_widths = c(10, 2),
                            
                            # --- Column 1: Text ---
                            markdown(
@@ -170,7 +170,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                        card_header("Engagement with the UPR is associated with on-the-ground progress"),
                        card_body(
                          layout_columns(
-                           col_widths = c(11, 1),
+                           col_widths = c(10, 2),
                          markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time:"),
                          actionLink(
                            inputId = "upr_analysis", # Give a unique ID to the link
