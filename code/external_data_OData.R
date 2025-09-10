@@ -1,3 +1,10 @@
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+## ## ## ##   IMPORTANT - READ FIRST   ## ## ## ## ##
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+
+# First make sure to clear all objects from the workspace, then source the whole file.
+# All objects that exist in the workspace will be saved as rds to the API_data folder !
+
 # Setup ####
 pacman::p_load(
   here,
@@ -222,6 +229,7 @@ MMR <- gho_api$path("MDG_0000000026")$retrieve()$value |> tibble() |>
   left_join(country_codes) |> 
   left_join(region_codes) |> 
   rename(YEAR = TimeDim) |> 
+  add_row(COUNTRY="GRL", country_name = "Greenland", YEAR = 2023) |> 
   mutate(
     # NumericValue = as.numeric(NumericValue),
     across(c(NumericValue:High), ~ as.numeric(.x)),

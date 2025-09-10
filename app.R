@@ -77,12 +77,12 @@ ui <- page_navbar(
     # title = "Controls & Map", # Give the sidebar a title
     
     selectInput("selected_regional_grouping", "Select Regional Grouping:",
-                choices = c("Sub-regions", "World Bank regions", "WHO regions", 
+                choices = c("Global", "Sub-regions", "World Bank regions", "WHO regions", 
                             "ECSA-HC Membership", 
                             "CARICOM Membership", "South Centre Membership", 
                             "OACPS Membership", "OACPS Member regions", 
                             "COMESA Membership", "FCS status"),
-                selected = "Sub-regions"),
+                selected = "Global"),
     
     selectInput("selected_region", "Select Region:",
                 choices = c("Global"),
@@ -291,7 +291,9 @@ server <- function(input, output, session) {
       state_geo |> mutate(region_dashboard = subregion)
     } else if (input$selected_regional_grouping == "World Bank regions") {
       state_geo |> mutate(region_dashboard = wbregion)
-    } else if (input$selected_regional_grouping == "ECSA-HC Membership") {
+    } else if (input$selected_regional_grouping == "WHO regions") {
+      state_geo |> mutate(region_dashboard = WHO_region)
+    }else if (input$selected_regional_grouping == "ECSA-HC Membership") {
       state_geo |> mutate(region_dashboard = ECSA_status)
     } else if (input$selected_regional_grouping == "FCS status") {
       state_geo |> mutate(region_dashboard = FCS_status)
@@ -306,7 +308,7 @@ server <- function(input, output, session) {
     } else if (input$selected_regional_grouping == "South Centre Membership") {
       state_geo |> mutate(region_dashboard = SC_status)
     } else {
-      state_geo |> mutate(region_dashboard = WHO_region)
+      state_geo |> mutate(region_dashboard = "Global")
     }
   })
   
@@ -346,11 +348,20 @@ server <- function(input, output, session) {
   
   ## Observers for Dynamic UI Updates --------------------------------------
   observeEvent(input$selected_regional_grouping, {
-    updateSelectInput(
-      session, "selected_region",
-      choices = c("Global", levels(state_geo_reactive()$region_dashboard)),
-      selected = "Global"
-    )
+    if (input$selected_regional_grouping == "Global") {
+      # If the top-level grouping is "Global", force the region to "Global" as well.
+      updateSelectInput(
+        session, "selected_region",
+        choices = "Global",
+        selected = "Global"
+      )
+    } else {
+      # Otherwise, populate the region dropdown with the appropriate sub-regions.
+      updateSelectInput(
+        session, "selected_region",
+        choices = levels(state_geo_reactive()$region_dashboard)
+      )
+    }
   })
   
   observeEvent(input$selected_region, {
