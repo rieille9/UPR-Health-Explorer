@@ -325,7 +325,9 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                 nav_panel("Causes Over Time", plotOutput("mmr_causes_longitudinal", height = "600px")),
                 nav_panel(
                   shiny::icon("circle-info"),
-                  markdown("**Maternal haemorrhage** includes both postpartum haemorrhage (defined as blood loss ≥500 ml for vaginal delivery and ≥1000 ml for caesarean delivery) and antepartum haemorrhage (defined as vaginal bleeding from any cause at or beyond 20 weeks of gestation).  
+                  markdown("The below *abbreviated definitions* were compiled from the **IHME's** <a href='https://www.healthdata.org/research-analysis/diseases-injuries-risks/factsheets-hierarchy' target='_blank'>factsheets pages for the level 4 causes of maternal disorders</a>:  
+                  
+**Maternal haemorrhage** includes both postpartum haemorrhage (defined as blood loss ≥500 ml for vaginal delivery and ≥1000 ml for caesarean delivery) and antepartum haemorrhage (defined as vaginal bleeding from any cause at or beyond 20 weeks of gestation).  
 
 **Maternal sepsis** is defined as a temperature <36°C or >38°C and clinical signs of shock (systolic blood pressure <90 mmHg and tachycardia >120 bpm). **Other maternal infections** are defined as any maternal infections excluding HIV, STI, or not related to pregnancy. 
 
@@ -628,10 +630,10 @@ server <- function(input, output, session) {
         # ,caption = "*Cycle 4 is currently underway"
       ) +
       geom_text(aes(label = perc), position = position_stack(vjust = 0.5)
-                # , size = 5
+                , size = 4
                 ) +
       geom_text(aes(label = sprintf("%1.0f", med_n_tot), y = med_n_tot, vjust = -0.2), 
-                # size = 5, 
+                size = 5,
                 fontface = "bold") +
       scale_y_continuous(limits = c(0,rec_max+25),
                          expand = expansion(mult = c(0, 0.05)))+
@@ -639,17 +641,17 @@ server <- function(input, output, session) {
       theme(
         panel.grid = element_blank(),
         axis.text.x = element_text(angle = 30, hjust = 0.8,
-                                   # ,size = 12
+                                   ,size = 12
                                    ),
-        # axis.text.y = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
         axis.title.x = element_blank(),
-        # axis.title.y = element_text(size = 14),
-        # strip.text = element_text(size = 18),
+        axis.title.y = element_text(size = 14),
+        strip.text = element_text(size = 18),
         # plot.caption = element_text(size = 14),
         legend.position = "bottom",
         # legend.position = c(0, 1),
         # legend.justification = c("left", "top"),
-        # legend.text = element_text(size = 18),
+        legend.text = element_text(size = 18),
         legend.background = element_blank()
       )
   })
