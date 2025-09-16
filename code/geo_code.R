@@ -98,6 +98,7 @@ UN_official <- readxl::read_xlsx(here("data", "countries.xlsx")) |>
 # WHO regions
 who_regions <- read_csv(here("data", "who_regions.csv")) |> select(-country) |> 
   add_row(iso3="GRL", WHO_region ="European Region (EUR)") |> 
+  add_row(iso3="LIE", WHO_region ="European Region (EUR)") |> 
   mutate(WHO_region = factor(WHO_region,
                              levels = c("African Region (AFR)", 
                                         "Eastern Mediterranean Region (EMR)",
