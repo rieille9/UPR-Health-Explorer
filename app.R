@@ -10,6 +10,7 @@ pacman::p_load(
   bslib, # Modern UI for Shiny dashboard
   here,
   dplyr, forcats, ggplot2, magrittr, readr, readxl, stringr, tibble, tidyr, lubridate,
+  ggtext, # allow dynamically wrapped plot titles
   janitor,
   DT, # interactive tables
   sf, # mapping features
@@ -62,13 +63,13 @@ ui <- page_navbar(
       label = "Go to CeHDI homepage",
       # target = "_blank",
       img(src = "logo_5.png"
-          , height = "40px"
+          , height = "50px"
           , style = "margin-right:10px;"
-          )
+      )
     ),
     actionLink(
       inputId = "home_button",
-      label = "UPR Health Explorer",
+      label = "HiHRO: Health in Human Rights Observatory",
       style = "color: white; text-decoration: none; font-size: 1.125rem; background: none; border: none; padding: 0;"
     )
   ),
@@ -193,8 +194,13 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
            #                          )
            #                        )
            #            ),
+           nav_panel(title = "HiHRO",
+                     card_body(markdown(
+                       "Welcome to HiHRO, the Health in Human Rights Observatory. This platform has been designed and created by CeHDI, the Global Center for Health Diplomacy and Inclusion, to empower health diplomats, decision-makers, and emerging leaders to actively engage in the Human Rights Council's Universal Periodic Review (UPR) mechanism.  
+                       
+                       On these pages you will find data and tools to review the ways in which countries have featured health in their UPR reporting cycles and how their engagement has correlated with national health outcomes, especially in women's and maternal health. We encourage you to browse the country profiles and we invite you to contact the CeHDI team at info@cehdi.org for more information."
+                     ))),
            nav_panel(title = "Right to Health and the UPR",
-                     value = "home",
                      card(
                        card_header("The Right to Health and the Universal Periodic Review"),
                        card_body(
@@ -265,20 +271,23 @@ To systematically analyze the recommendations, we developed a keyword-based clas
   
   ### UPR: Regional -----------------------
   nav_panel(title = "UPR: Region", icon = icon("globe-africa"),
-            h2("UPR Recommendations: Regional View"),
-            layout_columns(
-              col_widths = c(8, 4),
+            "UPR Recommendations: Regional View",
+            layout_column_wrap(
+              style = css(grid_template_columns = "2fr 1fr"),
               navset_card_tab(
                 full_screen = TRUE,
                 # title = "Regional Recommendation Themes",
                 nav_panel("All Recommendations", plotOutput("upr_themes_all_global", height = "700px")),
                 nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle_global", height = "700px"))
               ),
-              list(
+              layout_column_wrap(
+                width=1,
+                # This sets a 3:2 height ratio
+                style = css(grid_template_rows = "3fr 2fr"),
                 card(
                   full_screen = TRUE,
                   card_header("Health-Related Recommendations"),
-                  card_body(plotOutput("global_plot", height = "450px"))
+                  card_body(plotOutput("global_plot"))
                 ),
                 card(
                   full_screen = TRUE,
@@ -286,7 +295,8 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                   card_body(plotOutput("regional_map"))
                 )
               )
-            )),
+            )
+  ),
   
   ### UPR: SuR -------------------------------
   nav_panel(title = "UPR: State Under Review", icon = icon("flag"),
@@ -308,9 +318,22 @@ To systematically analyze the recommendations, we developed a keyword-based clas
             )
   ),
   
+  ### UHC ---------------------
+  nav_panel(title = "UHC", icon = icon("umbrella"),
+            "Universal Health Coverage",
+            layout_column_wrap(
+            layout_column_wrap(
+              width=1,
+            card(full_screen = TRUE,card_header("UHC Service Coverage Index (2021)"), plotOutput("UHC_map")),
+            card(full_screen = TRUE,card_header("UHC sub-index on RMNCH (2021)"), plotOutput("UHC_RMNCH_map"))
+            ),
+            card(full_screen = TRUE,card_header("UHC indices over time"), plotOutput("UHC_trend"))
+            )
+            ),
+  
   ### Maternal mortality -----------------------
   nav_panel(title = "Maternal Mortality", icon = icon("person-pregnant"),
-            h2("Maternal Mortality Ratio (MMR): Number of maternal deaths per 100,000 live births."),
+            "Maternal Mortality Ratio (MMR): Number of maternal deaths per 100,000 live births.",
             layout_columns(
               full_screen = TRUE,
               col_widths = c(5, 7),
@@ -350,21 +373,39 @@ To systematically analyze the recommendations, we developed a keyword-based clas
               )
             )
   ),
-  
-  ### Family planning ------------------
-  nav_panel(title = "Family Planning", icon = icon("people-group"),
-            h2("Family Planning and Abortion"),
-            layout_columns(
-              full_screen = TRUE,
-              col_widths = c(6, 6),
-              list(
-                card(full_screen = TRUE,card_header("Abortion Laws (June 2023)"), plotOutput("abortion_map_sur"), 
-                     markdown("Data: <a href='https://reproductiverights.org/maps/worlds-abortion-laws/' target='_blank'>Center for Reproductive Rights</a>")),
-                card(full_screen = TRUE,card_header("Met Need for Family Planning (%)"), plotOutput("family_planning"))
+  ### Abortion ------------------------
+  nav_panel(title = "Abortion", icon = icon("house-medical"),
+            layout_column_wrap(
+              card(
+                full_screen = TRUE,
+                card_header("Abortion Laws (June 2023)"),
+                plotOutput("abortion_map_sur"),
+                markdown("Data: <a href='https://reproductiverights.org/maps/worlds-abortion-laws/' target='_blank'>Center for Reproductive Rights</a>")
               ),
-              list(
-                card(full_screen = TRUE,card_header("Estimated Abortion Rate (2015-2019)"), plotOutput("abortion_rate")),
-                card(full_screen = TRUE,card_header("Estimated Unintended Pregnancy Rate (2015-2019)"), plotOutput("unintended_pregnancy"))
+              layout_column_wrap(
+                width = 1,
+                card(
+                  full_screen = TRUE,
+                  card_header("Estimated Abortion Rate (2015-2019)"),
+                  plotOutput("abortion_rate")
+                ),
+                card(
+                  full_screen = TRUE,
+                  card_header("Estimated Unintended Pregnancy Rate (2015-2019)"),
+                  plotOutput("unintended_pregnancy")
+                )
+              )
+            )
+  ),
+  ## Family planning ------------------
+  nav_panel(title = "Family Planning", icon = icon("people-group"),
+            # "Family Planning",
+            layout_column_wrap(
+              full_screen = TRUE,
+              card(
+                full_screen = TRUE,
+                card_header("Met Need for Family Planning (%)"),
+                plotOutput("family_planning")
               )
             )
   ),
@@ -372,7 +413,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
   nav_spacer(),
   nav_item(
     tags$a(
-      shiny::icon("github", class = "fa-2x"), # The GitHub icon  
+      shiny::icon("github", class = "fa-1x"), # The GitHub icon  
       # "Source",              # Optional text next to the icon
       href = "https://github.com/CeHDI-Foundation/UPR-Health-Explorer", # <-- REPLACE with your repo URL
       target = "_blank"      # Opens the link in a new tab
@@ -389,7 +430,7 @@ server <- function(input, output, session) {
     updateNavbarPage(
       session = session,
       inputId = "main_navbar",
-      selected = "Right to Health and the UPR" # The title of your first nav_panel
+      selected = "HiHRO" # The title of the first nav_panel
     )
   })
   
@@ -570,7 +611,7 @@ server <- function(input, output, session) {
       )
     }
     
-    p2 + theme(plot.margin = margin(t = 1, r = 1, b = -10, l = 1, unit = "pt"))
+    p2 + theme(plot.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"))
   })
   
   output$regional_map <- renderPlot({
@@ -596,7 +637,7 @@ server <- function(input, output, session) {
       guides(
         fill = "none", lwd = "none", color = "none"
       )
-    p1 + theme(plot.margin = margin(t = 1, r = 1, b = -10, l = 1, unit = "pt"))
+    p1 + theme(plot.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"))
   })
   
   ## UPR: REGIONAL Outputs ----------------------------------------------------
@@ -624,14 +665,14 @@ server <- function(input, output, session) {
       scale_fill_manual(values = c("Health-related" = "#E69F00", "Other" = "grey80")) +
       geom_bar(stat = "identity") +
       labs(
-        y = "Median number of recommendations", x = "UPR Cycle",
-        title = paste0("Median recommendations received by States\n", input$selected_region),
+        y = "Median # of recommendations", x = "UPR Cycle",
+        title = paste0("Median recommendations received by States<br>", input$selected_region),
         fill = NULL
         # ,caption = "*Cycle 4 is currently underway"
       ) +
       geom_text(aes(label = perc), position = position_stack(vjust = 0.5)
                 , size = 4
-                ) +
+      ) +
       geom_text(aes(label = sprintf("%1.0f", med_n_tot), y = med_n_tot, vjust = -0.2), 
                 size = 5,
                 fontface = "bold") +
@@ -642,7 +683,7 @@ server <- function(input, output, session) {
         panel.grid = element_blank(),
         axis.text.x = element_text(angle = 30, hjust = 0.8,
                                    ,size = 12
-                                   ),
+        ),
         axis.text.y = element_text(size = 12),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 14),
@@ -652,7 +693,11 @@ server <- function(input, output, session) {
         # legend.position = c(0, 1),
         # legend.justification = c("left", "top"),
         legend.text = element_text(size = 18),
-        legend.background = element_blank()
+        legend.background = element_blank(),
+        plot.margin = margin(t = 0, r = 0, b = 0, l = 0, unit = "pt"),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, unit = "pt")
+        )
       )
   })
   
@@ -711,7 +756,7 @@ server <- function(input, output, session) {
       arrange(fct_rev(cycle), -n_tot_theme) |>
       mutate(
         theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
-        theme_label = str_wrap(theme_label, width = 30),
+        # theme_label = str_wrap(theme_label, width = 30),
         theme_label = fct_inorder(theme_label)
       )
     
@@ -754,7 +799,7 @@ server <- function(input, output, session) {
         strip.placement = "outside",
         strip.text.y.left = element_text(angle = 0, vjust = 1
                                          , size = 11
-                                         ),
+        ),
         strip.background = element_rect(fill = NA, linewidth = 1, color = "black", linetype = 1),
         panel.grid = element_blank()
       ) 
@@ -813,7 +858,7 @@ server <- function(input, output, session) {
       arrange(-n_tot_theme) |>
       mutate(
         theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
-        theme_label = str_wrap(theme_label, width = 40),
+        # theme_label = str_wrap(theme_label, width = 40),
         theme_label = fct_inorder(theme_label)
       )
     
@@ -898,7 +943,10 @@ server <- function(input, output, session) {
         legend.position = c(0.01, 0.99),
         legend.justification = c("left", "top"),
         legend.text = element_text(size = 18),
-        legend.background = element_blank()
+        legend.background = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
       )
   })
   
@@ -1120,6 +1168,178 @@ server <- function(input, output, session) {
       )
   })
   
+  ## UHC Outputs ----------------------------------------------------------
+  output$UHC_map <- renderPlot({
+    UHC_estimate_2021 = UHC_all |>
+      filter(country_name == input$selected_SUR, YEAR == 2021, 
+             IndicatorCode == "UHC_INDEX_REPORTED") |>
+      pull(NumericValue) |>
+      round(0)
+    
+    p1<-UHC_all |> 
+      filter(YEAR == 2021) |> 
+      # group_by(country_name, IndicatorCode) |> slice_max(order_by = YEAR, n=1) |> ungroup() |> 
+      filter(SpatialDimType == "COUNTRY") |> 
+      filter(IndicatorCode == "UHC_INDEX_REPORTED") |> 
+      left_join(state_geo |> select(iso3), join_by(COUNTRY==iso3)) |> 
+      mutate(selected_sur = factor(case_when(
+        country_name == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      )) |> 
+      ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
+      geom_sf()+
+      scale_linewidth_manual(values = c(0.8, 0.3)) +
+      scale_color_manual(values = c("blue3", "grey90")) +
+      scale_fill_stepsn(n.breaks = 10, na.value = "grey80", 
+                        colors = hcl.colors(n = 10, palette = "RdYlBu"))+
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.background = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          width=grid::unit(1.5,"npc"),
+          halign=0.5,
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
+      )+
+      labs(
+        title = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
+        fill = NULL
+      )+
+      guides(color = "none", lwd = "none")+
+      coord_sf(
+        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+      )
+    
+    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
+      aes(
+        xmin = bbox_selected_SUR()["xmin"]-1,
+        xmax = bbox_selected_SUR()["xmax"]+1,
+        ymin = bbox_selected_SUR()["ymin"]-1,
+        ymax = bbox_selected_SUR()["ymax"]+1
+      ),
+      fill = "transparent",      # Make the rectangle hollow
+      color = "red",             # Set the border color
+      linewidth = 0.5            # Set the border thickness
+    )}
+    
+    p3<-p1+
+      scale_linewidth_manual(values = c(0.2, 0.1))+
+      coord_sf(
+        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    
+    if(sur_area() > 10^11){p2} else{p2+p3}
+  })
+  
+  output$UHC_RMNCH_map <- renderPlot({
+    UHC_estimate_2021 = UHC_all |>
+      filter(country_name == input$selected_SUR, YEAR == 2021, 
+             IndicatorCode == "UHC_SCI_RMNCH") |>
+      pull(NumericValue) |>
+      round(0)
+    
+    p1<-UHC_all |> 
+      filter(YEAR == 2021) |> 
+      # group_by(country_name, IndicatorCode) |> slice_max(order_by = YEAR, n=1) |> ungroup() |> 
+      filter(SpatialDimType == "COUNTRY") |> 
+      filter(IndicatorCode == "UHC_SCI_RMNCH") |> 
+      left_join(state_geo |> select(iso3), join_by(COUNTRY==iso3)) |> 
+      mutate(selected_sur = factor(case_when(
+        country_name == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      )) |> 
+      ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
+      geom_sf()+
+      scale_linewidth_manual(values = c(0.8, 0.3)) +
+      scale_color_manual(values = c("blue3", "grey90")) +
+      scale_fill_stepsn(n.breaks = 10, na.value = "grey80", 
+                        colors = hcl.colors(n = 10, palette = "RdYlBu"))+
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.background = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          width=grid::unit(1,"npc"),
+          halign=0.5,
+          margin = margin(t = 10, b = 15, r=0, l=0, unit = "pt")
+        )
+      )+
+      labs(
+        title = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
+        # caption = "RMNCH: reproductive, maternal, newborn and child health",
+        fill = NULL
+      )+
+      guides(color = "none", lwd = "none")+
+      coord_sf(
+        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+      )
+    
+    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
+      aes(
+        xmin = bbox_selected_SUR()["xmin"]-1,
+        xmax = bbox_selected_SUR()["xmax"]+1,
+        ymin = bbox_selected_SUR()["ymin"]-1,
+        ymax = bbox_selected_SUR()["ymax"]+1
+      ),
+      fill = "transparent",      # Make the rectangle hollow
+      color = "red",             # Set the border color
+      linewidth = 0.5            # Set the border thickness
+    )}
+    
+    p3<-p1+
+      scale_linewidth_manual(values = c(0.2, 0.1))+
+      coord_sf(
+        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    
+    if(sur_area() > 10^11){p2} else{p2+p3}
+  })
+  
+  output$UHC_trend <- renderPlot({
+    start_year <- "2005"
+    UHC_all |> 
+      filter(IndicatorCode %in% c("UHC_SCI_RMNCH",
+                                  "UHC_INDEX_REPORTED")) |> 
+      mutate(selected_sur = factor(case_when(
+        country_name == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      )) |>
+      filter(country_name %in% c(
+        input$selected_SUR,
+        nearest_neighbors_list[, input$selected_SUR][1:5]
+      )) |>
+      filter(year >= ymd(paste0(start_year, "-01-01"))) |>
+      mutate(country_name = fct_relevel(country_name, input$selected_SUR)) |>
+      ggplot(aes(x=year, y = NumericValue, color = IndicatorName, shape = IndicatorName))+
+      geom_point()+
+      geom_line(linewidth=1)+
+      labs(y = "Index value",
+           x = NULL,
+           title = "UHC Service Coverage", color = NULL, shape = NULL)+
+      facet_wrap(.~country_name)+
+      theme_bw()+
+      theme(
+        legend.position = "bottom",
+        axis.text.x = element_text(angle=30),
+        panel.grid.minor = element_blank()
+      )+
+      # scale_y_continuous(sec.axis = dup_axis(name = NULL))+
+      guides(color=guide_legend(nrow=2,byrow=TRUE))
+  })
+  
   ## MMR Outputs -------------------------------------------------------------
   output$mmr_map <- renderPlot({
     mmr_estimate_2023 = MMR |>
@@ -1292,7 +1512,7 @@ server <- function(input, output, session) {
       )
   })
   
-  ## FAMILY PLANNING Outputs -------------------------------------------------
+  ## Abortion Outputs -------------------------------------------------
   
   # Reactive for base abortion map to avoid code duplication
   abortion_map_base <- reactive({
@@ -1472,6 +1692,7 @@ server <- function(input, output, session) {
     if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
+  ## Family planning outputs -------------------------------------
   output$family_planning <- renderPlot({
     p1 <- family_planning |>
       filter(!is.na(COUNTRY)) |>
@@ -1501,10 +1722,13 @@ server <- function(input, output, session) {
         axis.text = element_blank(), axis.ticks = element_blank(),
         legend.position = "right",
         legend.background = element_blank(),
-        axis.title = element_blank()
+        axis.title = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
       ) +
       labs(
-        title = str_wrap("Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year", 60),
+        title = "Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
         fill = NULL,
         color = NULL, lwd = NULL
       ) +
