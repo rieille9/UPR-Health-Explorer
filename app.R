@@ -69,7 +69,7 @@ ui <- page_navbar(
     ),
     actionLink(
       inputId = "home_button",
-      label = "HiHRO: Health in Human Rights Observatory",
+      label = "HaRO: Health & Rights Observatory",
       style = "color: white; text-decoration: none; font-size: 1.125rem; background: none; border: none; padding: 0;"
     )
   ),
@@ -194,9 +194,9 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
            #                          )
            #                        )
            #            ),
-           nav_panel(title = "HiHRO",
+           nav_panel(title = "HaRO",
                      card_body(markdown(
-                       "Welcome to HiHRO, the Health in Human Rights Observatory. This platform has been designed and created by CeHDI, the Global Center for Health Diplomacy and Inclusion, to empower health diplomats, decision-makers, and emerging leaders to actively engage in the Human Rights Council's Universal Periodic Review (UPR) mechanism.  
+                       "Welcome to HaRO, the Health and Rights Observatory. This platform has been designed and created by CeHDI, the Global Center for Health Diplomacy and Inclusion, to empower health diplomats, decision-makers, and emerging leaders to actively engage in the Human Rights Council's Universal Periodic Review (UPR) mechanism.  
                        
                        On these pages you will find data and tools to review the ways in which countries have featured health in their UPR reporting cycles and how their engagement has correlated with national health outcomes, especially in women's and maternal health. We encourage you to browse the country profiles and we invite you to contact the CeHDI team at info@cehdi.org for more information."
                      ))),
@@ -642,6 +642,8 @@ server <- function(input, output, session) {
   
   ## UPR: REGIONAL Outputs ----------------------------------------------------
   output$global_plot <- renderPlot({
+    req(nrow(filtered_upr_region()) > 0) # pause execution until filtered data is ready
+    
     upr_rec_global <- filtered_upr_region() |>
       droplevels() |>
       group_by(cycle, state_under_review) |>
@@ -661,12 +663,13 @@ server <- function(input, output, session) {
     rec_max <- max(upr_rec_global$med_n_tot)
     
     upr_rec_global |>
+      mutate(region = input$selected_region) |> 
       ggplot(aes(x = cycle, y = med_n, fill = health_related)) +
       scale_fill_manual(values = c("Health-related" = "#E69F00", "Other" = "grey80")) +
       geom_bar(stat = "identity") +
       labs(
         y = "Median # of recommendations", x = "UPR Cycle",
-        title = paste0("Median recommendations received by States<br>", input$selected_region),
+        title = paste0("Median recommendations received by States"),
         fill = NULL
         # ,caption = "*Cycle 4 is currently underway"
       ) +
@@ -679,6 +682,7 @@ server <- function(input, output, session) {
       scale_y_continuous(limits = c(0,rec_max+25),
                          expand = expansion(mult = c(0, 0.05)))+
       theme_bw() +
+      facet_wrap(.~region)+
       theme(
         panel.grid = element_blank(),
         axis.text.x = element_text(angle = 30, hjust = 0.8,
@@ -940,8 +944,9 @@ server <- function(input, output, session) {
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 14),
         strip.text = element_text(size = 18),
-        legend.position = c(0.01, 0.99),
-        legend.justification = c("left", "top"),
+        legend.position = "bottom",
+        # legend.position = c(0.01, 0.99),
+        # legend.justification = c("left", "top"),
         legend.text = element_text(size = 18),
         legend.background = element_blank(),
         plot.title = ggtext::element_textbox_simple(
