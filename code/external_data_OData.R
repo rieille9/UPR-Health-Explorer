@@ -118,8 +118,8 @@ world_abortion_laws <- readxl::read_xlsx(here("data", "world_abortion_laws.xlsx"
 
 
 # WHO ####
-
-live_births <- readxl::read_xlsx(here("data", "Data 2025-08-20 12-18.xlsx"), 
+# https://platform.who.int/data/maternal-newborn-child-adolescent-ageing/data-export
+live_births <- readxl::read_xlsx(here("data", "WHO_data_export_250917.xlsx"), 
                                  sheet = "Data") |> 
   janitor::clean_names() |> 
   filter(indicator=="Number of births (thousands)") |> 
@@ -132,7 +132,7 @@ live_births_wide <- live_births |>
     names_from = year, values_from = livebirths, names_prefix = "livebirths_"
   )
 
-maternal_deaths <- readxl::read_xlsx(here("data", "Data 2025-08-20 12-18.xlsx"), 
+maternal_deaths <- readxl::read_xlsx(here("data", "WHO_data_export_250917.xlsx"), 
                                  sheet = "Data") |> 
   janitor::clean_names() |> 
   filter(indicator=="Number of maternal deaths") |> 
@@ -145,7 +145,7 @@ maternal_deaths_wide <- maternal_deaths |>
     names_from = year, values_from = maternal_deaths, names_prefix = "maternal_deaths_"
   )
 
-mmr_WHO <- readxl::read_xlsx(here("data", "Data 2025-08-20 12-18.xlsx"), 
+mmr_WHO <- readxl::read_xlsx(here("data", "WHO_data_export_250917.xlsx"), 
                                      sheet = "Data") |> 
   janitor::clean_names() |> 
   filter(indicator=="Maternal mortality ratio (per 100 000 live births) (SDG 3.1.1)") |> 
