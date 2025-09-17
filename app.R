@@ -338,7 +338,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
             card(full_screen = TRUE,card_header("UHC Service Coverage Index (2021)"), plotOutput("UHC_map")),
             card(full_screen = TRUE,card_header("UHC sub-index on RMNCH (2021)"), plotOutput("UHC_RMNCH_map"))
             ),
-            card(full_screen = TRUE,card_header("UHC indices over time"), plotOutput("UHC_trend"))
+            card(full_screen = TRUE, fill = FALSE, card_header("UHC indices over time"), plotOutput("UHC_trend"))
             )
             ),
   
@@ -434,6 +434,16 @@ To systematically analyze the recommendations, we developed a keyword-based clas
 
 # 3. SERVER: REACTIVE LOGIC ============================
 server <- function(input, output, session) {
+  
+  # This reactive expression captures the real-time width of our plot container.
+  # It's debounced to wait 500ms after a resize before updating.
+  plot_width_mmr_neighbors <- reactive({
+    session$clientData$output_mmr_time_plot_neighbors_width
+  }) |> debounce(500)
+  
+  plot_width_UHC_neighbors <- reactive({
+    session$clientData$output_UHC_trend_width
+  }) |> debounce(500)
   
   ## About page options ------------------------
   
@@ -1323,6 +1333,13 @@ server <- function(input, output, session) {
   })
   
   output$UHC_trend <- renderPlot({
+    # Set a default number of columns
+    num_cols <- 3
+    # If the plot width is available and less than 600px (i.e., a phone screen),
+    # switch to a single column.
+    if (!is.null(plot_width_UHC_neighbors()) && plot_width_UHC_neighbors() < 300) {
+      num_cols <- 2
+    }
     start_year <- "2005"
     UHC_all |> 
       filter(IndicatorCode %in% c("UHC_SCI_RMNCH",
@@ -1339,13 +1356,14 @@ server <- function(input, output, session) {
       )) |>
       filter(year >= ymd(paste0(start_year, "-01-01"))) |>
       mutate(country_name = fct_relevel(country_name, input$selected_SUR)) |>
+      mutate(IndicatorName = str_wrap(IndicatorName,50)) |> 
       ggplot(aes(x=year, y = NumericValue, color = IndicatorName, shape = IndicatorName))+
       geom_point()+
       geom_line(linewidth=1)+
       labs(y = "Index value",
            x = NULL,
            title = "UHC Service Coverage", color = NULL, shape = NULL)+
-      facet_wrap(.~country_name)+
+      facet_wrap(.~country_name, ncol=num_cols)+
       theme_bw()+
       theme(
         legend.position = "bottom",
@@ -1417,6 +1435,14 @@ server <- function(input, output, session) {
   })
   
   output$mmr_time_plot_neighbors <- renderPlot({
+    
+    # Set a default number of columns
+    num_cols <- 3
+    # If the plot width is available and less than 600px (i.e., a phone screen),
+    # switch to a single column.
+    if (!is.null(plot_width_mmr_neighbors()) && plot_width_mmr_neighbors() < 300) {
+      num_cols <- 2
+    }
     start_year <- "2005"
     dat_plot <- MMR |>
       mutate(selected_sur = factor(case_when(
@@ -1456,7 +1482,7 @@ server <- function(input, output, session) {
       scale_color_manual(values = c("tomato3", "grey30")) +
       scale_fill_manual(values = c("tomato3", "grey30")) +
       guides(color = "none", lwd = "none", fill = "none") +
-      facet_wrap(. ~ country_name) +
+      facet_wrap(. ~ country_name, ncol=num_cols) +
       geom_hline(data = hline_data, aes(yintercept = NumericValue), lty = 2) +
       theme_bw()
   })
