@@ -41,7 +41,7 @@ for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$
 }
 
 upr_dpi <- 200
-upr_width <- 550
+upr_width <- 600
 upr_height <- 450
 
 upr_cycle_width <- 550
@@ -860,7 +860,7 @@ server <- function(input, output, session) {
       scale_x_continuous(
         labels = function(x) paste0(x, "%"),
         # limits = c(0, max_a + 2),
-        expand = expansion(mult = c(0, 0.5))
+        expand = expansion(mult = c(0, 0.45))
       ) +
       theme(
         legend.position = c(0.99, 0.01),
