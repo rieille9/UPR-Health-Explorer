@@ -40,7 +40,7 @@ for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$
   assign(object_name, readRDS(here("data", "API_data", file_name)))
 }
 
-upr_dpi <- 96
+upr_dpi <- 200
 upr_width <- 550
 upr_height <- 450
 
@@ -239,7 +239,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
               navset_card_tab(
                 full_screen = TRUE,
                 # title = "Regional Recommendation Themes",
-                nav_panel("All Recommendations", plotOutput("upr_themes_all_global", width = paste0(upr_width*upr_dpi,"px"), height =  paste0(upr_height,"px"))),
+                nav_panel("All Recommendations", plotOutput("upr_themes_all_global", width = paste0(upr_width,"px"), height =  paste0(upr_height,"px"))),
                 nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle_global"))
               ),
               layout_column_wrap(
@@ -793,7 +793,7 @@ server <- function(input, output, session) {
   output$upr_themes_all_global <- renderPlot(
     width = upr_width, 
     height = upr_height,
-    res = upr_dpi,
+    res = 96,
     {
     req(nrow(filtered_upr_region()) > 0)
     a_1 <- filtered_upr_region() |>
