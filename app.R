@@ -239,8 +239,21 @@ To systematically analyze the recommendations, we developed a keyword-based clas
               navset_card_tab(
                 full_screen = TRUE,
                 # title = "Regional Recommendation Themes",
-                nav_panel("All Recommendations", plotOutput("upr_themes_all_global", width = paste0(upr_width,"px"), height =  paste0(upr_height,"px"))),
-                nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle_global"))
+                nav_panel("All Recommendations", 
+                          card(fill = FALSE,
+                          card_body(
+                                    plotOutput("upr_themes_all_global", 
+                                               width = paste0(upr_width,"px"), 
+                                               height =  paste0(upr_height,"px"))),
+                          card_footer(
+                            downloadButton(
+                              outputId = "download_upr_themes_all_global",
+                              label = "Download as PNG"
+                            )
+                          ))),
+                nav_panel("Per UPR Cycle", card(
+                  card_body(plotOutput("upr_themes_cycle_global")))
+                  )
               ),
               layout_column_wrap(
                 width=1,
@@ -790,11 +803,8 @@ server <- function(input, output, session) {
   })
   
   ### All cycles themes -------------------
-  output$upr_themes_all_global <- renderPlot(
-    width = upr_width, 
-    height = upr_height,
-    res = 96,
-    {
+  #### Plot object -------------------
+  upr_themes_all_global_object <- reactive({
     req(nrow(filtered_upr_region()) > 0)
     a_1 <- filtered_upr_region() |>
       select(cycle, health_related:maternal_health, response_upr) |>
@@ -864,7 +874,7 @@ server <- function(input, output, session) {
       ) +
       coord_cartesian(clip = "off")+
       theme(
-        plot.margin = margin(r = 30, unit = "pt"),
+        plot.margin = margin(l=2,t=2,b=2, r = 30, unit = "pt"),
         legend.position = c(0.99, 0.01),
         legend.justification = c("right", "bottom"),
         legend.frame = element_rect(color = "black"),
@@ -885,6 +895,33 @@ server <- function(input, output, session) {
         hjust = -0.15, size = 3, vjust = 0.25
       )
   })
+  #### Plot output ----------------------------
+  output$upr_themes_all_global <- renderPlot(
+    width = upr_width, 
+    height = upr_height,
+    res = 96,
+    {
+      upr_themes_all_global_object()
+  })
+  
+  #### Plot downloader -------------------
+  output$download_upr_themes_all_global <- downloadHandler(
+    filename = function() {
+      # Create a dynamic filename
+      paste0("health-recommendations-", input$selected_region, ".png")
+    },
+    content = function(file) {
+      # Use ggsave to save the reactive plot object to the temp file
+      ggsave(
+        file,
+        plot = upr_themes_all_global_object(),
+        width = 7,
+        height = 5,
+        dpi = 300,
+        units = "in"
+      )
+    }
+  )
   
   ## UPR: SUR Outputs --------------------------------------------------------
   ### General plot --------------------------
