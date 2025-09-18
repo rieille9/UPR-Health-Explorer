@@ -263,13 +263,13 @@ To systematically analyze the recommendations, we developed a keyword-based clas
   ### UPR: SuR -------------------------------
   nav_panel(title = "UPR: State Under Review", icon = icon("flag"),
             "UPR Recommendations: State Under Review",
-            layout_columns(
-              col_widths = c(8, 4),
+            layout_column_wrap(
+              style = css(grid_template_columns = "2fr 1fr"),
               navset_card_tab(
                 full_screen = TRUE,
                 # title = "SUR Recommendation Details",
-                nav_panel("All Recommendations", plotOutput("upr_themes_all", height = "700px")),
-                nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle", height = "700px")),
+                nav_panel("All Recommendations", plotOutput("upr_themes_all", width = paste0(upr_width,"px"), height =  paste0(upr_height,"px"))),
+                nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle")),
                 nav_panel("Data Table", DTOutput("DT_table"))
               ),
               card(
@@ -613,7 +613,7 @@ server <- function(input, output, session) {
   })
   
   ## UPR: REGIONAL Outputs ----------------------------------------------------
-  ### Global plot ----------------
+  ### General plot ----------------
   output$global_plot <- renderPlot({
     req(nrow(filtered_upr_region()) > 0) # pause execution until filtered data is ready
     
@@ -885,6 +885,7 @@ server <- function(input, output, session) {
   })
   
   ## UPR: SUR Outputs --------------------------------------------------------
+  ### General plot --------------------------
   output$plot <- renderPlot({
     req(nrow(filtered_upr()) > 0)
     upr_rec_countries <- filtered_upr() |>
@@ -934,6 +935,7 @@ server <- function(input, output, session) {
       )
   })
   
+  ### Cycle themes ------------------
   output$upr_themes_cycle <- renderPlot({
     req(nrow(filtered_upr()) > 0)
     a_1 <- filtered_upr() |>
@@ -1036,7 +1038,12 @@ server <- function(input, output, session) {
     theme_plot
   })
   
-  output$upr_themes_all <- renderPlot({
+  ### All cycles themes ----------------------------
+  output$upr_themes_all <- renderPlot(
+    width = upr_width, 
+    height = upr_height,
+    res = 96,
+    {
     req(nrow(filtered_upr()) > 0)
     a_1 <- filtered_upr() |>
       select(cycle, state_under_review, health_related:maternal_health, response_upr) |>
@@ -1100,18 +1107,18 @@ server <- function(input, output, session) {
       theme_classic() +
       scale_x_continuous(
         labels = function(x) paste0(x, "%"),
-        limits = c(0, max_a + 2),
-        expand = expansion(mult = c(0, 0.05))
+        # limits = c(0, max_a + 2),
+        expand = expansion(mult = c(0, 0.45))
       ) +
       theme(
         legend.position = c(0.99, 0.01),
         legend.justification = c("right", "bottom"),
         legend.frame = element_rect(color = "black"),
-        legend.text = element_text(size = 12),
-        legend.title = element_text(size = 15),
+        legend.text = element_text(size = 9),
+        legend.title = element_text(size = 11),
         legend.background = element_rect(fill = "transparent"),
-        axis.text.y = element_text(size = 13),
-        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(size = 10),
         plot.title = element_text(hjust = 0.5),
         axis.title.y = element_blank(),
         plot.title.position = "plot",
@@ -1120,7 +1127,7 @@ server <- function(input, output, session) {
       geom_text(
         data = a |> filter(response_upr == "Supported"),
         aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
-        hjust = -0.15, size = 4, vjust = 0.25
+        hjust = -0.15, size = 3, vjust = 0.25
       )
   })
   
