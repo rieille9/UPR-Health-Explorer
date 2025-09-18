@@ -1108,8 +1108,10 @@ server <- function(input, output, session) {
       scale_x_continuous(
         labels = function(x) paste0(x, "%"),
         # limits = c(0, max_a + 2),
-        expand = expansion(mult = c(0, 0.45))
+        expand = expansion(mult = c(0, 0.1))
       ) +
+      coord_cartesian(clip = "off")+
+      
       theme(
         legend.position = c(0.99, 0.01),
         legend.justification = c("right", "bottom"),
@@ -1117,6 +1119,7 @@ server <- function(input, output, session) {
         legend.text = element_text(size = 9),
         legend.title = element_text(size = 11),
         legend.background = element_rect(fill = "transparent"),
+        plot.margin = margin(r = 30, unit = "pt"),
         axis.text.y = element_text(size = 9),
         axis.text.x = element_text(size = 10),
         plot.title = element_text(hjust = 0.5),
