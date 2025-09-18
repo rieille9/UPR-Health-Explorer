@@ -40,6 +40,12 @@ for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$
   assign(object_name, readRDS(here("data", "API_data", file_name)))
 }
 
+upr_dpi <- 150
+upr_width <- 550
+upr_height <- 450
+
+upr_cycle_width <- 550
+upr_cycle_height <- 700
 
 # 2. UI: BSLIB USER INTERFACE (with page_navbar) ==============================
 
@@ -147,11 +153,11 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   # Each nav_panel is now a separate page accessible from the top navbar
   ### About page ------------------
   nav_menu(title = "Health & Rights Observatory", icon = icon("info-circle"),
-           nav_panel(title = "About",
+           nav_panel(title = "About", icon = icon("info-circle"),
                      card(
                        fill = FALSE,
                        card_body(markdown(
-                         "Welcome to the **Health and Rights Observatory**. This platform has been designed and created by CeHDI, the Global Center for Health Diplomacy and Inclusion, to empower health diplomats, decision-makers, and emerging leaders to actively engage with the Human Rights Council's Universal Periodic Review (UPR) mechanism.  
+                         "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to empower health diplomats, decision-makers, and emerging leaders to actively engage with the Human Rights Council's Universal Periodic Review (UPR) mechanism.  
                        
                        On these pages you will find data and tools to review the ways in which countries have featured health in their UPR reporting cycles and show trends in national health outcomes, particularly in the areas of maternal health and family planning. We encourage you to browse the country profiles and we invite you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."
                        ))),
@@ -202,7 +208,7 @@ The <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'
                        )
                      )
            ),
-           nav_panel(title = "Classification of UPR recommendations",
+           nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
                      card(fill = FALSE,
                        card_header("Methodology"),
                        card_body(markdown("We conducted a comprehensive longitudinal analysis of all recommendations made during the first three cycles of the United Nations' Universal Periodic Review (UPR), spanning from 2008 to 2022. The full dataset of recommendations, including the State Under Review's response (“supported” or “noted”), was sourced from the Danish Institute for Human Rights’ “SDG-Human Rights Data Explorer”. Their database in turn relies partly on UPR Info’s “Database of Recommendations”. This dataset formed the basis for our classification and subsequent statistical modelling to assess the relationship between UPR engagement and health outcomes.  
@@ -233,8 +239,8 @@ To systematically analyze the recommendations, we developed a keyword-based clas
               navset_card_tab(
                 full_screen = TRUE,
                 # title = "Regional Recommendation Themes",
-                nav_panel("All Recommendations", plotOutput("upr_themes_all_global", height = "700px")),
-                nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle_global", height = "700px"))
+                nav_panel("All Recommendations", plotOutput("upr_themes_all_global", width = paste0(upr_width*upr_dpi/96,"px"), height =  paste0(upr_height*upr_dpi/96,"px"))),
+                nav_panel("Per UPR Cycle", plotOutput("upr_themes_cycle_global"))
               ),
               layout_column_wrap(
                 width=1,
@@ -607,6 +613,7 @@ server <- function(input, output, session) {
   })
   
   ## UPR: REGIONAL Outputs ----------------------------------------------------
+  ### Global plot ----------------
   output$global_plot <- renderPlot({
     req(nrow(filtered_upr_region()) > 0) # pause execution until filtered data is ready
     
@@ -671,6 +678,7 @@ server <- function(input, output, session) {
       )
   })
   
+  ### Cycle themes ---------------------
   output$upr_themes_cycle_global <- renderPlot({
     req(nrow(filtered_upr_region()) > 0)
     a_1 <- filtered_upr_region() |>
@@ -781,7 +789,12 @@ server <- function(input, output, session) {
     theme_plot
   })
   
-  output$upr_themes_all_global <- renderPlot({
+  ### All cycles themes -------------------
+  output$upr_themes_all_global <- renderPlot(
+    width = upr_width*upr_dpi/96, 
+    height = upr_height*upr_dpi/96,
+    res = upr_dpi,
+    {
     req(nrow(filtered_upr_region()) > 0)
     a_1 <- filtered_upr_region() |>
       select(cycle, health_related:maternal_health, response_upr) |>
@@ -846,20 +859,20 @@ server <- function(input, output, session) {
       theme_classic() +
       scale_x_continuous(
         labels = function(x) paste0(x, "%"),
-        limits = c(0, max_a + 2),
-        expand = expansion(mult = c(0, 0.05))
+        # limits = c(0, max_a + 2),
+        expand = expansion(mult = c(0, 0.45))
       ) +
       theme(
         legend.position = c(0.99, 0.01),
         legend.justification = c("right", "bottom"),
         legend.frame = element_rect(color = "black"),
-        legend.text = element_text(size = 12),
-        legend.title = element_text(size = 15),
+        legend.text = element_text(size = 9),
+        legend.title = element_text(size = 11),
         legend.background = element_rect(fill = "transparent"),
-        axis.text.y = element_text(size = 13),
-        axis.text.x = element_text(size = 8),
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_text(size = 10),
         plot.title = element_text(hjust = 0.5),
-        plot.caption = element_text(size = 14),
+        plot.caption = element_text(size = 11),
         axis.title.y = element_blank(),
         plot.title.position = "plot",
         panel.grid = element_blank()
@@ -867,7 +880,7 @@ server <- function(input, output, session) {
       geom_text(
         data = a |> filter(response_upr == "Supported"),
         aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
-        hjust = -0.15, size = 4, vjust = 0.25
+        hjust = -0.15, size = 3, vjust = 0.25
       )
   })
   
