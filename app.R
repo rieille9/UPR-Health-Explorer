@@ -1960,7 +1960,7 @@ server <- function(input, output, session) {
     
     p_title <-  plot_annotation(
       title="Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year", 
-      theme = theme(plot.title = element_textbox_simple(size=18, 
+      theme = theme(plot.title = element_textbox_simple(size=14, 
                                                         margin = margin(t = 17, b = 17, r=0, l=0, unit = "pt")))
     )
     if(sur_area() > 10^11){p2+p_title} else{p2+p3+p_title}
