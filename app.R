@@ -266,7 +266,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                          nav_panel("Per UPR Cycle", 
                                    card(fill=FALSE,
                                      card_body(plotOutput("upr_themes_cycle_global", 
-                                                          width = paste0(upr_width*0.8,"px"),
+                                                          width = paste0(upr_width,"px"),
                                                           height =  paste0(upr_height*1.6,"px")
                                      ))
                                    )
@@ -313,7 +313,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                          nav_panel("Per UPR Cycle", 
                                    card(fill = FALSE,
                                      card_body(plotOutput("upr_themes_cycle",
-                                                          width = paste0(upr_width*0.8,"px"),
+                                                          width = paste0(upr_width,"px"),
                                                           height =  paste0(upr_height*1.6,"px")
                                                           ))
                                    )
