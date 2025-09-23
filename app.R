@@ -105,7 +105,7 @@ ui <- page_navbar(
     
     selectInput("selected_regional_grouping", "Select Regional Grouping:",
                 choices = c("Global", "WHO regions", "World Bank regions", 
-                            # "Sub-regions",
+                            "Sub-regions (UN M49)",
                             # "ECSA-HC Membership", 
                             # "CARICOM Membership", "South Centre Membership", 
                             # "OACPS Membership", "OACPS Member regions", 
@@ -265,10 +265,10 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                                    )),
                          nav_panel("Per UPR Cycle", 
                                    card(fill=FALSE,
-                                     card_body(plotOutput("upr_themes_cycle_global", 
-                                                          width = paste0(upr_width*1.05,"px"),
-                                                          height =  paste0(upr_height*1.6,"px")
-                                     ))
+                                        card_body(plotOutput("upr_themes_cycle_global", 
+                                                             width = paste0(upr_width*1.05,"px"),
+                                                             height =  paste0(upr_height*1.6,"px")
+                                        ))
                                    )
                          )
                        ),
@@ -312,10 +312,10 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                          ),
                          nav_panel("Per UPR Cycle", 
                                    card(fill = FALSE,
-                                     card_body(plotOutput("upr_themes_cycle",
-                                                          width = paste0(upr_width*1.05,"px"),
-                                                          height =  paste0(upr_height*1.6,"px")
-                                                          ))
+                                        card_body(plotOutput("upr_themes_cycle",
+                                                             width = paste0(upr_width*1.05,"px"),
+                                                             height =  paste0(upr_height*1.6,"px")
+                                        ))
                                    )
                          ),
                          nav_panel("Data Table", DTOutput("DT_table"))
@@ -341,25 +341,26 @@ To systematically analyze the recommendations, we developed a keyword-based clas
               card(full_screen = TRUE, card_header("UHC indices over time"), plotOutput("UHC_trend"))
             )
   ),
-  
-  ### Maternal mortality -----------------------
-  nav_panel(title = "Maternal Mortality", icon = icon("person-pregnant"),
-            "Maternal Mortality Ratio (MMR): Number of maternal deaths per 100,000 live births.",
-            layout_columns(
-              full_screen = TRUE,
-              col_widths = c(5, 7),
-              list(
-                card(full_screen = TRUE,card_header("MMR Estimate Map (2023)"), plotOutput("mmr_map")),
-                card(full_screen = TRUE,card_header("MMR Trends vs. Neighbors"), plotOutput("mmr_time_plot_neighbors"))
-              ),
-              navset_card_tab(
-                # title = "Causes of Maternal Death",
-                full_screen = TRUE,
-                nav_panel("Causes of Maternal Death", plotOutput("mmr_causes", height = "600px")),
-                nav_panel("Causes Over Time", plotOutput("mmr_causes_longitudinal", height = "600px")),
-                nav_panel(
-                  shiny::icon("circle-info"),
-                  markdown("The below *abbreviated definitions* were compiled from the **IHME's** <a href='https://www.healthdata.org/research-analysis/diseases-injuries-risks/factsheets-hierarchy' target='_blank'>factsheets pages for the level 4 causes of maternal disorders</a>:  
+  ### Maternal health ------------------------------
+  nav_menu(title = "Maternal health", icon = icon("person-pregnant"),
+           #### Maternal mortality -----------------------
+           nav_panel(title = "Maternal Mortality", icon = icon("house-medical"),
+                     "Maternal Mortality Ratio (MMR): Number of maternal deaths per 100,000 live births.",
+                     layout_columns(
+                       full_screen = TRUE,
+                       col_widths = c(5, 7),
+                       list(
+                         card(full_screen = TRUE,card_header("MMR Estimate Map (2023)"), plotOutput("mmr_map")),
+                         card(full_screen = TRUE,card_header("MMR Trends vs. Neighbors"), plotOutput("mmr_time_plot_neighbors"))
+                       ),
+                       navset_card_tab(
+                         # title = "Causes of Maternal Death",
+                         full_screen = TRUE,
+                         nav_panel("Causes of Maternal Death", plotOutput("mmr_causes", height = "600px")),
+                         nav_panel("Causes Over Time", plotOutput("mmr_causes_longitudinal", height = "600px")),
+                         nav_panel(
+                           shiny::icon("circle-info"),
+                           markdown("The below *abbreviated definitions* were compiled from the **IHME's** <a href='https://www.healthdata.org/research-analysis/diseases-injuries-risks/factsheets-hierarchy' target='_blank'>factsheets pages for the level 4 causes of maternal disorders</a>:  
                   
 **Maternal haemorrhage** includes both postpartum haemorrhage (defined as blood loss ≥500 ml for vaginal delivery and ≥1000 ml for caesarean delivery) and antepartum haemorrhage (defined as vaginal bleeding from any cause at or beyond 20 weeks of gestation).  
 
@@ -380,33 +381,41 @@ To systematically analyze the recommendations, we developed a keyword-based clas
 **Maternal deaths aggravated by HIV/AIDS** are deaths occurring in HIV-positive women whose pregnancy has exacerbated their HIV/AIDS, leading to death.
 
 **Other direct maternal disorders** encompasses a wide range of maternal disorders that do not map to other diseases in the GBD cause list, including other fatal or non-fatal complications occurring during pregnancy, childbirth, and the postpartum period.")
-                )
-              )
-            )
-  ),
-  ### Abortion ------------------------
-  nav_panel(title = "Abortion", icon = icon("house-medical"),
-            layout_column_wrap(
-              card(fill = FALSE,
-                   full_screen = TRUE,
-                   card_header("Abortion Laws (June 2023)"),
-                   plotOutput("abortion_map_sur"),
-                   markdown("Data: <a href='https://reproductiverights.org/maps/worlds-abortion-laws/' target='_blank'>Center for Reproductive Rights</a>")
-              ),
-              layout_column_wrap(
-                width = 1,
-                card(
-                  full_screen = TRUE,
-                  card_header("Estimated Abortion Rate (2015-2019)"),
-                  plotOutput("abortion_rate")
-                ),
-                card(
-                  full_screen = TRUE,
-                  card_header("Estimated Unintended Pregnancy Rate (2015-2019)"),
-                  plotOutput("unintended_pregnancy")
-                )
-              )
-            )
+                         )
+                       )
+                     )
+           ),
+           
+           #### Skilled birth attendance ------------------------
+           nav_panel(title = "Skilled birth attendance", icon=icon("user-nurse"),
+                     markdown("Births attended by skilled health personnel  
+                     Proportion of births delivered in a health facility")
+           ),
+           
+           #### Abortion ------------------------
+           nav_panel(title = "Abortion", icon = icon("prescription-bottle-medical"),
+                     layout_column_wrap(
+                       card(fill = FALSE,
+                            full_screen = TRUE,
+                            card_header("Abortion Laws (June 2023)"),
+                            plotOutput("abortion_map_sur"),
+                            markdown("Data: <a href='https://reproductiverights.org/maps/worlds-abortion-laws/' target='_blank'>Center for Reproductive Rights</a>")
+                       ),
+                       layout_column_wrap(
+                         width = 1,
+                         card(
+                           full_screen = TRUE,
+                           card_header("Estimated Abortion Rate (2015-2019)"),
+                           plotOutput("abortion_rate")
+                         ),
+                         card(
+                           full_screen = TRUE,
+                           card_header("Estimated Unintended Pregnancy Rate (2015-2019)"),
+                           plotOutput("unintended_pregnancy")
+                         )
+                       )
+                     )
+           )
   ),
   ## Family planning ------------------
   nav_panel(title = "Family Planning", icon = icon("people-group"),
@@ -478,7 +487,7 @@ server <- function(input, output, session) {
   
   ## Reactive Expressions for Data Filtering ---------------------------------
   state_geo_reactive <- reactive({
-    if (input$selected_regional_grouping == "Sub-regions") {
+    if (input$selected_regional_grouping == "Sub-regions (UN M49)") {
       state_geo |> mutate(region_dashboard = subregion)
     } else if (input$selected_regional_grouping == "World Bank regions") {
       state_geo |> mutate(region_dashboard = wbregion)
@@ -570,6 +579,16 @@ server <- function(input, output, session) {
     state_geo_reactive()[state_geo_reactive()$country == input$selected_SUR, ]$region_dashboard
   })
   
+  SUR_WHOregion <- reactive({
+    req(input$selected_SUR)
+    state_geo_reactive()[state_geo_reactive()$country == input$selected_SUR, ]$WHO_region
+  })
+  
+  SUR_subregion <- reactive({
+    req(input$selected_SUR)
+    state_geo_reactive()[state_geo_reactive()$country == input$selected_SUR, ]$subregion
+  })
+  
   sur_area <- reactive({
     req(input$selected_SUR)
     state_geo_reactive() |>
@@ -588,6 +607,29 @@ server <- function(input, output, session) {
     req(SUR_region())
     state_geo_reactive() |>
       filter(region_dashboard %in% c(SUR_region())) |>
+      st_bbox()
+  })
+  
+  bbox_SUR_region_dynamic <- reactive({
+    req(SUR_region())
+    if(input$selected_regional_grouping == "Global"){
+      state_geo |>
+        filter(WHO_region %in% c(SUR_WHOregion())) |>
+        st_bbox()} else{
+          state_geo_reactive() |>
+            filter(region_dashboard %in% c(SUR_region())) |>
+            st_bbox()}
+  })
+  
+  bbox_SUR_subregion <- reactive({
+    state_geo |>
+      filter(subregion %in% c(SUR_subregion())) |>
+      st_bbox()
+  })
+  
+  bbox_SUR_WHOregion <- reactive({
+    state_geo |>
+      filter(WHO_region %in% c(SUR_WHOregion())) |>
       st_bbox()
   })
   
@@ -1467,7 +1509,9 @@ server <- function(input, output, session) {
       guides(color=guide_legend(nrow=2,byrow=TRUE))
   })
   
-  ## MMR Outputs -------------------------------------------------------------
+  ## Maternal health outputs --------------------------------
+  
+  ### MMR Outputs -------------------------------------------------------------
   output$mmr_map <- renderPlot({
     mmr_estimate_2023 = MMR |>
       filter(country_name == input$selected_SUR, YEAR == "2023") |>
@@ -1647,7 +1691,10 @@ server <- function(input, output, session) {
       )
   })
   
-  ## Abortion Outputs -------------------------------------------------
+  ### Skilled birth outputs --------------------------------------------
+  
+  
+  ### Abortion Outputs -------------------------------------------------
   
   # Reactive for base abortion map to avoid code duplication
   abortion_map_base <- reactive({
@@ -1835,6 +1882,92 @@ server <- function(input, output, session) {
   
   ## Family planning outputs -------------------------------------
   output$family_planning <- renderPlot({
+    family_planning_dat <- family_planning |>
+      filter(!is.na(COUNTRY)) |>
+      group_by(COUNTRY) |>
+      slice_max(order_by = year, n = 1) |>
+      ungroup() |>
+      right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
+      mutate(selected_sur = factor(case_when(
+        country == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      ))
+    
+    country_estimate <- family_planning_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(Value)
+    country_year <- family_planning_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(YEAR)
+      
+    p1 <- family_planning_dat |> 
+      ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
+      geom_sf() +
+      scale_linewidth_manual(values = c(0.8, 0.3)) +
+      scale_color_manual(values = c("blue3", "grey90")) +
+      scale_fill_fermenter(
+        n.breaks = 10,
+        palette = "RdYlBu", direction = 1,
+        na.value = "grey80",
+        labels = relabel_na
+      ) +
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size=12),
+        legend.key.size = unit(25,"pt"),
+        legend.background = element_blank(),
+        axis.title = element_blank(), 
+        plot.caption = element_text(size=16),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
+      ) +
+      labs(
+        # title = p_title,
+        fill = NULL,
+        caption = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+        color = NULL, lwd = NULL
+      ) +
+      guides(color = "none", lwd = "none", label = "none") +
+      coord_sf(
+        xlim = c(bbox_SUR_region_dynamic()[[1]],bbox_SUR_region_dynamic()[[3]]),
+        ylim = c(bbox_SUR_region_dynamic()[[2]], bbox_SUR_region_dynamic()[[4]])
+        # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+        # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+      )
+    p2<-p1+geom_rect(
+      aes(
+        xmin = bbox_selected_SUR()["xmin"]-0.2,
+        xmax = bbox_selected_SUR()["xmax"]+0.2,
+        ymin = bbox_selected_SUR()["ymin"]-0.2,
+        ymax = bbox_selected_SUR()["ymax"]+0.2
+      ),
+      fill = "transparent",      # Make the rectangle hollow
+      color = "red",             # Set the border color
+      linewidth = 0.5            # Set the border thickness
+    )
+    
+    p3<-p1+
+      scale_linewidth_manual(values = c(0.2, 0.1))+
+      coord_sf(
+        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL, caption=NULL)
+    
+    p_title <-  plot_annotation(
+      title="Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year", 
+      theme = theme(plot.title = element_textbox_simple(size=18, 
+                                                        margin = margin(t = 17, b = 17, r=0, l=0, unit = "pt")))
+    )
+    if(sur_area() > 10^11){p2+p_title} else{p2+p3+p_title}
+  })
+  
+  ### Alternative ------------
+  output$family_planning_alt <- renderPlot({
     p1 <- family_planning |>
       filter(!is.na(COUNTRY)) |>
       group_by(COUNTRY) |>
