@@ -8,6 +8,9 @@ pacman::p_load(
 )
 
 # Get member states geometries
+# !!!!! consider upgrading to using the GISCO map data:
+# world1 <- giscoR::gisco_get_countries()
+
 state_geo_prep <- necountries::ne_countries |> 
   # filter(type == "main"|country == "Alaska") #|>
   filter(status == "member"|status == "observer"|country == "Alaska"|country == "Greenland"|country=="Somaliland"|country == "Western Sahara") |> 
@@ -32,16 +35,31 @@ somalia <- state_geo_prep |>
   rename("polygon" = 1) |> 
   mutate(country = "Somalia")
 
+# Separate Siberian artifact for mapping simplicity
+gg_artifact_split <- state_geo_prep |> filter(country=="Russia")
+gg_russia <- st_cast(gg_artifact_split, "POLYGON")[-c(4,6,9),] |> 
+  st_union() |> st_sf() |> 
+  rename("polygon" = 1) |> 
+  mutate(country = "Russia")
+gg_siberia <- st_cast(gg_artifact_split, "POLYGON")[c(4,6,9),] |> 
+  st_union() |> st_sf() |> 
+  rename("polygon" = 1) |> 
+  mutate(country = "Siberian Artifact")
+
 # Update geometry for US and Alaska
 state_geo_prep <- state_geo_prep |> 
+  add_row(country="Siberian Artifact") |> 
   mutate(polygon = case_when(iso3 == "USA" ~ us_alaska$polygon,
                              country == "Somalia" ~ somalia$polygon,
+                             country == "Russia" ~ gg_russia$polygon,
+                             country == "Siberian Artifact" ~ gg_siberia$polygon,
                              .default = polygon)) |> 
   filter(!country %in% c("Somaliland", "Alaska"))
+
 # Get the centroid of each state and update dataset
 point_centroid <- st_centroid(state_geo_prep, of_largest_polygon = TRUE)
 state_geo_prep$point_centroid <- point_centroid$polygon
-rm(us_alaska, somalia, point_centroid)
+rm(us_alaska, somalia, point_centroid, gg_artifact_split, gg_russia, gg_siberia)
 
 # Update state names for compatability with SDG dataset
 state_geo_prep <- state_geo_prep |> 
@@ -97,7 +115,7 @@ UN_official <- readxl::read_xlsx(here("data", "countries.xlsx")) |>
 
 # WHO regions
 who_regions <- read_csv(here("data", "who_regions.csv")) |> select(-country) |> 
-  add_row(iso3="GRL", WHO_region ="European Region (EUR)") |> 
+  # add_row(iso3="GRL", WHO_region ="European Region (EUR)") |> 
   add_row(iso3="LIE", WHO_region ="European Region (EUR)") |> 
   mutate(WHO_region = factor(WHO_region,
                              levels = c("African Region (AFR)", 
@@ -198,11 +216,17 @@ state_geo <- left_join(state_geo_prep, UN_official, join_by(country == english_s
   left_join(South_Centre, join_by(iso3==iso3_code)) |> #mutate(SC_status = fct_na_value_to_level(SC_status, "Other")) |> 
   left_join(OACPS, join_by(iso3==iso3_code)) |> #mutate(OACPS_status = fct_na_value_to_level(OACPS_status, "Other")) |> 
   left_join(COMESA, join_by(iso3==iso3_code))  #|> mutate(COMESA_status = fct_na_value_to_level(COMESA_status, "Other"))
-  
+
+greenland_row <- state_geo$country == "Greenland"
+# Identify the columns to change
+columns_to_change <- state_geo |> sf::st_drop_geometry() |> select(region:wbregion, WHO_region) |>  names()
+# Assign NA to those specific cells
+state_geo[greenland_row, columns_to_change] <- NA
 
 saveRDS(state_geo, here("output", "state_geo_enhanced.rds"))
 
 state_geo_dist <- state_geo |> 
+  filter(!country %in% c("Greenland", "Siberian Artifact")) |> 
   # st_set_geometry("point_centroid") |> 
   st_set_geometry("polygon") |> 
   select(country) |> 
@@ -210,8 +234,12 @@ state_geo_dist <- state_geo |>
 
 diag(state_geo_dist)<- -1 # Make sure that the distance from itself is always the smallest distance
 # give the rows & cols meaningful names
-colnames(state_geo_dist) <- state_geo$country
-rownames(state_geo_dist) <- state_geo$country
+colnames(state_geo_dist) <- state_geo |> 
+  filter(!country %in% c("Greenland", "Siberian Artifact")) |> 
+  pull(country)
+rownames(state_geo_dist) <- state_geo |> 
+  filter(!country %in% c("Greenland", "Siberian Artifact")) |> 
+  pull(country)
 nearest_neighbors_list <- apply(state_geo_dist, 1, function(row_distances) {
   
   # 2. Sort the distances and get the original column indices
