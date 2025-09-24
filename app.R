@@ -219,23 +219,29 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                      #   fill = FALSE,
                      #   card_body(
                      markdown(
-                       "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to empower health diplomats, decision-makers, and emerging leaders to actively engage with the Human Rights Council's Universal Periodic Review (UPR) mechanism.  
-                       
-                       On these pages you will find data and tools to review the ways in which countries have featured health in their UPR reporting cycles and show trends in national health outcomes, particularly in the areas of maternal health and family planning. We encourage you to browse the country profiles and we invite you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."
+                       "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity."),
+                     card(
+                       fill = FALSE,
+                       card_header("The Right to Health"),
+                       card_body(markdown(
+"The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+                           
+Under the Right to Health, States have the following obligations:  
+-  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
+-  **Protect**: take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
+-  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.  
+
+The platform is intended to empower diplomats, policymakers, decision-makers across the health, foreign affairs, and related sectors, as well as civil society actors, to advance the Right to Health within global and national human rights discussions."
                        # ))
-                     ),
+                     ))),
                      card(
                        fill = FALSE,
                        card_header("The Right to Health and the Universal Periodic Review"),
                        card_body(
                          layout_columns(
-                           col_widths = c(9,3),
-                           markdown("The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a> is an inclusive right that 'extends not only to timely and appropriate health care but also to the underlying determinants of health.' As such, it is central to the fulfillment of broader human rights obligations, serving as a powerful tool to advance well-being, equity, and dignity across all sectors of society. The Right to Health comprises the State's obligations to:  
--  **Respect**: refrain from interfering directly or indirectly with the enjoyment of the right to health.  
--  **Protect**: take measures that prevent third parties from interfering with the guarantees of the right to health.  
--  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.  
-
-The <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a> is a **State-led** mechanism to **evaluate each State’s 'human rights obligations and commitments.'** Reviews involve interactive discussions during which any UN Member State can make recommendations to the States under review, which can either 'support' or 'note' the recommendations."),
+                           col_widths = c(10,2),
+                           markdown(
+                           "In the following pages, the platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations. We encourage you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."),
                            
                            
                            # --- Column 2: Clickable Image ---
@@ -462,17 +468,17 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                        ),
                        layout_column_wrap(
                          width=1,
-                       card(
-                         full_screen = TRUE,
-                         card_header("Proportion of births delivered in a health facility")
-                         ,plotOutput("births_facility")
-                       ),
-                       card(
-                         full_screen = TRUE,
-                         card_header("Trends vs. Neighbors"), 
-                         plotOutput("births_facility_plot_neighbors")
+                         card(
+                           full_screen = TRUE,
+                           card_header("Proportion of births delivered in a health facility")
+                           ,plotOutput("births_facility")
+                         ),
+                         card(
+                           full_screen = TRUE,
+                           card_header("Trends vs. Neighbors"), 
+                           plotOutput("births_facility_plot_neighbors")
+                         )
                        )
-                     )
                      )
            ),
            
@@ -1683,13 +1689,14 @@ server <- function(input, output, session) {
     
     dat_plot |>
       mutate(country_name = fct_relevel(country_name, input$selected_SUR)) |>
-      ggplot(aes(x = year, y = NumericValue)) +
+      ggplot(aes(x = YEAR, y = NumericValue)) +
       labs(
         title = paste0("Trends in Maternal Mortality Ratio (MMR)"),
         x = NULL, y = "MMR estimate (per 100,000 live births)",
         color = NULL,
         fill = NULL
       ) +
+      scale_x_continuous(breaks = c(2005, 2020))+
       geom_line(lwd = 1, aes(color = selected_sur)) +
       geom_ribbon(aes(ymin = Low, ymax = High, fill = selected_sur), color = NA, alpha = 0.4) +
       scale_color_manual(values = c("tomato3", "grey30")) +
