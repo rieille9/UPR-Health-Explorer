@@ -37,20 +37,22 @@ map_insetting <- function(
     coord_sf(
       xlim = c(bbox_SUR_region_dynamic[[1]],bbox_SUR_region_dynamic[[3]]),
       ylim = c(bbox_SUR_region_dynamic[[2]], bbox_SUR_region_dynamic[[4]])
+      
+      # Alternative mapping centered on the selected State
       # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
       # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
     )+
-  geom_rect(
-    aes(
-      xmin = bbox_sur["xmin"] - 0.2,
-      xmax = bbox_sur["xmax"] + 0.2,
-      ymin = bbox_sur["ymin"] - 0.2,
-      ymax = bbox_sur["ymax"] + 0.2
-    ),
-    fill = "transparent",
-    color = "red",
-    linewidth = 0.5
-  )
+    geom_rect(
+      aes(
+        xmin = bbox_sur["xmin"] - 0.2,
+        xmax = bbox_sur["xmax"] + 0.2,
+        ymin = bbox_sur["ymin"] - 0.2,
+        ymax = bbox_sur["ymax"] + 0.2
+      ),
+      fill = "transparent",
+      color = "red",
+      linewidth = 0.5
+    )
   
   p3 <- p1 +
     scale_linewidth_manual(values = c(0.2, 0.1)) +
@@ -59,7 +61,7 @@ map_insetting <- function(
       ylim = c(bbox_sur[[2]], bbox_sur[[4]])
     ) +
     guides(fill = "none") +
-    labs(title = NULL, caption = NULL)
+    labs(subtitle = "(map zoom)", caption = NULL)
   
   p_title <- plot_annotation(
     title = p_title_text,
@@ -444,8 +446,34 @@ To systematically analyze the recommendations, we developed a keyword-based clas
            
            #### Skilled birth attendance ------------------------
            nav_panel(title = "Skilled birth attendance", icon=icon("user-nurse"),
-                     markdown("Births attended by skilled health personnel  
-                     Proportion of births delivered in a health facility")
+                     layout_column_wrap(
+                       layout_column_wrap(
+                         width=1,
+                         card(
+                           full_screen = TRUE,
+                           card_header("Births attended by skilled health personnel")
+                           ,plotOutput("skilled_birth")
+                         ),
+                         card(
+                           full_screen = TRUE,
+                           card_header("Trends vs. Neighbors"), 
+                           plotOutput("skilled_birth_plot_neighbors")
+                         )
+                       ),
+                       layout_column_wrap(
+                         width=1,
+                       card(
+                         full_screen = TRUE,
+                         card_header("Proportion of births delivered in a health facility")
+                         ,plotOutput("births_facility")
+                       ),
+                       card(
+                         full_screen = TRUE,
+                         card_header("Trends vs. Neighbors"), 
+                         plotOutput("births_facility_plot_neighbors")
+                       )
+                     )
+                     )
            ),
            
            #### Abortion ------------------------
@@ -501,10 +529,19 @@ To systematically analyze the recommendations, we developed a keyword-based clas
 # 3. SERVER: REACTIVE LOGIC ============================
 server <- function(input, output, session) {
   
+  ## Plot width expressions -----------
   # This reactive expression captures the real-time width of our plot container.
   # It's debounced to wait 500ms after a resize before updating.
   plot_width_mmr_neighbors <- reactive({
     session$clientData$output_mmr_time_plot_neighbors_width
+  }) |> debounce(500)
+  
+  plot_width_skilled_birth_neighbors <- reactive({
+    session$clientData$output_skilled_birth_plot_neighbors_width
+  }) |> debounce(500)
+  
+  plot_width_births_facility_neighbors <- reactive({
+    session$clientData$output_births_facility_plot_neighbors_width
   }) |> debounce(500)
   
   plot_width_UHC_neighbors <- reactive({
@@ -1575,10 +1612,10 @@ server <- function(input, output, session) {
         color = NULL, lwd = NULL
       ) +
       guides(color = "none", lwd = "none")
-      # coord_sf(
-      #   xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-      #   ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      # )
+    # coord_sf(
+    #   xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+    #   ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    # )
     
     map_insetting(
       p1, 
@@ -1732,6 +1769,237 @@ server <- function(input, output, session) {
   
   ### Skilled birth outputs --------------------------------------------
   
+  #### Skilled birth attendance ----------------
+  output$skilled_birth <- renderPlot({
+    skilled_birth_dat <- skilled_birth |>
+      filter(!is.na(COUNTRY)) |>
+      group_by(COUNTRY) |>
+      slice_max(order_by = year, n = 1) |>
+      ungroup() |>
+      right_join(state_geo, by = c("COUNTRY" = "iso3")) |>
+      mutate(selected_sur = factor(case_when(
+        country == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      ))
+    
+    country_estimate <- skilled_birth_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(Value)
+    country_year <- skilled_birth_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(YEAR)
+    
+    p1<-skilled_birth_dat |> 
+      ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
+      geom_sf() +
+      scale_linewidth_manual(values = c(0.8, 0.3)) +
+      scale_color_manual(values = c("blue3", "grey90")) +
+      scale_fill_fermenter(
+        n.breaks = 10,
+        palette = "RdYlBu", direction = 1,
+        na.value = "grey80",
+        labels = relabel_na
+      ) +
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size=12),
+        legend.key.size = unit(25,"pt"),
+        legend.background = element_blank(),
+        axis.title = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
+      ) +
+      labs(
+        fill = NULL,
+        color = NULL, lwd = NULL
+      )+guides(color="none", lwd="none")
+    
+    map_insetting(
+      p1,
+      p_caption_text = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+      p_title_text = "Births attended by skilled health personnel (%), latest year",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(),
+      bbox_sur = bbox_selected_SUR(),
+      sur_area =sur_area()
+    )
+  })
+  
+  ##### Neighbors --------------
+  output$skilled_birth_plot_neighbors <- renderPlot({
+    
+    # Set a default number of columns
+    num_cols <- 3
+    # If the plot width is available and less than 600px (i.e., a phone screen),
+    # switch to a single column.
+    if (!is.null(plot_width_skilled_birth_neighbors()) && plot_width_skilled_birth_neighbors() < 300) {
+      num_cols <- 2
+    }
+    start_year <- "2005"
+    dat_plot <- skilled_birth |>
+      mutate(selected_sur = factor(case_when(
+        country_name == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      )) |>
+      filter(country_name %in% c(
+        input$selected_SUR,
+        nearest_neighbors_list[, input$selected_SUR][1:5]
+      )) |>
+      # filter(year >= ymd(paste0(start_year, "-01-01"))) |>
+      mutate(country_name = fct_relevel(country_name, input$selected_SUR))
+    
+    hline_data <- dat_plot |>
+      group_by(country_name) |> 
+      filter(YEAR == min(YEAR)) |> ungroup()
+    
+    dat_plot |>
+      mutate(country_name = fct_relevel(country_name, input$selected_SUR)) |>
+      ggplot(aes(x = YEAR, y = NumericValue)) +
+      labs(
+        title = paste0("Trends in births attended by skilled health personnel"),
+        x = NULL, y = "Births attended by skilled health personnel (%)",
+        color = NULL,
+        fill = NULL
+      ) +
+      geom_line(lwd = 1.5, aes(color = selected_sur)) +
+      geom_point(aes(color=selected_sur), size=2.5)+
+      scale_color_manual(values = c("tomato3", "grey30")) +
+      scale_fill_manual(values = c("tomato3", "grey30")) +
+      scale_x_continuous(breaks = c(2005, 2020))+
+      guides(color = "none", lwd = "none", fill = "none") +
+      facet_wrap(. ~ country_name, ncol=num_cols) +
+      geom_hline(data = hline_data, aes(yintercept = NumericValue), lty = 2) +
+      theme_bw()+
+      theme(
+        panel.grid.minor.y = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, unit = "pt")
+        )
+      )
+  })
+  
+  #### Proportion of births delivered in a health facility ----------------
+  output$births_facility <- renderPlot({
+    institutional_birth_dat <- institutional_birth |>
+      filter(!is.na(COUNTRY)) |>
+      group_by(COUNTRY) |>
+      slice_max(order_by = year, n = 1) |>
+      ungroup() |>
+      right_join(state_geo, by = c("COUNTRY" = "iso3")) |>
+      mutate(selected_sur = factor(case_when(
+        country == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      ))
+    
+    country_estimate <- institutional_birth_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(Value)
+    country_year <- institutional_birth_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(YEAR)
+    
+    p1<-institutional_birth_dat |> 
+      ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
+      geom_sf() +
+      scale_linewidth_manual(values = c(0.8, 0.3)) +
+      scale_color_manual(values = c("blue3", "grey90")) +
+      scale_fill_fermenter(
+        n.breaks = 10,
+        palette = "RdYlBu", direction = 1,
+        na.value = "grey80",
+        labels = relabel_na
+      ) +
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size=12),
+        legend.key.size = unit(25,"pt"),
+        legend.background = element_blank(),
+        axis.title = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
+      ) +
+      labs(
+        fill = NULL,
+        color = NULL, lwd = NULL
+      )+guides(color="none", lwd="none")
+    
+    map_insetting(
+      p1,
+      p_caption_text = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+      p_title_text = "Proportion of births delivered in a health facility (%), latest year",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(),
+      bbox_sur = bbox_selected_SUR(),
+      sur_area =sur_area()
+    )
+  })
+  
+  ##### Neighbors --------------
+  output$births_facility_plot_neighbors <- renderPlot({
+    
+    # Set a default number of columns
+    num_cols <- 3
+    # If the plot width is available and less than 600px (i.e., a phone screen),
+    # switch to a single column.
+    if (!is.null(plot_width_births_facility_neighbors()) && plot_width_births_facility_neighbors() < 300) {
+      num_cols <- 2
+    }
+    start_year <- "2005"
+    dat_plot <- institutional_birth |>
+      mutate(selected_sur = factor(case_when(
+        country_name == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      )) |>
+      filter(country_name %in% c(
+        input$selected_SUR,
+        nearest_neighbors_list[, input$selected_SUR][1:5]
+      )) |>
+      # filter(year >= ymd(paste0(start_year, "-01-01"))) |>
+      mutate(country_name = fct_relevel(country_name, input$selected_SUR))
+    
+    hline_data <- dat_plot |>
+      group_by(country_name) |> 
+      filter(YEAR == min(YEAR)) |> ungroup()
+    
+    dat_plot |>
+      mutate(country_name = fct_relevel(country_name, input$selected_SUR)) |>
+      ggplot(aes(x = YEAR, y = NumericValue)) +
+      labs(
+        title = paste0("Trends in births delivered in a health facility"),
+        x = NULL, y = "Births delivered in a health facility (%)",
+        color = NULL,
+        fill = NULL
+      ) +
+      geom_line(lwd = 1.5, aes(color = selected_sur)) +
+      geom_point(aes(color=selected_sur), size=2.5)+
+      scale_color_manual(values = c("tomato3", "grey30")) +
+      scale_fill_manual(values = c("tomato3", "grey30")) +
+      scale_x_continuous(breaks = c(2005, 2020))+
+      guides(color = "none", lwd = "none", fill = "none") +
+      facet_wrap(. ~ country_name, ncol=num_cols) +
+      geom_hline(data = hline_data, aes(yintercept = NumericValue), lty = 2) +
+      theme_bw()+
+      theme(
+        panel.grid.minor.y = element_blank(),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, unit = "pt")
+        )
+      )
+  })
   
   ### Abortion Outputs -------------------------------------------------
   
@@ -1766,7 +2034,7 @@ server <- function(input, output, session) {
     p1 <- abortion_map_base() +
       labs(
         # title = "Abortion laws by State (current as of June 2023)", 
-           fill = NULL) +
+        fill = NULL) +
       theme(
         legend.position = "right",
         legend.key.size = unit(15, "pt"),
@@ -1782,29 +2050,6 @@ server <- function(input, output, session) {
       bbox_sur = bbox_selected_SUR(), 
       sur_area =sur_area()
     )
-    # coord_sf(
-    #     xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-    #     ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-    #   )
-    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-    #   aes(
-    #     xmin = bbox_selected_SUR()["xmin"]-1,
-    #     xmax = bbox_selected_SUR()["xmax"]+1,
-    #     ymin = bbox_selected_SUR()["ymin"]-1,
-    #     ymax = bbox_selected_SUR()["ymax"]+1
-    #   ),
-    #   fill = "transparent",      # Make the rectangle hollow
-    #   color = "red",             # Set the border color
-    #   linewidth = 0.5            # Set the border thickness
-    # )}
-    # 
-    # p3<-p1+
-    #   scale_linewidth_manual(values = c(0.2, 0.1))+
-    #   coord_sf(
-    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    # 
-    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   output$abortion_rate <- renderPlot({
@@ -1851,30 +2096,6 @@ server <- function(input, output, session) {
       bbox_sur = bbox_selected_SUR(), 
       sur_area =sur_area()
     )
-    # 
-    #   coord_sf(
-    #     xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-    #     ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-    #   )
-    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-    #   aes(
-    #     xmin = bbox_selected_SUR()["xmin"]-1,
-    #     xmax = bbox_selected_SUR()["xmax"]+1,
-    #     ymin = bbox_selected_SUR()["ymin"]-1,
-    #     ymax = bbox_selected_SUR()["ymax"]+1
-    #   ),
-    #   fill = "transparent",      # Make the rectangle hollow
-    #   color = "red",             # Set the border color
-    #   linewidth = 0.5            # Set the border thickness
-    # )}
-    # 
-    # p3<-p1+
-    #   scale_linewidth_manual(values = c(0.2, 0.1))+
-    #   coord_sf(
-    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    # 
-    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   output$unintended_pregnancy <- renderPlot({
@@ -1924,31 +2145,6 @@ server <- function(input, output, session) {
       bbox_sur = bbox_selected_SUR(), 
       sur_area =sur_area()
     )
-    
-    # 
-    #   coord_sf(
-    #     xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-    #     ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-    #   )
-    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-    #   aes(
-    #     xmin = bbox_selected_SUR()["xmin"]-1,
-    #     xmax = bbox_selected_SUR()["xmax"]+1,
-    #     ymin = bbox_selected_SUR()["ymin"]-1,
-    #     ymax = bbox_selected_SUR()["ymax"]+1
-    #   ),
-    #   fill = "transparent",      # Make the rectangle hollow
-    #   color = "red",             # Set the border color
-    #   linewidth = 0.5            # Set the border thickness
-    # )}
-    # 
-    # p3<-p1+
-    #   scale_linewidth_manual(values = c(0.2, 0.1))+
-    #   coord_sf(
-    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    # 
-    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   ## Family planning outputs -------------------------------------
@@ -2005,12 +2201,6 @@ server <- function(input, output, session) {
         color = NULL, lwd = NULL
       ) +
       guides(color = "none", lwd = "none", label = "none")
-    # coord_sf(
-    #   xlim = c(bbox_SUR_region_dynamic()[[1]],bbox_SUR_region_dynamic()[[3]]),
-    #   ylim = c(bbox_SUR_region_dynamic()[[2]], bbox_SUR_region_dynamic()[[4]])
-    #   # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-    #   # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-    # )
     
     map_insetting(
       p1, 
@@ -2020,100 +2210,6 @@ server <- function(input, output, session) {
       bbox_sur = bbox_selected_SUR(), 
       sur_area =sur_area()
     )
-    # p2<-p1+geom_rect(
-    #   aes(
-    #     xmin = bbox_selected_SUR()["xmin"]-0.2,
-    #     xmax = bbox_selected_SUR()["xmax"]+0.2,
-    #     ymin = bbox_selected_SUR()["ymin"]-0.2,
-    #     ymax = bbox_selected_SUR()["ymax"]+0.2
-    #   ),
-    #   fill = "transparent",      # Make the rectangle hollow
-    #   color = "red",             # Set the border color
-    #   linewidth = 0.5            # Set the border thickness
-    # )
-    # 
-    # p3<-p1+
-    #   scale_linewidth_manual(values = c(0.2, 0.1))+
-    #   coord_sf(
-    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]),
-    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL, caption=NULL)
-    # 
-    # p_title <-  plot_annotation(
-    #   title="Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
-    #   theme = theme(plot.title = element_textbox_simple(size=14,
-    #                                                     margin = margin(t = 17, b = 17, r=0, l=0, unit = "pt")))
-    # )
-    # if(sur_area() > 10^11){p2+p_title} else{p2+p3+p_title}
-  })
-  
-  ### Alternative ------------
-  output$family_planning_alt <- renderPlot({
-    p1 <- family_planning |>
-      filter(!is.na(COUNTRY)) |>
-      group_by(COUNTRY) |>
-      slice_max(order_by = year, n = 1) |>
-      ungroup() |>
-      right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
-      mutate(selected_sur = factor(case_when(
-        country == input$selected_SUR ~ input$selected_SUR,
-        .default = "Other"
-      ),
-      levels = c(input$selected_SUR, "Other")
-      )) |>
-      ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
-      geom_sf() +
-      scale_linewidth_manual(values = c(0.8, 0.3)) +
-      scale_color_manual(values = c("blue3", "grey90")) +
-      scale_fill_fermenter(
-        n.breaks = 10,
-        palette = "RdYlBu", direction = 1,
-        na.value = "grey80",
-        labels = relabel_na
-      ) +
-      theme_bw() +
-      theme(
-        panel.grid = element_blank(),
-        axis.text = element_blank(), axis.ticks = element_blank(),
-        legend.position = "right",
-        legend.text = element_text(size=12),
-        legend.key.size = unit(25,"pt"),
-        legend.background = element_blank(),
-        axis.title = element_blank(),
-        plot.title = ggtext::element_textbox_simple(
-          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
-        )
-      ) +
-      labs(
-        title = "Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
-        fill = NULL,
-        color = NULL, lwd = NULL
-      ) +
-      guides(color = "none", lwd = "none", label = "none") +
-      coord_sf(
-        xlim = c(bbox_SUR_region()[[1]],bbox_SUR_region()[[3]]),
-        ylim = c(bbox_SUR_region()[[2]], bbox_SUR_region()[[4]])
-        # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
-    
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    
-    if(sur_area() > 10^11){p2} else{p2+p3}
   })
 }
 
