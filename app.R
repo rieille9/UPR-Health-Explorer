@@ -44,10 +44,10 @@ map_insetting <- function(
     )+
     geom_rect(
       aes(
-        xmin = bbox_sur["xmin"] - 0.2,
-        xmax = bbox_sur["xmax"] + 0.2,
-        ymin = bbox_sur["ymin"] - 0.2,
-        ymax = bbox_sur["ymax"] + 0.2
+        xmin = bbox_sur["xmin"] - 0.5,
+        xmax = bbox_sur["xmax"] + 0.5,
+        ymin = bbox_sur["ymin"] - 0.5,
+        ymax = bbox_sur["ymax"] + 0.5
       ),
       fill = "transparent",
       color = "red",
@@ -610,6 +610,7 @@ server <- function(input, output, session) {
       state_geo |> mutate(region_dashboard = "Global")
     }
   })
+  
   
   sdg_data_dashboard <- reactive({
     sdg_data |>
