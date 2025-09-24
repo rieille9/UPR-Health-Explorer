@@ -26,33 +26,60 @@ relabel_na <- function(x) {
   factor(x)
 }
 
-map_insetting <- function(p1, p_title_text="Update this text"){
-  p2<-p1+geom_rect(
+map_insetting <- function(
+    p1, bbox_SUR_region_dynamic, bbox_sur, sur_area, 
+    p_title_text="Update this text", 
+    p_caption_text = "Update this text",
+    title_size=14, title_margin=17,
+    caption_size=14
+) {
+  p2 <- p1 + 
+    coord_sf(
+      xlim = c(bbox_SUR_region_dynamic[[1]],bbox_SUR_region_dynamic[[3]]),
+      ylim = c(bbox_SUR_region_dynamic[[2]], bbox_SUR_region_dynamic[[4]])
+      # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+      # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    )+
+  geom_rect(
     aes(
-      xmin = bbox_selected_SUR()["xmin"]-0.2,
-      xmax = bbox_selected_SUR()["xmax"]+0.2,
-      ymin = bbox_selected_SUR()["ymin"]-0.2,
-      ymax = bbox_selected_SUR()["ymax"]+0.2
+      xmin = bbox_sur["xmin"] - 0.2,
+      xmax = bbox_sur["xmax"] + 0.2,
+      ymin = bbox_sur["ymin"] - 0.2,
+      ymax = bbox_sur["ymax"] + 0.2
     ),
-    fill = "transparent",      # Make the rectangle hollow
-    color = "red",             # Set the border color
-    linewidth = 0.5            # Set the border thickness
+    fill = "transparent",
+    color = "red",
+    linewidth = 0.5
   )
   
-  p3<-p1+
-    scale_linewidth_manual(values = c(0.2, 0.1))+
+  p3 <- p1 +
+    scale_linewidth_manual(values = c(0.2, 0.1)) +
     coord_sf(
-      xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-      ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL, caption=NULL)
+      xlim = c(bbox_sur[[1]], bbox_sur[[3]]),
+      ylim = c(bbox_sur[[2]], bbox_sur[[4]])
+    ) +
+    guides(fill = "none") +
+    labs(title = NULL, caption = NULL)
   
-  p_title <-  plot_annotation(
-    title=p_title_text, 
-    theme = theme(plot.title = element_textbox_simple(
-      size=14, 
-      margin = margin(t = 17, b = 17, r=0, l=0, unit = "pt"))
+  p_title <- plot_annotation(
+    title = p_title_text,
+    caption = p_caption_text,
+    theme = theme(
+      plot.title = element_textbox_simple(
+        size = title_size,
+        margin = margin(t = title_margin, b = title_margin, r=0, l=0, unit = "pt")
+      ),
+      plot.caption = element_textbox_simple(
+        size = caption_size, halign = 0.5
+      )
     )
   )
-  if(sur_area() > 10^11){p2+p_title} else{p2+p3+p_title}
+  
+  if (sur_area > 11^11) {
+    p2 + p_title
+  } else {
+    p2 + p3 + p_title
+  }
 }
 
 source(here("code", "external_data_GBD.R"))
@@ -665,15 +692,18 @@ server <- function(input, output, session) {
   
   ## MAPS (from original sidebar) ------------------------------------------
   output$global_map <- renderPlot({
+    req(input$selected_SUR)
     p1 <- state_geo_reactive() |>
       mutate(selected_sur = factor(case_when(country == input$selected_SUR ~ input$selected_SUR,
+                                             region_dashboard == input$selected_region ~ "Region",
                                              .default = "Other"),
-                                   levels = c(input$selected_SUR, "Other"))) |>
+                                   levels = c(input$selected_SUR,"Region", "Other"))) |>
       ggplot(aes(geometry = polygon, color = selected_sur, fill = selected_sur, lwd = selected_sur)) +
       geom_sf() +
-      scale_color_manual(values = c("green4", "grey80")) +
-      scale_linewidth_manual(values = c(0.8, 0.3)) +
-      scale_fill_manual(values = c("green4", "grey90")) +
+      scale_color_manual(values = c("green4", "grey50", "grey80")) +
+      scale_linewidth_manual(values = c(0.8,0.3, 0.3)) +
+      scale_fill_manual(values = c("green4","grey60", "grey90")) +
+      scale_alpha_manual(values = c(1,1,0.3))+
       theme_bw() +
       theme(
         panel.grid = element_blank(),
@@ -682,10 +712,10 @@ server <- function(input, output, session) {
       labs(
         title = NULL,
         fill = NULL,
-        color = NULL, lwd = NULL
+        color = NULL, lwd = NULL, alpha=NULL
       ) +
       guides(
-        fill = "none", lwd = "none", color = "none"
+        fill = "none", lwd = "none", color = "none", alpha="none"
       )
     
     if (sur_area() > 10^11) {
@@ -1380,34 +1410,19 @@ server <- function(input, output, session) {
         )
       )+
       labs(
-        title = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
+        # title = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
         fill = NULL
       )+
-      guides(color = "none", lwd = "none")+
-      coord_sf(
-        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
+      guides(color = "none", lwd = "none")
     
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
-    
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    
-    if(sur_area() > 10^11){p2} else{p2+p3}
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
+      p_title_text = "UHC Service Coverage Index (2021)",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
   })
   
   output$UHC_RMNCH_map <- renderPlot({
@@ -1450,35 +1465,21 @@ server <- function(input, output, session) {
         )
       )+
       labs(
-        title = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
+        # title = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
         # caption = "RMNCH: reproductive, maternal, newborn and child health",
         fill = NULL
       )+
-      guides(color = "none", lwd = "none")+
-      coord_sf(
-        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
+      guides(color = "none", lwd = "none")
     
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR, ": ", UHC_estimate_2021),
+      p_title_text = "UHC sub-index on reproductive, maternal, newborn, and child health (2021)",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
     
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    
-    if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   output$UHC_trend <- renderPlot({
@@ -1569,35 +1570,44 @@ server <- function(input, output, session) {
         legend.background = element_blank()
       ) +
       labs(
-        title = paste0("Maternal mortality ratio (MMR) estimate in 2023\n", input$selected_SUR, ": ", mmr_estimate_2023, " per 100,000 live births"),
+        # title = paste0("Maternal mortality ratio (MMR) estimates in 2023\n", input$selected_SUR, ": ", mmr_estimate_2023, " per 100,000 live births"),
         fill = NULL,
         color = NULL, lwd = NULL
       ) +
-      guides(color = "none", lwd = "none") +
-      coord_sf(
-        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
+      guides(color = "none", lwd = "none")
+      # coord_sf(
+      #   xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+      #   ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+      # )
     
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR, ": ", mmr_estimate_2023, " per 100,000 live births"),
+      p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
     
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    
-    if(sur_area() > 10^11){p2} else{p2+p3}
+    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
+    #   aes(
+    #     xmin = bbox_selected_SUR()["xmin"]-1,
+    #     xmax = bbox_selected_SUR()["xmax"]+1,
+    #     ymin = bbox_selected_SUR()["ymin"]-1,
+    #     ymax = bbox_selected_SUR()["ymax"]+1
+    #   ),
+    #   fill = "transparent",      # Make the rectangle hollow
+    #   color = "red",             # Set the border color
+    #   linewidth = 0.5            # Set the border thickness
+    # )}
+    # 
+    # p3<-p1+
+    #   scale_linewidth_manual(values = c(0.2, 0.1))+
+    #   coord_sf(
+    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    # 
+    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   output$mmr_time_plot_neighbors <- renderPlot({
@@ -1754,36 +1764,47 @@ server <- function(input, output, session) {
   
   output$abortion_map_sur <- renderPlot({
     p1 <- abortion_map_base() +
-      labs(title = "Abortion laws by State (current as of June 2023)", fill = NULL) +
+      labs(
+        # title = "Abortion laws by State (current as of June 2023)", 
+           fill = NULL) +
       theme(
         legend.position = "right",
         legend.key.size = unit(15, "pt"),
         # legend.key.height = unit(1,"cm"),
         legend.text = element_text(size = 11)
-      ) +
-      coord_sf(
-        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
       )
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
     
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    
-    if(sur_area() > 10^11){p2} else{p2+p3}
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR),
+      p_title_text = "Abortion laws by State (current as of June 2023)",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
+    # coord_sf(
+    #     xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+    #     ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    #   )
+    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
+    #   aes(
+    #     xmin = bbox_selected_SUR()["xmin"]-1,
+    #     xmax = bbox_selected_SUR()["xmax"]+1,
+    #     ymin = bbox_selected_SUR()["ymin"]-1,
+    #     ymax = bbox_selected_SUR()["ymax"]+1
+    #   ),
+    #   fill = "transparent",      # Make the rectangle hollow
+    #   color = "red",             # Set the border color
+    #   linewidth = 0.5            # Set the border thickness
+    # )}
+    # 
+    # p3<-p1+
+    #   scale_linewidth_manual(values = c(0.2, 0.1))+
+    #   coord_sf(
+    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    # 
+    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   output$abortion_rate <- renderPlot({
@@ -1816,34 +1837,44 @@ server <- function(input, output, session) {
         axis.title = element_blank()
       ) +
       labs(
-        title = "Abortion rate (model-estimated), 2015-2019",
+        # title = "Abortion rate (model-estimated), 2015-2019",
         fill = "Annual estimate\n(per 1,000)",
         color = NULL, lwd = NULL
       ) +
-      guides(color = "none", lwd = "none", label = "none") +
-      coord_sf(
-        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
+      guides(color = "none", lwd = "none", label = "none")
     
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
-    
-    if(sur_area() > 10^11){p2} else{p2+p3}
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR),
+      p_title_text = "Abortion rate (model-estimated), 2015-2019",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
+    # 
+    #   coord_sf(
+    #     xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+    #     ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    #   )
+    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
+    #   aes(
+    #     xmin = bbox_selected_SUR()["xmin"]-1,
+    #     xmax = bbox_selected_SUR()["xmax"]+1,
+    #     ymin = bbox_selected_SUR()["ymin"]-1,
+    #     ymax = bbox_selected_SUR()["ymax"]+1
+    #   ),
+    #   fill = "transparent",      # Make the rectangle hollow
+    #   color = "red",             # Set the border color
+    #   linewidth = 0.5            # Set the border thickness
+    # )}
+    # 
+    # p3<-p1+
+    #   scale_linewidth_manual(values = c(0.2, 0.1))+
+    #   coord_sf(
+    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    # 
+    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   output$unintended_pregnancy <- renderPlot({
@@ -1879,34 +1910,45 @@ server <- function(input, output, session) {
         axis.title = element_blank()
       ) +
       labs(
-        title = "Unintended pregnancy (model-estimated), 2015-2019",
+        # title = "Unintended pregnancy (model-estimated), 2015-2019",
         fill = "Annual estimate\n(per 1,000)",
         color = NULL, lwd = NULL
       ) +
-      guides(color = "none", lwd = "none", label = "none") +
-      coord_sf(
-        xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
-    if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-1,
-        xmax = bbox_selected_SUR()["xmax"]+1,
-        ymin = bbox_selected_SUR()["ymin"]-1,
-        ymax = bbox_selected_SUR()["ymax"]+1
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
-    )}
+      guides(color = "none", lwd = "none", label = "none")
     
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR),
+      p_title_text = "Unintended pregnancy (model-estimated), 2015-2019",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
     
-    if(sur_area() > 10^11){p2} else{p2+p3}
+    # 
+    #   coord_sf(
+    #     xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+    #     ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    #   )
+    # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
+    #   aes(
+    #     xmin = bbox_selected_SUR()["xmin"]-1,
+    #     xmax = bbox_selected_SUR()["xmax"]+1,
+    #     ymin = bbox_selected_SUR()["ymin"]-1,
+    #     ymax = bbox_selected_SUR()["ymax"]+1
+    #   ),
+    #   fill = "transparent",      # Make the rectangle hollow
+    #   color = "red",             # Set the border color
+    #   linewidth = 0.5            # Set the border thickness
+    # )}
+    # 
+    # p3<-p1+
+    #   scale_linewidth_manual(values = c(0.2, 0.1))+
+    #   coord_sf(
+    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]), 
+    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL)
+    # 
+    # if(sur_area() > 10^11){p2} else{p2+p3}
   })
   
   ## Family planning outputs -------------------------------------
@@ -1959,42 +2001,49 @@ server <- function(input, output, session) {
       labs(
         # title = p_title,
         fill = NULL,
-        caption = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+        # caption = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
         color = NULL, lwd = NULL
       ) +
-      guides(color = "none", lwd = "none", label = "none") +
-      coord_sf(
-        xlim = c(bbox_SUR_region_dynamic()[[1]],bbox_SUR_region_dynamic()[[3]]),
-        ylim = c(bbox_SUR_region_dynamic()[[2]], bbox_SUR_region_dynamic()[[4]])
-        # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
-        # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
-      )
+      guides(color = "none", lwd = "none", label = "none")
+    # coord_sf(
+    #   xlim = c(bbox_SUR_region_dynamic()[[1]],bbox_SUR_region_dynamic()[[3]]),
+    #   ylim = c(bbox_SUR_region_dynamic()[[2]], bbox_SUR_region_dynamic()[[4]])
+    #   # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+    #   # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    # )
     
-    # map_insetting(p1)
-    p2<-p1+geom_rect(
-      aes(
-        xmin = bbox_selected_SUR()["xmin"]-0.2,
-        xmax = bbox_selected_SUR()["xmax"]+0.2,
-        ymin = bbox_selected_SUR()["ymin"]-0.2,
-        ymax = bbox_selected_SUR()["ymax"]+0.2
-      ),
-      fill = "transparent",      # Make the rectangle hollow
-      color = "red",             # Set the border color
-      linewidth = 0.5            # Set the border thickness
+    map_insetting(
+      p1, 
+      p_caption_text = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+      p_title_text = "Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
     )
-
-    p3<-p1+
-      scale_linewidth_manual(values = c(0.2, 0.1))+
-      coord_sf(
-        xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]),
-        ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL, caption=NULL)
-
-    p_title <-  plot_annotation(
-      title="Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
-      theme = theme(plot.title = element_textbox_simple(size=14,
-                                                        margin = margin(t = 17, b = 17, r=0, l=0, unit = "pt")))
-    )
-    if(sur_area() > 10^11){p2+p_title} else{p2+p3+p_title}
+    # p2<-p1+geom_rect(
+    #   aes(
+    #     xmin = bbox_selected_SUR()["xmin"]-0.2,
+    #     xmax = bbox_selected_SUR()["xmax"]+0.2,
+    #     ymin = bbox_selected_SUR()["ymin"]-0.2,
+    #     ymax = bbox_selected_SUR()["ymax"]+0.2
+    #   ),
+    #   fill = "transparent",      # Make the rectangle hollow
+    #   color = "red",             # Set the border color
+    #   linewidth = 0.5            # Set the border thickness
+    # )
+    # 
+    # p3<-p1+
+    #   scale_linewidth_manual(values = c(0.2, 0.1))+
+    #   coord_sf(
+    #     xlim = c(bbox_selected_SUR()[[1]], bbox_selected_SUR()[[3]]),
+    #     ylim = c(bbox_selected_SUR()[[2]], bbox_selected_SUR()[[4]]))+guides(fill = "none")+labs(title = NULL, caption=NULL)
+    # 
+    # p_title <-  plot_annotation(
+    #   title="Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
+    #   theme = theme(plot.title = element_textbox_simple(size=14,
+    #                                                     margin = margin(t = 17, b = 17, r=0, l=0, unit = "pt")))
+    # )
+    # if(sur_area() > 10^11){p2+p_title} else{p2+p3+p_title}
   })
   
   ### Alternative ------------
