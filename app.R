@@ -408,7 +408,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
   
   ### UHC ---------------------
   nav_panel(title = "UHC", icon = icon("umbrella"),
-            markdown("UHC: Universal Health Coverage<br>RMNCH: Reproductive, Maternal, Newborn and Child Health"),
+            markdown("UHC: Universal Health Coverage"),
             layout_column_wrap(
               layout_column_wrap(
                 width=1,
