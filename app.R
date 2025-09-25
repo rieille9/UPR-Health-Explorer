@@ -19,6 +19,17 @@ pacman::p_load(
   pdftools
 )
 
+# Make a vertical line that cuts the mapping geometries, for adjusting the maps to allow for shifting the center to the Pacific region
+polygon_shift <- st_polygon(x = list(rbind(
+  c(-0.000001, 90),
+  c(0, 90),
+  c(0, -90),
+  c(-0.000001, -90),
+  c(-0.000001, 90)
+))) %>%
+  st_sfc() %>%
+  st_set_crs(4326)
+
 # A helper function from utils.R for the app to run standalone
 relabel_na <- function(x) {
   x <- as.character(x)
@@ -698,14 +709,20 @@ server <- function(input, output, session) {
   
   bbox_selected_SUR <- reactive({
     req(input$selected_SUR)
-    state_geo_reactive() |>
+    (if(SUR_WHOregion() == "Western Pacific Region (WPR)"){
+      state_geo_reactive() |> 
+        st_difference(polygon_shift) |> 
+        st_shift_longitude()} else{state_geo_reactive()}) |>
       filter(country %in% c(input$selected_SUR)) |>
       st_bbox()
   })
   
   bbox_SUR_region <- reactive({
     req(SUR_region())
-    state_geo_reactive() |>
+    (if(SUR_WHOregion() == "Western Pacific Region (WPR)"){
+      state_geo_reactive() |> 
+        st_difference(polygon_shift) |> 
+        st_shift_longitude()} else{state_geo_reactive()}) |>
       filter(region_dashboard %in% c(SUR_region())) |>
       st_bbox()
   })
@@ -713,22 +730,34 @@ server <- function(input, output, session) {
   bbox_SUR_region_dynamic <- reactive({
     req(SUR_region())
     if(input$selected_regional_grouping == "Global"){
-      state_geo |>
+      (if(SUR_WHOregion() == "Western Pacific Region (WPR)"){
+        state_geo |> 
+          st_difference(polygon_shift) |> 
+          st_shift_longitude()} else{state_geo}) |>
         filter(WHO_region %in% c(SUR_WHOregion())) |>
         st_bbox()} else{
-          state_geo_reactive() |>
+          (if(SUR_WHOregion() == "Western Pacific Region (WPR)"){
+            state_geo_reactive() |> 
+              st_difference(polygon_shift) |> 
+              st_shift_longitude()} else{state_geo_reactive()}) |>
             filter(region_dashboard %in% c(SUR_region())) |>
             st_bbox()}
   })
   
   bbox_SUR_subregion <- reactive({
-    state_geo |>
+    (if(SUR_WHOregion() == "Western Pacific Region (WPR)"){
+      state_geo |> 
+        st_difference(polygon_shift) |> 
+        st_shift_longitude()} else{state_geo}) |>
       filter(subregion %in% c(SUR_subregion())) |>
       st_bbox()
   })
   
   bbox_SUR_WHOregion <- reactive({
-    state_geo |>
+    (if(SUR_WHOregion() == "Western Pacific Region (WPR)"){
+      state_geo |> 
+        st_difference(polygon_shift) |> 
+        st_shift_longitude()} else{state_geo}) |>
       filter(WHO_region %in% c(SUR_WHOregion())) |>
       st_bbox()
   })
@@ -1599,7 +1628,8 @@ server <- function(input, output, session) {
       levels = c(input$selected_SUR, "Other")
       )) |>
       filter(TimeDimensionValue == 2023, !is.na(country_name)) |>
-      right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
+      right_join(state_geo_reactive(), 
+        by = c("COUNTRY" = "iso3")) |>
       filter(!is.na(selected_sur)) |>
       ggplot(aes(geometry = polygon, fill = mmr_cat, color = selected_sur, lwd = selected_sur)) +
       geom_sf() +
