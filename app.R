@@ -72,7 +72,9 @@ map_insetting <- function(
       ylim = c(bbox_sur[[2]], bbox_sur[[4]])
     ) +
     guides(fill = "none") +
-    labs(subtitle = "(map zoom)", caption = NULL)
+    labs(
+      # subtitle = "(map zoom)", 
+      caption = NULL)
   
   p_title <- plot_annotation(
     title = p_title_text,
