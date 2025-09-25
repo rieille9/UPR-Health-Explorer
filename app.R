@@ -1588,7 +1588,7 @@ server <- function(input, output, session) {
                          )
       )+
       theme_bw()+
-      scale_x_continuous(breaks = c(2005, 2020))+
+      scale_x_continuous(breaks = c(2005,2010, 2015, 2020))+
       theme(
         legend.text = element_text(size = 12),
         legend.title = element_text(size = 11),
@@ -1597,7 +1597,7 @@ server <- function(input, output, session) {
         strip.text = element_text(size = 12),
         axis.text = element_text(angle=30, size = 10, hjust=0.5),
         axis.title = element_text(size = 12),
-        panel.grid.minor = element_blank()
+        panel.grid.minor.y = element_blank()
       )+
       # scale_y_continuous(sec.axis = dup_axis(name = NULL))+
       guides(color=guide_legend(nrow=2,byrow=TRUE))
