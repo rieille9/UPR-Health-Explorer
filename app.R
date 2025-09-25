@@ -214,8 +214,6 @@ UPR recommendations were downloaded from a database maintained by the Danish Ins
 
 Data related to various indicators (e.g. maternal mortality ratio and estimated abortion rates) were accessed via the [Global Health Observatory's API](https://www.who.int/data/gho/info/gho-odata-api), and data regarding the causes of maternal death were obtained using the [IHME's GBD Results tool](https://vizhub.healthdata.org/gbd-results/).
 
-More information on the East, Central and Southern Africa Health Community (**ECSA-HC**) can be found [here](https://ecsahc.org/ecsa-hc-at-a-glance/).
-
 Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
 
 **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
@@ -254,7 +252,9 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                          layout_columns(
                            col_widths = c(10,2),
                            markdown(
-                             "In the following pages, the platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations. We encourage you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."),
+                             "In the following pages, the platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
+                             
+                             **This platform us under active development**, and we encourage you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."),
                            
                            
                            # --- Column 2: Clickable Image ---
@@ -272,38 +272,28 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                        )
                      )
            ),
-           nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
-                     card(fill = FALSE,
-                          card_header("Methodology"),
-                          card_body(markdown("We conducted a comprehensive longitudinal analysis of all recommendations made during the first three cycles of the United Nations' Universal Periodic Review (UPR), spanning from 2008 to 2022. The full dataset of recommendations, including the State Under Review's response (“supported” or “noted”), was sourced from the Danish Institute for Human Rights’ “SDG-Human Rights Data Explorer”. Their database in turn relies partly on UPR Info’s “Database of Recommendations”. This dataset formed the basis for our classification and subsequent statistical modelling to assess the relationship between UPR engagement and health outcomes.  
-
-To systematically analyze the recommendations, we developed a keyword-based classification system using R. Drawing inspiration from <a href='https://iris.who.int/handle/10665/277114' target='_blank'>a recent WHO report on health-related recommendation under the first two cycles of the UPR</a>, recommendations were categorized into non-exclusive thematic health areas (i.e. a single recommendation could fall into mutliple categories), such as health systems, communicable diseases, and environmental health. For this study's focus, we developed specific, detailed sub-classification definitions for themes related to Maternal, Newborn, and Child Health (MNCH) and Sexual and Reproductive Health and Rights (SRHR), with a particular focus on identifying recommendations pertaining to maternal health and family planning."))
-                     ))
-           # nav_panel(title = "CeHDI",
-           #           card(
-           #             card_header("Global Center for Health Diplomacy and Inclusion (CeHDI)"),
-           #             card_body(
-           #               markdown("[CeHDI](https://www.cehdi.org/) has a mission of amplifying and facilitating the inclusion of  the priorities and voices of the Global South within the global health architecture and building robust partnerships for global health equity and the right to health.")
-           #               )
-           #           )
-           # )
-           # , card(
-           #   card_header("Preliminary results?"),
-           #   card_body(img(src = "full_plot.png",
-           #                 style = "height: 100%; width: 100%; object-fit: contain;"),
-           #             padding = 0)
-           # )
+#            nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
+#                      card(fill = FALSE,
+#                           card_header("Methodology"),
+#                           card_body(markdown("We conducted a comprehensive longitudinal analysis of all recommendations made during the first three cycles of the United Nations' Universal Periodic Review (UPR), spanning from 2008 to 2022. The full dataset of recommendations, including the State Under Review's response (“supported” or “noted”), was sourced from the Danish Institute for Human Rights’ “SDG-Human Rights Data Explorer”. Their database in turn relies partly on UPR Info’s “Database of Recommendations”. This dataset formed the basis for our classification and subsequent statistical modelling to assess the relationship between UPR engagement and health outcomes.  
+# 
+# To systematically analyze the recommendations, we developed a keyword-based classification system using R. Drawing inspiration from <a href='https://iris.who.int/handle/10665/277114' target='_blank'>a recent WHO report on health-related recommendation under the first two cycles of the UPR</a>, recommendations were categorized into non-exclusive thematic health areas (i.e. a single recommendation could fall into mutliple categories), such as health systems, communicable diseases, and environmental health. For this study's focus, we developed specific, detailed sub-classification definitions for themes related to Maternal, Newborn, and Child Health (MNCH) and Sexual and Reproductive Health and Rights (SRHR), with a particular focus on identifying recommendations pertaining to maternal health and family planning."))
+#                      ))
   ),
   
   ### UPR impact ----------------------------
   nav_panel(title = "UPR impact", icon = icon("square-poll-vertical"),
             card(
               fill=FALSE,
-              card_header("Engagement with the UPR is associated with on-the-ground progress"),
+              card_header("Does engagement with the UPR translate to real-world progress?"),
+              layout_column_wrap(
+                style = css(grid_template_columns = "2fr 1fr"),
+                card(fill = FALSE, 
               card_body(
-                layout_columns(
-                  col_widths = c(7, 5),
-                  markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time."),
+                # layout_column_wrap(
+                  # width=1,
+                  # style = css(grid_template_columns = "2fr 1fr"),
+                  markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time."))),
                   actionLink(
                     inputId = "upr_analysis", # Give a unique ID to the link
                     label = img(
@@ -314,8 +304,7 @@ To systematically analyze the recommendations, we developed a keyword-based clas
                   # ,padding = 0
                 )
               )
-            )
-  ),
+            ),
   ### UPR recommendations ----------------
   nav_menu(title = "UPR recommendations", icon = icon("people-arrows"),
            #### UPR: Regional -----------------------
