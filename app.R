@@ -237,7 +237,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                        fill = FALSE,
                        card_header("The Right to Health"),
                        card_body(markdown(
-"The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+                         "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
                            
 Under the Right to Health, States have the following obligations:  
 -  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
@@ -245,8 +245,8 @@ Under the Right to Health, States have the following obligations:
 -  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.  
 
 The platform is intended to empower diplomats, policymakers, decision-makers across the health, foreign affairs, and related sectors, as well as civil society actors, to advance the Right to Health within global and national human rights discussions."
-                       # ))
-                     ))),
+                         # ))
+                       ))),
                      card(
                        fill = FALSE,
                        card_header("The Right to Health and the Universal Periodic Review"),
@@ -254,7 +254,7 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                          layout_columns(
                            col_widths = c(10,2),
                            markdown(
-                           "In the following pages, the platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations. We encourage you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."),
+                             "In the following pages, the platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations. We encourage you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."),
                            
                            
                            # --- Column 2: Clickable Image ---
@@ -1631,7 +1631,7 @@ server <- function(input, output, session) {
       )) |>
       filter(TimeDimensionValue == 2023, !is.na(country_name)) |>
       right_join(state_geo_reactive(), 
-        by = c("COUNTRY" = "iso3")) |>
+                 by = c("COUNTRY" = "iso3")) |>
       filter(!is.na(selected_sur)) |>
       ggplot(aes(geometry = polygon, fill = mmr_cat, color = selected_sur, lwd = selected_sur)) +
       geom_sf() +
@@ -1862,7 +1862,8 @@ server <- function(input, output, session) {
     
     map_insetting(
       p1,
-      p_caption_text = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+      p_caption_text = if(is.na(country_estimate)){paste0(input$selected_SUR, ": No available data")} 
+      else{paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year)},
       p_title_text = "Births attended by skilled health personnel (%), latest year",
       bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(),
       bbox_sur = bbox_selected_SUR(),
@@ -1978,7 +1979,8 @@ server <- function(input, output, session) {
     
     map_insetting(
       p1,
-      p_caption_text = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+      p_caption_text = if(is.na(country_estimate)){paste0(input$selected_SUR, ": No available data")} 
+      else{paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year)},
       p_title_text = "Proportion of births delivered in a health facility (%), latest year",
       bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(),
       bbox_sur = bbox_selected_SUR(),
@@ -2093,7 +2095,7 @@ server <- function(input, output, session) {
   })
   
   output$abortion_rate <- renderPlot({
-    p1 <- abortion_rate |>
+    abortion_rate_data <- abortion_rate |>
       filter(!is.na(COUNTRY)) |>
       filter(Dim1 == "UNCERTAINTY_INTERVAL_UI95") |>
       right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
@@ -2102,7 +2104,13 @@ server <- function(input, output, session) {
         .default = "Other"
       ),
       levels = c(input$selected_SUR, "Other")
-      )) |>
+      ))
+    
+    country_estimate <- abortion_rate_data |> 
+      filter(country == input$selected_SUR) |> 
+      pull(Value)
+    
+    p1<- abortion_rate_data |> 
       ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
       geom_sf() +
       scale_linewidth_manual(values = c(0.8, 0.3)) +
@@ -2130,7 +2138,8 @@ server <- function(input, output, session) {
     
     map_insetting(
       p1, 
-      p_caption_text = paste0(input$selected_SUR),
+      p_caption_text = paste0(input$selected_SUR, if(is.na(country_estimate)){": No available data"} 
+      else{paste0(": ",country_estimate, " per 1,000")}),
       p_title_text = "Abortion rate (model-estimated), 2015-2019",
       bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
       bbox_sur = bbox_selected_SUR(), 
@@ -2139,7 +2148,7 @@ server <- function(input, output, session) {
   })
   
   output$unintended_pregnancy <- renderPlot({
-    p1 <- unintended_pregnancy |>
+    unintended_pregnancy_data <- unintended_pregnancy |>
       filter(!is.na(COUNTRY)) |>
       filter(Dim1 == "UNCERTAINTY_INTERVAL_UI95") |>
       right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
@@ -2148,7 +2157,13 @@ server <- function(input, output, session) {
         .default = "Other"
       ),
       levels = c(input$selected_SUR, "Other")
-      )) |>
+      ))
+    
+    country_estimate <- unintended_pregnancy_data |> 
+      filter(country == input$selected_SUR) |> 
+      pull(Value)
+    
+    p1<- unintended_pregnancy_data |> 
       ggplot(aes(geometry = polygon, fill = NumericValue, color = selected_sur, lwd = selected_sur)) +
       geom_sf() +
       scale_linewidth_manual(values = c(0.8, 0.3)) +
@@ -2179,7 +2194,8 @@ server <- function(input, output, session) {
     
     map_insetting(
       p1, 
-      p_caption_text = paste0(input$selected_SUR),
+      p_caption_text = paste0(input$selected_SUR, if(is.na(country_estimate)){": No available data"} 
+                              else{paste0(": ",country_estimate, " per 1,000")}),
       p_title_text = "Unintended pregnancy (model-estimated), 2015-2019",
       bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
       bbox_sur = bbox_selected_SUR(), 
@@ -2244,7 +2260,8 @@ server <- function(input, output, session) {
     
     map_insetting(
       p1, 
-      p_caption_text = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+      p_caption_text = if(is.na(country_estimate)){paste0(input$selected_SUR, ": No available data")} 
+      else{paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year)},
       p_title_text = "Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%), latest year",
       bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
       bbox_sur = bbox_selected_SUR(), 
