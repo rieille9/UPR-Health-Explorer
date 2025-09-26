@@ -59,10 +59,10 @@ map_insetting <- function(
     )+
     geom_rect(
       aes(
-        xmin = bbox_sur["xmin"] - 0.5,
-        xmax = bbox_sur["xmax"] + 0.5,
-        ymin = bbox_sur["ymin"] - 0.5,
-        ymax = bbox_sur["ymax"] + 0.5
+        xmin = bbox_sur["xmin"] - 0.7,
+        xmax = bbox_sur["xmax"] + 0.7,
+        ymin = bbox_sur["ymin"] - 0.7,
+        ymax = bbox_sur["ymax"] + 0.7
       ),
       fill = "transparent",
       color = "red",
@@ -77,8 +77,8 @@ map_insetting <- function(
     # scale_linewidth_manual(values = c(0.2, 0.1)) +
     coord_sf(
       expand=FALSE,
-      xlim = c(bbox_sur[[1]]-.022, bbox_sur[[3]]+.022),
-      ylim = c(bbox_sur[[2]]-.022, bbox_sur[[4]]+.022)
+      xlim = c(bbox_sur[[1]]-.11, bbox_sur[[3]]+.11),
+      ylim = c(bbox_sur[[2]]-.11, bbox_sur[[4]]+.11)
     ) +
     theme_void()+
     theme(
@@ -87,10 +87,10 @@ map_insetting <- function(
     )+
     geom_rect(
       aes(
-        xmin = bbox_sur["xmin"]-.02,
-        xmax = bbox_sur["xmax"]+.02,
-        ymin = bbox_sur["ymin"]-.02,
-        ymax = bbox_sur["ymax"]+.02
+        xmin = bbox_sur["xmin"]-.1,
+        xmax = bbox_sur["xmax"]+.1,
+        ymin = bbox_sur["ymin"]-.1,
+        ymax = bbox_sur["ymax"]+.1
       ),
       fill = "transparent",
       color = "red",
@@ -453,10 +453,12 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
            #### Maternal mortality -----------------------
            nav_panel(title = "Maternal Mortality", icon = icon("house-medical"),
                      "Maternal Mortality Ratio (MMR): Number of maternal deaths per 100,000 live births.",
-                     layout_columns(
+                     layout_column_wrap(
                        full_screen = TRUE,
-                       col_widths = c(5, 7),
-                       list(
+                       style = css(grid_template_columns = "1fr 1fr"),
+                       layout_column_wrap(
+                         width=1,
+                         style = css(grid_template_rows = "6fr 5fr"),
                          card(full_screen = TRUE,card_header("MMR Estimate Map (2023)"), plotOutput("mmr_map")),
                          card(full_screen = TRUE,card_header("MMR Trends vs. Neighbors"), plotOutput("mmr_time_plot_neighbors"))
                        ),
@@ -1676,10 +1678,10 @@ server <- function(input, output, session) {
       )) # |> filter(!is.na(selected_sur))
     
     p1<-mmr_dat |> 
-      ggplot(aes(geometry = polygon, fill = mmr_cat, color = selected_sur, lwd = selected_sur)) +
-      geom_sf() +
-      scale_linewidth_manual(values = c(0.8, 0.3)) +
-      scale_color_manual(values = c("blue3", "grey90")) +
+      ggplot(aes(geometry = polygon, fill = mmr_cat)) +
+      geom_sf(color="transparent") +
+      # scale_linewidth_manual(values = c(0.8, 0.3)) +
+      # scale_color_manual(values = c("blue3", "grey90")) +
       scale_fill_brewer(palette = "YlOrRd", na.value = "grey80", labels = relabel_na) +
       theme_bw() +
       theme(
