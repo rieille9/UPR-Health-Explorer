@@ -222,7 +222,13 @@ ui <- page_navbar(
                 selected = "Global"),
     
     selectInput("selected_SUR", "Select State:",
-                choices = sort(unique(state_geo$country)),
+                choices = state_geo |> 
+                  # Remove non-member states (no data, causes crash)
+                  filter(!country %in% c("Western Sahara","Greenland" ,
+                                         "Palestine","Vatican",
+                                         "Siberian Artifact")) |>  
+                  select(country) |> distinct() |> arrange(country) |> 
+                  pull(country),
                 multiple = FALSE),
     
     card(
@@ -699,7 +705,14 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$selected_region, {
-    choices <- sort(unique(region_selection()$country))
+    choices <- region_selection() |> 
+      # Remove non-member states (no data, causes crash)
+      filter(!country %in% c("Western Sahara","Greenland" ,
+                             # "Palestine",
+                             "Vatican",
+                             "Siberian Artifact")) |>  
+      select(country) |> distinct() |> arrange(country) |> 
+      pull(country)
     updateSelectInput(
       session, "selected_SUR",
       choices = choices,
@@ -1478,7 +1491,7 @@ server <- function(input, output, session) {
       # group_by(country_name, IndicatorCode) |> slice_max(order_by = YEAR, n=1) |> ungroup() |> 
       filter(SpatialDimType == "COUNTRY") |> 
       filter(IndicatorCode == "UHC_INDEX_REPORTED") |> 
-      left_join(state_geo |> select(iso3), join_by(COUNTRY==iso3)) |> 
+      right_join(state_geo |> select(iso3), join_by(COUNTRY==iso3)) |> 
       mutate(selected_sur = factor(case_when(
         country_name == input$selected_SUR ~ input$selected_SUR,
         .default = "Other"
@@ -1535,7 +1548,7 @@ server <- function(input, output, session) {
       # group_by(country_name, IndicatorCode) |> slice_max(order_by = YEAR, n=1) |> ungroup() |> 
       filter(SpatialDimType == "COUNTRY") |> 
       filter(IndicatorCode == "UHC_SCI_RMNCH") |> 
-      left_join(state_geo |> select(iso3), join_by(COUNTRY==iso3)) |> 
+      right_join(state_geo |> select(iso3), join_by(COUNTRY==iso3)) |> 
       mutate(selected_sur = factor(case_when(
         country_name == input$selected_SUR ~ input$selected_SUR,
         .default = "Other"
@@ -1649,16 +1662,15 @@ server <- function(input, output, session) {
       round(0)
     
     mmr_dat <- MMR |>
+      filter(TimeDimensionValue == 2023, !is.na(country_name)) |>
+      right_join(state_geo_reactive(), 
+                 by = c("COUNTRY" = "iso3")) |> 
       mutate(selected_sur = factor(case_when(
         country_name == input$selected_SUR ~ input$selected_SUR,
         .default = "Other"
       ),
       levels = c(input$selected_SUR, "Other")
-      )) |>
-      filter(TimeDimensionValue == 2023, !is.na(country_name)) |>
-      right_join(state_geo_reactive(), 
-                 by = c("COUNTRY" = "iso3")) |>
-      filter(!is.na(selected_sur))
+      )) # |> filter(!is.na(selected_sur))
     
     p1<-mmr_dat |> 
       ggplot(aes(geometry = polygon, fill = mmr_cat, color = selected_sur, lwd = selected_sur)) +
