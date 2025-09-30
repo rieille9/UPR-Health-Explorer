@@ -829,32 +829,29 @@ server <- function(input, output, session) {
   
   ## PDF Country profile -------------------------------------------------------
   output$download_report <- downloadHandler(
-    # For PDF output, change this to "report.pdf"
-    filename = "report.pdf",
+    filename = function() {
+      paste0("UPR-Profile-", input$selected_SUR, "-", Sys.Date(), ".pdf")
+    },
+    
     content = function(file) {
-      # Copy the report file to a temporary directory before processing it, in
-      # case we don't have write permissions to the current working dir (which
-      # can happen when deployed).
-      temp_dir <- tempfile()
-      dir.create(temp_dir)
+      # 1. Create a temporary directory for Quarto to work in.
+      temp_dir <- tempdir()
       
-      # Copy the Quarto template to the temporary directory.
+      # 2. Copy your Quarto template into that directory.
       temp_report_path <- file.path(temp_dir, "report-template.qmd")
+      # Note: Ensure your template file is named "report-template.qmd"
       file.copy("report-template.qmd", temp_report_path, overwrite = TRUE)
       
-      
-      # Render the Quarto document INSIDE the temporary directory.
-      # We'll just name the output 'report.pdf' here.
+      # 3. Render the document inside the temporary directory.
       quarto::quarto_render(
         input = temp_report_path,
-        output_file = "report.pdf", # Render with a simple filename
-        # Temporarily switch the working directory to the temp dir for rendering
-        execute_dir = temp_dir
+        output_file = "report.pdf",   # Use a simple filename for the output
+        execute_dir = temp_dir        # Tell Quarto to run in the temp directory
       )
       
-      # After rendering, copy the generated PDF from the temp directory
-      # to the final download path provided by Shiny.
-      file.copy(file.path(temp_dir, "report.pdf"), file)
+      # 4. Copy the generated PDF from the temporary directory to the final
+      #    download path that Shiny expects.
+      file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
     }
   )
   
