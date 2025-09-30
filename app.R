@@ -848,7 +848,9 @@ server <- function(input, output, session) {
       # 3. Render the document inside the temporary directory.
       rmarkdown::render(
         input = temp_report_path,
-        output_file = file,
+        # output_file = file,
+        output_dir = temp_dir,
+        output_file = "report.pdf",
         params = list(
           country_name = input$selected_SUR,
           plot_object = upr_themes_all_object()
@@ -858,7 +860,8 @@ server <- function(input, output, session) {
       
       # 4. Copy the generated PDF from the temporary directory to the final
       #    download path that Shiny expects.
-      # file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
+      file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
+      
       incProgress(1, detail = "Done!")
       })
     }
