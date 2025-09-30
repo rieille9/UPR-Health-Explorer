@@ -848,8 +848,12 @@ server <- function(input, output, session) {
       # 3. Render the document inside the temporary directory.
       rmarkdown::render(
         input = temp_report_path,
-        output_file = file        
-        ,envir = new.env(parent = globalenv())
+        output_file = file,
+        params = list(
+          country_name = input$selected_SUR,
+          plot_object = upr_themes_all_object()
+        ),
+        envir = new.env(parent = globalenv())
       )
       
       # 4. Copy the generated PDF from the temporary directory to the final
