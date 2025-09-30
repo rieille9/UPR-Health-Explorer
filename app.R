@@ -24,6 +24,22 @@ pacman::p_load(
 
 # tinytex::install_tinytex()
 
+## Data ---------------------------------------------------------------
+source(here("code", "external_data_GBD.R"))
+
+# Read in pre-processed datasets
+sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
+  mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
+state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
+nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
+theme_labels <- source(here("code", "theme_labels.R"))$value
+
+# Loop through API-generated files
+for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
+  object_name <- gsub("\\.rds$", "", file_name)
+  assign(object_name, readRDS(here("data", "API_data", file_name)))
+}
+
 # Make a vertical line that cuts the mapping geometries, for adjusting the maps to allow for shifting the center to the Pacific region
 polygon_shift <- st_polygon(x = list(rbind(
   c(-0.000001, 90),
@@ -141,21 +157,7 @@ map_insetting <- function(
   }
 }
 
-source(here("code", "external_data_GBD.R"))
-
-# Read in pre-processed datasets
-sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
-  mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
-state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
-nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
-theme_labels <- source(here("code", "theme_labels.R"))$value
-
-# Loop through API-generated files
-for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
-  object_name <- gsub("\\.rds$", "", file_name)
-  assign(object_name, readRDS(here("data", "API_data", file_name)))
-}
-
+## Plot resolutions ------------------------------------------
 upr_dpi <- 200
 upr_width <- 600
 upr_height <- 450
@@ -452,11 +454,15 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                          ),
                          nav_panel("Data Table", DTOutput("DT_table"))
                        ),
+                       layout_column_wrap(
+                         style = css(grid_template_rows = "1fr 1fr"),
                        card(
+                         # fill = FALSE,
                          full_screen = TRUE,
                          card_header("Health-Related Recommendations"),
                          card_body(plotOutput("plot", height = "700px"))
                        )
+                     )
                      )
            )
   ),
@@ -855,7 +861,9 @@ server <- function(input, output, session) {
         output_file = "report.pdf",
         params = list(
           country_name = input$selected_SUR,
-          upr_all = upr_themes_all_object()
+          upr_all = upr_themes_all_object(),
+          rec_plot = rec_plot_object(),
+          mmr_map_plot = mmr_map_object()
         ),
         envir = new.env(parent = globalenv())
       )
@@ -1245,7 +1253,8 @@ server <- function(input, output, session) {
   
   ## UPR: SUR Outputs --------------------------------------------------------
   ### General plot --------------------------
-  output$plot <- renderPlot({
+  #### Plot object ----------------------------
+  rec_plot_object <- reactive({
     req(nrow(filtered_upr()) > 0)
     upr_rec_countries <- filtered_upr() |>
       droplevels() |>
@@ -1263,7 +1272,7 @@ server <- function(input, output, session) {
         )
       )
     
-    upr_rec_countries |>
+    p<-upr_rec_countries |>
       ggplot(aes(x = cycle, y = med_n, fill = health_related)) +
       scale_fill_manual(values = c("Health-related" = "#E69F00", "Other" = "grey80")) +
       geom_bar(stat = "identity") +
@@ -1276,6 +1285,9 @@ server <- function(input, output, session) {
       geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold") +
       theme_bw() +
       facet_wrap(. ~ state_under_review, nrow = 2) +
+      scale_y_continuous(
+        expand = expansion(mult = c(0, 0.15))
+      )+
       theme(
         panel.grid = element_blank(),
         axis.text.x = element_text(size = 12),
@@ -1292,6 +1304,12 @@ server <- function(input, output, session) {
           margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
         )
       )
+    p
+  })
+  
+  #### Output --------------------
+  output$plot <- renderPlot({
+    rec_plot_object()
   })
   
   ### Cycle themes ------------------
@@ -1727,6 +1745,10 @@ server <- function(input, output, session) {
   
   ### MMR Outputs -------------------------------------------------------------
   output$mmr_map <- renderPlot({
+    mmr_map_object()
+  })
+  
+  mmr_map_object <- reactive({
     mmr_estimate_2023 = MMR |>
       filter(country_name == input$selected_SUR, YEAR == "2023") |>
       pull(NumericValue) |>

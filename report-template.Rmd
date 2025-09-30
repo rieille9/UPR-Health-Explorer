@@ -3,10 +3,11 @@ title: "UPR Health Profile"
 params:
   country_name: "Default Country"
   upr_all: NULL
+  rec_plot: NULL
+  mmr_map_plot: NULL
 output: pdf_document
 date: "2025-09-30"
 ---
-
 ```{r setup, include=FALSE}
 # This chunk loads the necessary packages for the report
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
@@ -14,25 +15,30 @@ pacman::p_load(
   ggplot2, 
   ggtext, 
   patchwork
-  )
+)
 ```
 
-## Health-Related UPR Recommendations  
-
-**Report for:** `r params$country_name`  
+## Health-Related UPR Recommendations: `r params$country_name`  
 
 This plot shows all health-related recommendations received by the selected state across all UPR cycles.
 ```{r, fig.width=6, fig.height=5, out.width="30%"}
-# # This chunk prints the plot object that is passed from the Shiny app
-#   penguins |> 
-#   ggplot(aes(x=island, y = body_mass, fill = species))+
-#   geom_jitter(
-#     aes(color = species),
-#     position = position_jitterdodge(
-#       jitter.width = 0.3,  # How much to spread the points horizontally
-#       dodge.width = 0.9    # Must match the violin's dodge width
-#     ))+
-#   geom_violin(quantile.linetype = 2, position = position_dodge(width = 0.9), alpha=0.5)
-
 print(params$upr_all+theme(axis.title.x = element_text(color = "red")))
+```
+
+```{r, fig.width=4, fig.height=3, out.width="30%"}
+print(
+  params$rec_plot+
+    labs(y="Recommendations (N)")+
+    theme(
+      strip.background = element_blank(), 
+      strip.text = element_blank(),
+      plot.title = element_blank()
+    )
+)
+```
+
+```{r, fig.width=5, out.width="50%"}
+print(
+  params$mmr_map_plot
+)
 ```
