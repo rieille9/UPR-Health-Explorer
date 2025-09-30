@@ -17,8 +17,11 @@ pacman::p_load(
   sf, # mapping features
   # necountries,
   patchwork,
-  pdftools
+  pdftools,
+  tinytex
 )
+
+# tinytex::install_tinytex()
 
 # Make a vertical line that cuts the mapping geometries, for adjusting the maps to allow for shifting the center to the Pacific region
 polygon_shift <- st_polygon(x = list(rbind(
@@ -121,10 +124,13 @@ map_insetting <- function(
   multiplier_a <- abs(a$layout$coord$limits$x[1]-a$layout$coord$limits$x[2])/abs(a$layout$coord$limits$y[1]-a$layout$coord$limits$y[2])
   multiplier_b <- abs(b$layout$coord$limits$x[1]-b$layout$coord$limits$x[2])/abs(b$layout$coord$limits$y[1]-b$layout$coord$limits$y[2])
   
+  area_a <- abs(a$layout$coord$limits$x[1]-a$layout$coord$limits$x[2])*abs(a$layout$coord$limits$y[1]-a$layout$coord$limits$y[2])
+  area_b <- abs(b$layout$coord$limits$x[1]-b$layout$coord$limits$x[2])*abs(b$layout$coord$limits$y[1]-b$layout$coord$limits$y[2])
+  
   key_dim <- 0.3/(multiplier_a/multiplier_b)
-  inset_dimensions <- if(multiplier_b<=3){c(0,0,key_dim,key_dim*multiplier_a/multiplier_b)}else{c(0,0,key_dim*multiplier_a/multiplier_b, 0.3)}
+  inset_dimensions <- if(multiplier_b<=3){c(0,0,key_dim,key_dim*multiplier_a/multiplier_b)}else{c(0,0,key_dim*multiplier_a/multiplier_b,0.2)}
 
-  if (sur_area > 11^11) {
+  if (sur_area > 11^11 | area_b > 0.02*area_a) {
     p2 + p_title
   } else {
     p2 + inset_element(p3, inset_dimensions[1], inset_dimensions[2],inset_dimensions[3],inset_dimensions[4]) + p_title
@@ -233,6 +239,16 @@ ui <- page_navbar(
                   select(country) |> distinct() |> arrange(country) |> 
                   pull(country),
                 multiple = FALSE),
+    
+    ### PDF downloader ------------------------
+    # # Add a separator and the download button
+    # hr(style = "border-top: 1px solid white;"),
+    # downloadButton(
+    #   outputId = "download_report",
+    #   label = "Download Country Profile (PDF)"
+    #   # ,style = "width: 100%;" # Make the button full-width
+    # ),
+    # hr(style = "border-top: 1px solid white;"),
     
     card(
       class = "bg-light",
@@ -806,6 +822,32 @@ server <- function(input, output, session) {
       st_bbox()
   })
   
+  
+  ## PDF Country profile -------------------------------------------------------
+  output$download_report <- downloadHandler(
+    
+    filename = function() {
+      # Create a dynamic filename based on the selected country and date
+      paste0("UPR-Profile-", input$selected_SUR, "-", Sys.Date(), ".pdf")
+    },
+    
+    content = function(file) {
+      # Temporarily copy the report template to a temp directory
+      temp_report <- file.path(tempdir(), "report-template.qmd")
+      file.copy("report-template.qmd", temp_report, overwrite = TRUE)
+      
+      # Render the Quarto file, passing the selected country and the
+      # plot object as parameters
+      quarto::quarto_render(
+        input = temp_report,
+        output_file = file, # Render directly to the download file path
+        execute_params = list(
+          country_name = input$selected_SUR,
+          plot_object = upr_themes_all_object()
+        )
+      )
+    }
+  )
   
   ## MAPS (from original sidebar) ------------------------------------------
   output$global_map <- renderPlot({
@@ -1393,7 +1435,7 @@ server <- function(input, output, session) {
     
     
     max_a <- max(a$perc_theme, na.rm = TRUE)
-    a |>
+    p <- a |>
       ggplot(aes(x = perc, y = fct_rev(theme_label))) +
       geom_col(aes(fill = response_upr)) +
       labs(
@@ -1429,6 +1471,7 @@ server <- function(input, output, session) {
         aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
         hjust = -0.15, size = 3, vjust = 0.25
       )
+    p
   })
   #### Plot output -------------------
   output$upr_themes_all <- renderPlot(
