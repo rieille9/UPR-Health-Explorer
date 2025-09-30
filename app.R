@@ -18,7 +18,8 @@ pacman::p_load(
   # necountries,
   patchwork,
   pdftools,
-  tinytex
+  tinytex,
+  quarto
 )
 
 # tinytex::install_tinytex()
@@ -129,11 +130,11 @@ map_insetting <- function(
   
   key_dim <- 0.3/(multiplier_a/multiplier_b)
   inset_dimensions <- if(multiplier_b<=3){c(0,0,key_dim,key_dim*multiplier_a/multiplier_b)}else{c(0,0,key_dim*multiplier_a/multiplier_b,0.2)}
-
+  
   if (
     # sur_area > 11^11 | 
     area_b > 0.02*area_a
-    ) {
+  ) {
     p2 + p_title
   } else {
     p2 + inset_element(p3, inset_dimensions[1], inset_dimensions[2],inset_dimensions[3],inset_dimensions[4]) + p_title
@@ -244,13 +245,13 @@ ui <- page_navbar(
                 multiple = FALSE),
     
     ### PDF downloader ------------------------
-    # # Add a separator and the download button
+    # Add a separator and the download button
     # hr(style = "border-top: 1px solid white;"),
-    # downloadButton(
-    #   outputId = "download_report",
-    #   label = "Download Country Profile (PDF)"
-    #   # ,style = "width: 100%;" # Make the button full-width
-    # ),
+    downloadButton(
+      outputId = "download_report",
+      label = "Download Report (IN DEVELOPMENT)"
+      # ,style = "width: 100%;" # Make the button full-width
+    ),
     # hr(style = "border-top: 1px solid white;"),
     
     card(
@@ -350,13 +351,13 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                 style = css(grid_template_columns = "9fr 3fr"),
                 # card(fill = FALSE, 
                 #      card_body(
-                       # layout_column_wrap(
-                       # width=1,
-                       # style = css(grid_template_columns = "2fr 1fr"),
-                       markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time."
-                       #          )
-                       # )
-              ),
+                # layout_column_wrap(
+                # width=1,
+                # style = css(grid_template_columns = "2fr 1fr"),
+                markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time."
+                         #          )
+                         # )
+                ),
                 actionLink(
                   inputId = "upr_analysis", # Give a unique ID to the link
                   label = img(
@@ -828,27 +829,32 @@ server <- function(input, output, session) {
   
   ## PDF Country profile -------------------------------------------------------
   output$download_report <- downloadHandler(
-    
-    filename = function() {
-      # Create a dynamic filename based on the selected country and date
-      paste0("UPR-Profile-", input$selected_SUR, "-", Sys.Date(), ".pdf")
-    },
-    
+    # For PDF output, change this to "report.pdf"
+    filename = "report.pdf",
     content = function(file) {
-      # Temporarily copy the report template to a temp directory
-      temp_report <- file.path(tempdir(), "report-template.qmd")
-      file.copy("report-template.qmd", temp_report, overwrite = TRUE)
+      # Copy the report file to a temporary directory before processing it, in
+      # case we don't have write permissions to the current working dir (which
+      # can happen when deployed).
+      temp_dir <- tempfile()
+      dir.create(temp_dir)
       
-      # Render the Quarto file, passing the selected country and the
-      # plot object as parameters
+      # Copy the Quarto template to the temporary directory.
+      temp_report_path <- file.path(temp_dir, "report-template.qmd")
+      file.copy("report-template.qmd", temp_report_path, overwrite = TRUE)
+      
+      
+      # Render the Quarto document INSIDE the temporary directory.
+      # We'll just name the output 'report.pdf' here.
       quarto::quarto_render(
-        input = temp_report,
-        output_file = file, # Render directly to the download file path
-        execute_params = list(
-          country_name = input$selected_SUR,
-          plot_object = upr_themes_all_object()
-        )
+        input = temp_report_path,
+        output_file = "report.pdf", # Render with a simple filename
+        # Temporarily switch the working directory to the temp dir for rendering
+        execute_dir = temp_dir
       )
+      
+      # After rendering, copy the generated PDF from the temp directory
+      # to the final download path provided by Shiny.
+      file.copy(file.path(temp_dir, "report.pdf"), file)
     }
   )
   
@@ -2319,7 +2325,7 @@ server <- function(input, output, session) {
       ggplot(aes(geometry = polygon, fill = NumericValue, color = NumericValue)) +
       geom_sf(
         color = "transparent"
-        ) +
+      ) +
       # scale_linewidth_manual(values = c(1, 0)) +
       # scale_color_manual(values = c("blue3", "grey90")) +
       scale_fill_fermenter(

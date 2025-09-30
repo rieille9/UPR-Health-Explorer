@@ -4196,6 +4196,35 @@
         "Archs": "x64"
       }
     },
+    "quarto": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "quarto",
+        "Title": "R Interface to 'Quarto' Markdown Publishing System",
+        "Version": "1.4.4",
+        "Authors@R": "c(\n    person(\"JJ\", \"Allaire\", , \"jj@posit.co\", role = \"aut\",\n           comment = c(ORCID = \"0000-0003-0174-9868\")),\n    person(\"Christophe\", \"Dervieux\", , \"cderv@posit.co\", role = c(\"cre\", \"aut\"),\n           comment = c(ORCID = \"0000-0003-4474-2498\")),\n    person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\"))\n  )",
+        "Description": "Convert R Markdown documents and 'Jupyter' notebooks to a\n    variety of output formats using 'Quarto'.",
+        "License": "GPL (>= 2)",
+        "URL": "https://github.com/quarto-dev/quarto-r,\nhttps://quarto-dev.github.io/quarto-r/",
+        "BugReports": "https://github.com/quarto-dev/quarto-r/issues",
+        "Depends": "R (>= 3.6)",
+        "Imports": "cli, jsonlite, later, processx, rlang, rmarkdown, rstudioapi,\ntools, utils, yaml",
+        "Suggests": "curl, knitr, rsconnect (>= 0.8.26), testthat (>= 3.1.7),\nwithr, xfun",
+        "VignetteBuilder": "quarto",
+        "Config/testthat/edition": "3",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.3.2",
+        "SystemRequirements": "Quarto command line tool\n(<https://github.com/quarto-dev/quarto-cli>).",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-07-19 17:48:41 UTC; chris",
+        "Author": "JJ Allaire [aut] (<https://orcid.org/0000-0003-0174-9868>),\n  Christophe Dervieux [cre, aut]\n    (<https://orcid.org/0000-0003-4474-2498>),\n  Posit Software, PBC [cph, fnd]",
+        "Maintainer": "Christophe Dervieux <cderv@posit.co>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-07-20 06:20:01 UTC",
+        "Built": "R 4.5.0; ; 2025-05-31 01:43:52 UTC; windows"
+      }
+    },
     "ragg": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -5799,7 +5828,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "c42cb08ca1eaa7448cd725cbe1d0dcfb"
+      "checksum": "a5c6769cb8d0203115c0d40d713fe35f"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -5814,7 +5843,7 @@
       "checksum": "8952ddc95bdef9346124d5d4d53f6a37"
     },
     "code/external_data_OData.R": {
-      "checksum": "d4475df02aeee006ff16e31d3abcfd22"
+      "checksum": "1b157d6c0cb62f4539dae557bcc31cda"
     },
     "code/geo_code.R": {
       "checksum": "7a14f483c6c9d71360b98938203eee72"
@@ -5835,34 +5864,37 @@
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
     "data/API_data/abortion_rate.rds": {
-      "checksum": "6d03edb9abfbe00bc8b7d540b012cf98"
+      "checksum": "4b123f033fd9bf377717d69d81f5a9c0"
+    },
+    "data/API_data/adolescent_birth_rate.rds": {
+      "checksum": "c5dd5c4da789175970f96ae673b9292a"
     },
     "data/API_data/contraceptive_prevalence.rds": {
-      "checksum": "d9b740d48de7e8a829b3a5335d2f402d"
+      "checksum": "0baa637c177bd12f40cc6599c106a7f5"
     },
     "data/API_data/family_planning.rds": {
-      "checksum": "d44c3d612078d2267dccccdcb04bd09c"
+      "checksum": "8d285c57c652d0b382628a2907194d45"
     },
     "data/API_data/gho_api.rds": {
-      "checksum": "d89fddb1c679778528efebd6ef93521e"
+      "checksum": "2d44d421f011a3ee84d455fe46e599f2"
     },
     "data/API_data/HDI.rds": {
       "checksum": "2d3904a1ed84a91f1aab84faadba8247"
     },
     "data/API_data/HIV_death.rds": {
-      "checksum": "d5a779e66fbba26c6802936253c88ee9"
+      "checksum": "3476e1e0f8c357204eaee1483b39cdd3"
     },
     "data/API_data/HPV_coverage.rds": {
-      "checksum": "e4343d633e91a43b3794ff3c9745fa18"
+      "checksum": "ce07a899b611fa9ec031339b97ad1adc"
     },
     "data/API_data/HPV_national.rds": {
-      "checksum": "a85e30108bacb87e332aafd15cc06844"
+      "checksum": "fc09bfd7d7e80a67cfe49c46ae41ea06"
     },
     "data/API_data/informed_decisions.rds": {
-      "checksum": "7b10257e40067026d0ec9333fa97dd2b"
+      "checksum": "c2dfe15cf314a859dda76f722bd22c1d"
     },
     "data/API_data/institutional_birth.rds": {
-      "checksum": "b6988770f05ce456bd180e5ca37cd8a9"
+      "checksum": "2866bd8eb07e81cce53c40b54305ec65"
     },
     "data/API_data/live_births.rds": {
       "checksum": "28c6fdbfc4bf9afc63e25bdbb74dd780"
@@ -5877,7 +5909,7 @@
       "checksum": "f67c5410d4e6cdd1b4f1213adac19f36"
     },
     "data/API_data/MMR.rds": {
-      "checksum": "996f21c468287a799bc2971b5aae7058"
+      "checksum": "b05fc4d5efc496a02c106997626e74db"
     },
     "data/API_data/mmr_data_WHO.rds": {
       "checksum": "cb1359263a72f60c1584db6b257e740b"
@@ -5892,40 +5924,40 @@
       "checksum": "f5ce74671a4522b4659a27b1bb54fee2"
     },
     "data/API_data/postnatal_care.rds": {
-      "checksum": "ed7ffcdcc312f4e1188418591e08cda3"
+      "checksum": "e1461b76d8c1e22b3edb0fbc10f66926"
     },
     "data/API_data/postnatal_care_3.rds": {
-      "checksum": "7ac39cfd9f64ea9ce250533fa645538a"
+      "checksum": "41ed120f762d5b375bcb91c341fbd064"
     },
     "data/API_data/postnatal_care_5.rds": {
-      "checksum": "a4678f8417a6d7f31d99b0235fc82cc5"
+      "checksum": "253887872e0727001700908f5e339201"
     },
     "data/API_data/skilled_birth.rds": {
-      "checksum": "f8e6a151733f8a58ec18159482dbd502"
+      "checksum": "7ac0ee859f479160f325031a57600b18"
     },
     "data/API_data/UHC_all.rds": {
-      "checksum": "5f26ed89b5ca9a2dbd90c0fc8cf4d560"
+      "checksum": "6219f248e10fd00c4878c5d54762bb77"
     },
     "data/API_data/UHC_AVAILABILITY_SCORE.rds": {
-      "checksum": "d0cb8658e43785b4d0b8d66b6da5273e"
+      "checksum": "f819ff89002f1c86e8bc969efbccae68"
     },
     "data/API_data/UHC_INDEX_REPORTED.rds": {
-      "checksum": "d45a472e4813ccc0cdd1618bac982872"
+      "checksum": "ce68265a1b44e61792d254d9fa3e1939"
     },
     "data/API_data/UHC_SCI_CAPACITY.rds": {
-      "checksum": "025d97f8783019b9ce1fc15fee676299"
+      "checksum": "625dc78d5775c9f0397676d8539edf0f"
     },
     "data/API_data/UHC_SCI_INFECT.rds": {
-      "checksum": "e33d3c630d824f9a2d41261de927b6fa"
+      "checksum": "18664bd63f75ae9514de7f4fb7209b7e"
     },
     "data/API_data/UHC_SCI_NCD.rds": {
-      "checksum": "ebb4e8bee69f4e5a4035f60a36c24040"
+      "checksum": "783d48edfb358edbf6b8fc95fc2ea1f9"
     },
     "data/API_data/UHC_SCI_RMNCH.rds": {
-      "checksum": "08740135f6e02cd76ca6a6b336276558"
+      "checksum": "9b4e664ae567354c91add03731b2433d"
     },
     "data/API_data/unintended_pregnancy.rds": {
-      "checksum": "08b2a1ff1ba4ca858a38c3b6e94e6498"
+      "checksum": "e0b488cf8299b0331df9abc6fd4c578f"
     },
     "data/API_data/world_abortion_laws.rds": {
       "checksum": "40afdb8307ed3b923536816b2b6741ae"
@@ -5957,8 +5989,8 @@
     "data/ecsa_status.csv": {
       "checksum": "d5c8254614c95c4763845f89ee606421"
     },
-    "data/export-full-en_20250924.xlsx": {
-      "checksum": "0447d6cd2288fb66092aeb5962642bc9"
+    "data/export-full-en_20250929.json": {
+      "checksum": "ecb98e369d6b63098ea8111c4c397d73"
     },
     "data/GBD/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -6002,6 +6034,15 @@
     "data/SouthCentre_status.csv": {
       "checksum": "e386fc68f31948dcb7f27754087e2527"
     },
+    "data/UHRI_full.rds": {
+      "checksum": "b6e218bdb25c43f424f8d9386e79b0ca"
+    },
+    "data/UHRI_full_2025-09-29.rds": {
+      "checksum": "b6e218bdb25c43f424f8d9386e79b0ca"
+    },
+    "data/UHRI_full_export_20250929.xlsx": {
+      "checksum": "05978d1881fa18c45e2b52e050e20614"
+    },
     "data/UNSD_Methodology.csv": {
       "checksum": "9854b926dca8d16e91a153d1cf40f3ab"
     },
@@ -6040,6 +6081,18 @@
     },
     "README.md": {
       "checksum": "17aebe0c4de1aa1626e5bcce1b9d0af9"
+    },
+    "report-template.pdf": {
+      "checksum": "5fde9ea711ca1f5e6858e3204c5ac9d5"
+    },
+    "report-template.qmd": {
+      "checksum": "37e4d66fe96cb6bdaeb8cf9596cd38d5"
+    },
+    "report.pdf": {
+      "checksum": "1383a42449f8f9786e9953e44f077877"
+    },
+    "upr_cols.csv": {
+      "checksum": "64a02b52049db9228904ccfdec2d2bee"
     },
     "utils.R": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
