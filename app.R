@@ -130,7 +130,10 @@ map_insetting <- function(
   key_dim <- 0.3/(multiplier_a/multiplier_b)
   inset_dimensions <- if(multiplier_b<=3){c(0,0,key_dim,key_dim*multiplier_a/multiplier_b)}else{c(0,0,key_dim*multiplier_a/multiplier_b,0.2)}
 
-  if (sur_area > 11^11 | area_b > 0.02*area_a) {
+  if (
+    # sur_area > 11^11 | 
+    area_b > 0.02*area_a
+    ) {
     p2 + p_title
   } else {
     p2 + inset_element(p3, inset_dimensions[1], inset_dimensions[2],inset_dimensions[3],inset_dimensions[4]) + p_title
@@ -2313,9 +2316,11 @@ server <- function(input, output, session) {
       pull(YEAR)
     
     p1 <- family_planning_dat |> 
-      ggplot(aes(geometry = polygon, fill = NumericValue)) +
-      geom_sf(color = "transparent") +
-      # scale_linewidth_manual(values = c(0.8, 0.3)) +
+      ggplot(aes(geometry = polygon, fill = NumericValue, color = NumericValue)) +
+      geom_sf(
+        color = "transparent"
+        ) +
+      # scale_linewidth_manual(values = c(1, 0)) +
       # scale_color_manual(values = c("blue3", "grey90")) +
       scale_fill_fermenter(
         n.breaks = 10,
