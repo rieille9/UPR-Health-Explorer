@@ -254,12 +254,12 @@ ui <- page_navbar(
     ),
     
     #### qmd --------------------------
-    downloadButton(
-      outputId = "download_report_qmd",
-      label = "Download Report QMD (IN DEVELOPMENT)"
-      # ,style = "width: 100%;" # Make the button full-width
-    ),
-
+    # downloadButton(
+    #   outputId = "download_report_qmd",
+    #   label = "Download Report QMD (IN DEVELOPMENT)"
+    #   # ,style = "width: 100%;" # Make the button full-width
+    # ),
+    
     card(
       class = "bg-light",
       full_screen = TRUE,
@@ -852,9 +852,11 @@ server <- function(input, output, session) {
         # 1. Create a temporary directory for Quarto to work in.
         temp_dir <- tempdir()
         
-        # 2. Copy your Quarto template into that directory.
+        # 2. Copy Rmd and other relevant files into that directory.
         temp_report_path <- file.path(temp_dir, "report-template.Rmd")
         file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
+        file.copy("preamble.tex", temp_dir, overwrite = TRUE)
+        file.copy("logo.png", temp_dir, overwrite = TRUE)
         
         incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
         # 3. Render the document inside the temporary directory.
@@ -891,26 +893,19 @@ server <- function(input, output, session) {
       withProgress(message = 'Generating your report...', value = 0, {
         
         incProgress(0.1, detail = "Preparing template...")
-        # 1. Create a temporary directory for Quarto to work in.
-        temp_dir <- tempdir()
-        
-        # 2. Copy your Quarto template into that directory.
-        temp_report_path <- file.path(temp_dir, "report-template.qmd")
-        file.copy("report-template.qmd", temp_report_path, overwrite = TRUE)
-        
         incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
-        # 3. Render the document inside the temporary directory.
+        # 1. Render the document
         quarto::quarto_render(
-          # temp_report_path, 
-          "report-template.qmd",
-          # output_file = "report-template.pdf",
-          # execute_dir = temp_dir,
+          "report-template.qmd", 
+          execute_params = list(
+            country_name = input$selected_SUR,
+            upr_all = upr_themes_all_object(),
+            rec_plot = rec_plot_object(),
+            mmr_map_plot = mmr_map_object()
+          ),
           output_format = "pdf" 
         )
-        
-        # 4. Copy the generated PDF from the temporary directory to the final
-        #    download path that Shiny expects.
-        # file.copy(file.path(temp_dir, "report-template.pdf"), file, overwrite = TRUE)
+        # 2. Copy the generated PDF to the final download path
         file.copy("report-template.pdf", file, overwrite = TRUE)
         incProgress(1, detail = "Done!")
       })

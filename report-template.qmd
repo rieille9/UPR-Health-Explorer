@@ -1,9 +1,13 @@
 ---
 title: "UPR Health Profile"
-# params:
-#   country_name: "Default Country"
-#   plot_object: NULL
-# format: html
+params:
+  country_name: "Default Country"
+  upr_all: NULL
+  rec_plot: NULL
+  mmr_map_plot: NULL
+format: 
+  pdf:
+    papersize: a4
 ---
 
 ```{r setup, include=FALSE}
@@ -15,18 +19,6 @@ library(ggtext)
 
 ## Health-Related UPR Recommendations
 
-**Report for:** Switzerland
+**Report for:** `r params$country_name`
 
 This plot shows all health-related recommendations received by the selected state across all UPR cycles.
-```{r}
-# This chunk prints the plot object that is passed from the Shiny app
-  penguins |> 
-  ggplot(aes(x=island, y = body_mass, fill = species))+
-  geom_jitter(
-    aes(color = species),
-    position = position_jitterdodge(
-      jitter.width = 0.3,  # How much to spread the points horizontally
-      dodge.width = 0.9    # Must match the violin's dodge width
-    ))+
-  geom_violin(quantile.linetype = 2, position = position_dodge(width = 0.9), alpha=0.5)
-```

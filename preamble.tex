@@ -1,0 +1,27 @@
+% Preamble for UPR Health Profile PDF Report
+
+% -- Color Definitions --
+\usepackage{xcolor}
+\definecolor{bgcolor}{HTML}{1c164d}
+\definecolor{fgcolor}{HTML}{FFFFFF}
+\pagecolor{bgcolor}
+\color{fgcolor}
+
+
+
+% -- Custom Header with Logo --
+\usepackage{fancyhdr}
+
+\newgeometry{top=2cm, bottom=1.5cm, left=1.5cm,right=1.5cm}
+
+\usepackage{graphicx}
+% \usepackage{eso-pic}
+
+\graphicspath{ {./} }
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{ \fancyplain{}{Country Profiles: Right to Health} }
+\rhead{\includegraphics[width=2cm]{logo}}
+\rfoot{ \fancyplain{}{\thepage} }
+% \setlength{\headheight}{21pt}
+\addtolength{\topmargin}{-8.5pt}
