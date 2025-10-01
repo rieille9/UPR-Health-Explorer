@@ -3,7 +3,7 @@ title: "UPR Health Profile"
 # params:
 #   country_name: "Default Country"
 #   plot_object: NULL
-format: pdf
+# format: html
 ---
 
 ```{r setup, include=FALSE}
