@@ -247,15 +247,19 @@ ui <- page_navbar(
                 multiple = FALSE),
     
     ### PDF downloader ------------------------
-    # Add a separator and the download button
-    # hr(style = "border-top: 1px solid white;"),
     downloadButton(
       outputId = "download_report",
       label = "Download Report (IN DEVELOPMENT)"
       # ,style = "width: 100%;" # Make the button full-width
     ),
-    # hr(style = "border-top: 1px solid white;"),
     
+    #### qmd --------------------------
+    downloadButton(
+      outputId = "download_report_qmd",
+      label = "Download Report QMD (IN DEVELOPMENT)"
+      # ,style = "width: 100%;" # Make the button full-width
+    ),
+
     card(
       class = "bg-light",
       full_screen = TRUE,
@@ -384,25 +388,25 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                          nav_panel("All Recommendations", 
                                    card(
                                      fill = FALSE,
-                                        card_body(
-                                          plotOutput("upr_themes_all_global"
-                                                     ,width = paste0(upr_width,"px")
-                                                     ,height =  paste0(upr_height,"px")
-                                          )),
-                                        card_footer(
-                                          downloadButton(
-                                            outputId = "download_upr_themes_all_global",
-                                            label = "Download as PNG"
-                                          )
-                                        )
+                                     card_body(
+                                       plotOutput("upr_themes_all_global"
+                                                  ,width = paste0(upr_width,"px")
+                                                  ,height =  paste0(upr_height,"px")
+                                       )),
+                                     card_footer(
+                                       downloadButton(
+                                         outputId = "download_upr_themes_all_global",
+                                         label = "Download as PNG"
+                                       )
+                                     )
                                    )),
                          nav_panel("Per UPR Cycle", 
                                    card(
                                      fill=FALSE,
-                                        card_body(plotOutput("upr_themes_cycle_global", 
-                                                             width = paste0(upr_width*1.05,"px"),
-                                                             height =  paste0(upr_height*1.6,"px")
-                                        ))
+                                     card_body(plotOutput("upr_themes_cycle_global", 
+                                                          width = paste0(upr_width*1.05,"px"),
+                                                          height =  paste0(upr_height*1.6,"px")
+                                     ))
                                    )
                          )
                        ),
@@ -456,13 +460,13 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                        ),
                        layout_column_wrap(
                          style = css(grid_template_rows = "1fr 1fr"),
-                       card(
-                         # fill = FALSE,
-                         full_screen = TRUE,
-                         card_header("Health-Related Recommendations"),
-                         card_body(plotOutput("plot", height = "700px"))
+                         card(
+                           # fill = FALSE,
+                           full_screen = TRUE,
+                           card_header("Health-Related Recommendations"),
+                           card_body(plotOutput("plot", height = "700px"))
+                         )
                        )
-                     )
                      )
            )
   ),
@@ -845,34 +849,63 @@ server <- function(input, output, session) {
       withProgress(message = 'Generating your report...', value = 0, {
         
         incProgress(0.1, detail = "Preparing template...")
-      # 1. Create a temporary directory for Quarto to work in.
-      temp_dir <- tempdir()
-      
-      # 2. Copy your Quarto template into that directory.
-      temp_report_path <- file.path(temp_dir, "report-template.Rmd")
-      file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
-      
-      incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
-      # 3. Render the document inside the temporary directory.
-      rmarkdown::render(
-        input = temp_report_path,
-        # output_file = file,
-        output_dir = temp_dir,
-        output_file = "report.pdf",
-        params = list(
-          country_name = input$selected_SUR,
-          upr_all = upr_themes_all_object(),
-          rec_plot = rec_plot_object(),
-          mmr_map_plot = mmr_map_object()
-        ),
-        envir = new.env(parent = globalenv())
-      )
-      
-      # 4. Copy the generated PDF from the temporary directory to the final
-      #    download path that Shiny expects.
-      file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
-      
-      incProgress(1, detail = "Done!")
+        # 1. Create a temporary directory for Quarto to work in.
+        temp_dir <- tempdir()
+        
+        # 2. Copy your Quarto template into that directory.
+        temp_report_path <- file.path(temp_dir, "report-template.Rmd")
+        file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
+        
+        incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
+        # 3. Render the document inside the temporary directory.
+        rmarkdown::render(
+          input = temp_report_path,
+          # output_file = file,
+          output_dir = temp_dir,
+          output_file = "report.pdf",
+          params = list(
+            country_name = input$selected_SUR,
+            upr_all = upr_themes_all_object(),
+            rec_plot = rec_plot_object(),
+            mmr_map_plot = mmr_map_object()
+          ),
+          envir = new.env(parent = globalenv())
+        )
+        
+        # 4. Copy the generated PDF from the temporary directory to the final
+        #    download path that Shiny expects.
+        file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
+        
+        incProgress(1, detail = "Done!")
+      })
+    }
+  )
+  
+  ### qmd -------------------
+  output$download_report_qmd <- downloadHandler(
+    filename = function() {
+      paste0("CeHDI-Profile-", input$selected_SUR, ".pdf")
+    },
+    
+    content = function(file) {
+      withProgress(message = 'Generating your report...', value = 0, {
+        
+        incProgress(0.1, detail = "Preparing template...")
+        # 1. Create a temporary directory for Quarto to work in.
+        # temp_file <- tempfile(fileext = ".pdf")
+        
+        incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
+        # 3. Render the document inside the temporary directory.
+        quarto::quarto_render(
+          "report-template.qmd"
+          ,output_file = file
+        )
+        
+        # 4. Copy the generated PDF from the temporary directory to the final
+        #    download path that Shiny expects.
+        # file.copy(temp_file, file)
+        
+        incProgress(1, detail = "Done!")
       })
     }
   )
