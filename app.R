@@ -896,21 +896,22 @@ server <- function(input, output, session) {
         
         # 2. Copy your Quarto template into that directory.
         temp_report_path <- file.path(temp_dir, "report-template.qmd")
-        file.copy("report-template.qmd", temp_report_path)
+        file.copy("report-template.qmd", temp_report_path, overwrite = TRUE)
         
         incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
         # 3. Render the document inside the temporary directory.
         quarto::quarto_render(
-          temp_report_path, 
-          output_file = "report-template.pdf",
-          execute_dir = temp_dir,
+          # temp_report_path, 
+          "report-template.qmd",
+          # output_file = "report-template.pdf",
+          # execute_dir = temp_dir,
           output_format = "pdf" 
         )
         
         # 4. Copy the generated PDF from the temporary directory to the final
         #    download path that Shiny expects.
-        file.copy(file.path(temp_dir, "report-template.pdf"), file)
-        
+        # file.copy(file.path(temp_dir, "report-template.pdf"), file, overwrite = TRUE)
+        file.copy("report-template.pdf", file, overwrite = TRUE)
         incProgress(1, detail = "Done!")
       })
     }
