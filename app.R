@@ -849,17 +849,29 @@ server <- function(input, output, session) {
       withProgress(message = 'Generating your report...', value = 0, {
         
         incProgress(0.1, detail = "Preparing template...")
-        # 1. Create a temporary directory for Quarto to work in.
+        
+        # Logic to dynamically get flag image
+        country_iso2 <- state_geo |> 
+          filter(country == input$selected_SUR) |> 
+          mutate(iso2=tolower(iso2)) |> 
+          pull(iso2) |> 
+          unique()
+        flag_filename <- paste0(country_iso2, ".png")
+        source_flag <- here::here("flags", flag_filename)
+        
+        # Create a temporary directory for Quarto to work in.
         temp_dir <- tempdir()
         
-        # 2. Copy Rmd and other relevant files into that directory.
+        # Copy Rmd and other relevant files into that directory.
         temp_report_path <- file.path(temp_dir, "report-template.Rmd")
         file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
-        file.copy("preamble.tex", temp_dir, overwrite = TRUE)
+        file.copy("preamble-b.tex", temp_dir, overwrite = TRUE)
         file.copy("logo.png", temp_dir, overwrite = TRUE)
+        file.copy(source_flag, temp_dir, overwrite = TRUE)
+        file.rename(file.path(temp_dir, flag_filename), file.path(temp_dir, "countryflag.png"))
         
         incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
-        # 3. Render the document inside the temporary directory.
+        # Render the document inside the temporary directory.
         rmarkdown::render(
           input = temp_report_path,
           # output_file = file,
@@ -874,7 +886,7 @@ server <- function(input, output, session) {
           envir = new.env(parent = globalenv())
         )
         
-        # 4. Copy the generated PDF from the temporary directory to the final
+        # Copy the generated PDF from the temporary directory to the final
         #    download path that Shiny expects.
         file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
         

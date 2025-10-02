@@ -1,32 +1,24 @@
 ---
-# title: "CeHDI Country Profile"
+title: "The UPR & Maternal Health"
 params:
-  country_name: "Default Country"
+  country_name: "Switzerland"
   upr_all: NULL
   rec_plot: NULL
   mmr_map_plot: NULL
+documentclass: article
+# classoption: twocolumn
 output: 
   pdf_document:
     includes:
-      in_header: preamble.tex
-
-# header-includes:
-#   - \usepackage{xcolor}
-#   - \definecolor{bgcolor}{HTML}{1c164d}
-#   - \definecolor{fgcolor}{HTML}{FFFFFF}
-#   - \pagecolor{bgcolor}
-#   - \color{fgcolor}
-#   # -- Added for Logo and Custom Header --
-#   - \usepackage{fancyhdr}
-#   - \usepackage{graphicx}
-#   - \graphicspath{ {./} }
-#   - \pagestyle{fancy}
-#   - \fancyhf{} # Clear all header and footer fields
-#   - \fancyhead[L]{\includegraphics[height=1.5cm]{logo}} # Left header with logo
-#   - \fancyfoot[R]{\thepage} # Optional: page number in the center footer
-#   - \setlength{\headheight}{1.8cm} # Adjust headheight to prevent overlap (logo height + some buffer)
-#   # -- End of Logo additions --
-# documentclass: article
+      in_header: preamble-b.tex
+    keep_tex: true
+    latex_engine: xelatex
+geometry: 
+  - top=2cm
+  - bottom=1.5cm
+  - left=1.5cm
+  - right=1.5cm
+papersize: a4
 date: "2025-09-30"
 ---
 ```{r setup, include=FALSE}
@@ -39,34 +31,37 @@ pacman::p_load(
 )
 ```
 
+\maketitle
 # `r params$country_name`  
-
+Some brief text here, for context, that runs the entire width of the page. Indicator results, tables, and figures can go into the columns below.
+```{=latex}
+\begin{multicols*}{2}
+```
 This plot shows all health-related recommendations received by the selected state across all UPR cycles.
-```{r, fig.width=6, fig.height=5, out.width="50%"}
+```{r, fig.width=6, fig.height=5.5, out.width="100%"}
 print(params$upr_all+theme(axis.title.x = element_text(color = "black")))
-
 ```
 
-```{r, fig.width=4, fig.height=3, out.width="50%"}
+```{r, fig.width=4, fig.height=3.5, out.width="100%"}
 print(
   params$rec_plot+
     labs(y="Recommendations (N)")+
-    geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold", color = "white") +
+    geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold", color = "#1c164d") +
     theme(
       panel.grid = element_blank(),
-      axis.text.x = element_text(size = 12, color = "white"),
-      axis.text.y = element_text(size = 12, color = "white"),
+      axis.text.x = element_text(size = 12, color = "#1c164d"),
+      axis.text.y = element_text(size = 12, color = "#1c164d"),
       axis.title.x = element_blank(),
-      axis.title.y = element_text(size = 14, color = "white"),
+      axis.title.y = element_text(size = 14, color = "#1c164d"),
       legend.position = "bottom",
       # legend.position = c(0.01, 0.99),
       # legend.justification = c("left", "top"),
-      legend.text = element_text(size = 12,colour = "white"),
+      legend.text = element_text(size = 12,colour = "#1c164d"),
       # plot.background = element_blank(),
-      plot.background = element_rect(color = "white", fill = NA),
-      panel.border = element_rect(color = "white"),
+      plot.background = element_rect(color = "#1c164d", fill = NA),
+      panel.border = element_rect(color = "#1c164d"),
       # panel.border = element_blank(),
-      axis.ticks = element_line(color = "white"),
+      axis.ticks = element_line(color = "#1c164d"),
       panel.background = element_blank(),
       legend.background = element_blank(),
       strip.background = element_blank(), 
@@ -76,8 +71,12 @@ print(
 )
 ```
 
-```{r, fig.width=6, out.width="50%"}
+```{r,fig.height=7, out.width="100%"}
 print(
   params$mmr_map_plot
 )
+```
+`
+```{=latex}
+\end{multicols*}
 ```
