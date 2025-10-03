@@ -87,7 +87,7 @@ print(
 )
 ```
 
-```{r,fig.height=7, out.height= 5 }
+```{r,fig.height=7}
 print(
   params$mmr_map_plot+theme(
     plot.background = element_blank()
