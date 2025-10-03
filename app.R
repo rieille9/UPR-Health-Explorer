@@ -1385,10 +1385,10 @@ server <- function(input, output, session) {
             plot.title = element_blank()
           )
           ,
-        width = 4.5,
-        height = 3,
+        width = 4.7,
+        height = 3.1,
         dpi = 300,
-        units = "in", 
+        # units = "in", 
         bg="transparent"
       )
     }
