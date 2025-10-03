@@ -15,15 +15,15 @@ output:
     latex_engine: xelatex
 geometry: 
   - top=2cm
-  - bottom=1.5cm
-  - left=1.5cm
-  - right=1.5cm
+  - bottom=0.5cm
+  - left=0.2cm
+  - right=0.2cm
 papersize: a4
 date: "2025-09-30"
 ---
 ```{r setup, include=FALSE}
 # This chunk loads the necessary packages for the report
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', out.width="100%")
 pacman::p_load(
   ggplot2, 
   ggtext, 
@@ -33,16 +33,32 @@ pacman::p_load(
 
 \maketitle
 # `r params$country_name`  
-Some brief text here, for context, that runs the entire width of the page. Indicator results, tables, and figures can go into the columns below.
+
+Some brief text here, for context, that runs the \textcolor{red}{entire width of the page}. Indicator results, tables, and figures can go into the columns below.
+
+<!-- \textcolor{fgcolor}{\hlCeHDIBlue{colortest}} -->
+<!-- \textcolor{fgcolor}{\textbf{\hlCeHDIBlue{colortest}}} -->
+<!-- \textcolor{fgcolor}{\hlCeHDIRed{colortest}} -->
+<!-- \textcolor{fgcolor}{\textbf{\hlCeHDIRed{colortest}}} -->
+
+\redrule
 ```{=latex}
 \begin{multicols*}{2}
 ```
+
 This plot shows all health-related recommendations received by the selected state across all UPR cycles.
-```{r, fig.width=6, fig.height=5.5, out.width="100%"}
-print(params$upr_all+theme(axis.title.x = element_text(color = "black")))
+```{r, fig.width=6, fig.height=5.5}
+print(params$upr_all+
+        theme(
+          axis.title.x = element_text(color = "black"),
+          plot.background = element_rect(color = "#1c164d", fill = NA),
+          panel.background = element_blank(),
+          legend.background = element_blank()
+        )
+)
 ```
 
-```{r, fig.width=4, fig.height=3.5, out.width="100%"}
+```{r, fig.width=4, fig.height=3.5}
 print(
   params$rec_plot+
     labs(y="Recommendations (N)")+
@@ -64,19 +80,58 @@ print(
       axis.ticks = element_line(color = "#1c164d"),
       panel.background = element_blank(),
       legend.background = element_blank(),
-      strip.background = element_blank(), 
+      strip.background = element_blank(),
       strip.text = element_blank(),
       plot.title = element_blank()
     )
 )
 ```
 
-```{r,fig.height=7, out.width="100%"}
+```{r,fig.height=7, out.height= 5 }
 print(
-  params$mmr_map_plot
+  params$mmr_map_plot+theme(
+    plot.background = element_blank()
+  )&
+    plot_annotation(theme = theme(
+      plot.background = element_rect(color = "#1c164d", fill=NA)
+      )
+      )
 )
 ```
-`
+
+
+<!-- ```{r, fig.height=3, out.width="80%"} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_violin() -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_boxplot() -->
+<!-- ``` -->
+
+<!-- ```{r, fig.height=3, out.width="80%"} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_violin() -->
+<!-- ``` -->
+
+<!-- ```{r, fig.width=3, out.height="500pt", } -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_boxplot() -->
+<!-- ``` -->
+
+<!-- ```{r, fig.height=3, out.width="80%"} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_violin() -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_boxplot() -->
+<!-- ``` -->
+
+<!-- ```{r, fig.height=3, out.width="80%"} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_violin() -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_boxplot() -->
+<!-- ``` -->
+
 ```{=latex}
 \end{multicols*}
 ```

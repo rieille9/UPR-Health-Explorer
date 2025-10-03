@@ -850,7 +850,8 @@ server <- function(input, output, session) {
         
         incProgress(0.1, detail = "Preparing template...")
         
-        # Logic to dynamically get flag image
+        # Logic to dynamically get flag image. Flags downloaded from:
+        # https://stefangabos.github.io/world_countries/#custom-download
         country_iso2 <- state_geo |> 
           filter(country == input$selected_SUR) |> 
           mutate(iso2=tolower(iso2)) |> 
@@ -867,8 +868,10 @@ server <- function(input, output, session) {
         file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
         file.copy("preamble-b.tex", temp_dir, overwrite = TRUE)
         file.copy("logo.png", temp_dir, overwrite = TRUE)
+        file.copy("logo2.png", temp_dir, overwrite = TRUE)
         file.copy(source_flag, temp_dir, overwrite = TRUE)
-        file.rename(file.path(temp_dir, flag_filename), file.path(temp_dir, "countryflag.png"))
+        file.rename(file.path(temp_dir, flag_filename), 
+                    file.path(temp_dir, "countryflag.png"))
         
         incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
         # Render the document inside the temporary directory.
@@ -890,35 +893,6 @@ server <- function(input, output, session) {
         #    download path that Shiny expects.
         file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
         
-        incProgress(1, detail = "Done!")
-      })
-    }
-  )
-  
-  ### qmd -------------------
-  output$download_report_qmd <- downloadHandler(
-    filename = function() {
-      paste0("CeHDI-Profile-", input$selected_SUR, "_qmd.pdf")
-    },
-    
-    content = function(file) {
-      withProgress(message = 'Generating your report...', value = 0, {
-        
-        incProgress(0.1, detail = "Preparing template...")
-        incProgress(0.6, detail = "Rendering PDF... (this may take a moment)")
-        # 1. Render the document
-        quarto::quarto_render(
-          "report-template.qmd", 
-          execute_params = list(
-            country_name = input$selected_SUR,
-            upr_all = upr_themes_all_object(),
-            rec_plot = rec_plot_object(),
-            mmr_map_plot = mmr_map_object()
-          ),
-          output_format = "pdf" 
-        )
-        # 2. Copy the generated PDF to the final download path
-        file.copy("report-template.pdf", file, overwrite = TRUE)
         incProgress(1, detail = "Done!")
       })
     }
