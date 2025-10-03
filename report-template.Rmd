@@ -34,7 +34,7 @@ pacman::p_load(
 \maketitle
 # `r params$country_name`  
 
-Some brief text here, for context, that runs the \textcolor{red}{entire width of the page}. Indicator results, tables, and figures can go into the columns below.
+Some brief text here, for context, that runs the \textcolor{CeHDIRed}{entire width of the page}. Indicator results, tables, and figures can go into the columns below.
 
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{colortest}} -->
 <!-- \textcolor{fgcolor}{\textbf{\hlCeHDIBlue{colortest}}} -->
@@ -43,10 +43,11 @@ Some brief text here, for context, that runs the \textcolor{red}{entire width of
 
 \redrule
 ```{=latex}
-\begin{multicols*}{2}
+\begin{multicols}{2}
 ```
 
 This plot shows all health-related recommendations received by the selected state across all UPR cycles.
+
 ```{r, fig.width=6, fig.height=5.5}
 print(params$upr_all+
         theme(
@@ -133,5 +134,5 @@ print(
 <!-- ``` -->
 
 ```{=latex}
-\end{multicols*}
+\end{multicols}
 ```
