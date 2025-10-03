@@ -1361,7 +1361,7 @@ server <- function(input, output, session) {
             axis.title.y = element_text(size = 14, color = "white"),
             # legend.position = "bottom",
             legend.position = c(0, 1),
-            legend.justification = c("left", "top"),
+            legend.justification = c("left", "top"), 
             legend.text = element_text(size = 11,colour = "white"),
             # plot.background = element_blank(),
             plot.background = element_rect(color = "white", fill = NA),
