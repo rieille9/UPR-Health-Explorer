@@ -464,7 +464,13 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                            # fill = FALSE,
                            full_screen = TRUE,
                            card_header("Health-Related Recommendations"),
-                           card_body(plotOutput("plot", height = "700px"))
+                           card_body(plotOutput("plot", height = "700px")),
+                           card_footer(
+                             downloadButton(
+                               outputId = "download_rec_plot_object",
+                               label = "Download as PNG"
+                             )
+                           )
                          )
                        )
                      )
@@ -1332,6 +1338,51 @@ server <- function(input, output, session) {
   output$plot <- renderPlot({
     rec_plot_object()
   })
+  
+  #### Plot downloader -------------------
+  output$download_rec_plot_object <- downloadHandler(
+    filename = function() {
+      # Create a dynamic filename
+      paste0("health-recommendations-", input$selected_SUR, ".png")
+    },
+    content = function(file) {
+      # Use ggsave to save the reactive plot object to the temp file
+      ggsave(
+        file,
+        plot = rec_plot_object()+
+          labs(y="Recommendations (N)")+
+          geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold", color = "white") +
+          scale_fill_manual(values = c("Health-related" = "#ec5557", "Other" = "grey80"))+
+          theme(
+            panel.grid = element_blank(),
+            axis.text.x = element_text(size = 12, color = "white"),
+            axis.text.y = element_text(size = 12, color = "white"),
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(size = 14, color = "white"),
+            # legend.position = "bottom",
+            legend.position = c(0, 1),
+            legend.justification = c("left", "top"),
+            legend.text = element_text(size = 11,colour = "white"),
+            # plot.background = element_blank(),
+            plot.background = element_rect(color = "white", fill = NA),
+            panel.border = element_rect(color = "white"),
+            # panel.border = element_blank(),
+            axis.ticks = element_line(color = "white"),
+            panel.background = element_blank(),
+            legend.background = element_blank(),
+            strip.background = element_blank(),
+            strip.text = element_blank(),
+            plot.title = element_blank()
+          )
+          ,
+        width = 4.5,
+        height = 3,
+        dpi = 300,
+        units = "in", 
+        bg="transparent"
+      )
+    }
+  )
   
   ### Cycle themes ------------------
   output$upr_themes_cycle <- renderPlot({
