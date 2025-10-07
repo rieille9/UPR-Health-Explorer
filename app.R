@@ -300,13 +300,13 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   ## Main Content Pages ------------------------------------------------------
   # Each nav_panel is now a separate page accessible from the top navbar
   ### About page ------------------
-  nav_menu(title = "Health & Rights", icon = icon("info-circle"),
+  nav_menu(title = "Health & Rights Observatory", icon = icon("info-circle"),
            nav_panel(title = "About", icon = icon("info-circle"),
                      # card(
                      #   fill = FALSE,
                      #   card_body(
                      markdown(
-                       "This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity."),
+                       "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity."),
                      card(
                        fill = FALSE,
                        card_header("The Right to Health"),
