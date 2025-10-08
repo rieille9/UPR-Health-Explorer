@@ -34,17 +34,17 @@ pacman::p_load(
   sf
 )
 
-# Load or install packages from GitHub:
-pacman::p_load_gh(
-  "PPgp/wpp2024"
-)
-
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 iso3_SUR <- state_geo |> filter(country==params$country_name) |> pull(iso3)
 
+# Loop through API-generated files
+for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
+  object_name <- gsub("\\.rds$", "", file_name)
+  assign(object_name, readRDS(here("data", "API_data", file_name)))
+}
+
 # Life expectancy
-data(e01dt);data(pop1dt);data(popAge1dt);data(popAge5dt)
 life_expectancy <- e01dt |> 
   left_join(state_geo |> sf::st_drop_geometry() |> select(iso3,iso2, loc_id),
             join_by(country_code==loc_id)) |> 
@@ -59,17 +59,15 @@ pop_wpp <- pop1dt |>
   filter(
     !is.na(iso3),
     year>=2005
-  );rm(pop1dt)
+  )
 
-pop_age_wpp <- popAge5dt |> 
+pop_age_wpp_C <- popAge5dt |> 
   left_join(state_geo |> sf::st_drop_geometry() |> select(iso3,iso2, loc_id),
             join_by(country_code==loc_id)) |> 
   filter(
     !is.na(iso3),
     year>=2005
-  )#;rm(popAge5dt)
-
-pop_age_wpp_C <- pop_age_wpp |> 
+  ) |> 
   filter(iso3 == iso3_SUR) |> 
   filter(year==max(year)) |> 
   select(name, year, age, popM, popF) |> 
@@ -81,13 +79,6 @@ pop_age_wpp_C <- pop_age_wpp |>
   ) |> 
   mutate(Sex=fct(Sex)) |> 
   mutate(prop = pop/sum(pop))
-
-
-# Loop through API-generated files
-for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
-  object_name <- gsub("\\.rds$", "", file_name)
-  assign(object_name, readRDS(here("data", "API_data", file_name)))
-}
 ```
 
 ```{r}
