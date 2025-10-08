@@ -607,6 +607,7 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
             # "Family Planning",
             layout_column_wrap(
               full_screen = TRUE,
+              style = css(grid_template_columns = "1fr 1fr"),
               card(
                 fill = FALSE,
                 full_screen = TRUE,
