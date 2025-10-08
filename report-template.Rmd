@@ -10,7 +10,7 @@ documentclass: article
 output: 
   pdf_document:
     includes:
-      in_header: preamble-b.tex
+      in_header: preamble.tex
     keep_tex: true
     latex_engine: xelatex
 geometry: 
@@ -26,10 +26,11 @@ date: "2025-09-30"
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', out.width="100%")
 pacman::p_load(
   here,
-  dplyr,
-  ggplot2, 
+  dplyr, forcats, ggplot2, magrittr, readr, readxl, stringr, tibble, tidyr, lubridate,
+  rlang,
   ggtext, 
   patchwork,
+  apyramid,
   sf
 )
 
@@ -43,7 +44,7 @@ nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 iso3_SUR <- state_geo |> filter(country==params$country_name) |> pull(iso3)
 
 # Life expectancy
-data(e01dt);data(pop1dt)
+data(e01dt);data(pop1dt);data(popAge1dt);data(popAge5dt)
 life_expectancy <- e01dt |> 
   left_join(state_geo |> sf::st_drop_geometry() |> select(iso3,iso2, loc_id),
             join_by(country_code==loc_id)) |> 
@@ -60,6 +61,28 @@ pop_wpp <- pop1dt |>
     year>=2005
   );rm(pop1dt)
 
+pop_age_wpp <- popAge5dt |> 
+  left_join(state_geo |> sf::st_drop_geometry() |> select(iso3,iso2, loc_id),
+            join_by(country_code==loc_id)) |> 
+  filter(
+    !is.na(iso3),
+    year>=2005
+  )#;rm(popAge5dt)
+
+pop_age_wpp_C <- pop_age_wpp |> 
+  filter(iso3 == iso3_SUR) |> 
+  filter(year==max(year)) |> 
+  select(name, year, age, popM, popF) |> 
+  rename(Male=popM, Female=popF) |> 
+  mutate(age = fct_inorder(age)) |> 
+  pivot_longer(cols = Male:Female,
+               names_to = "Sex",
+               values_to = "pop"
+  ) |> 
+  mutate(Sex=fct(Sex)) |> 
+  mutate(prop = pop/sum(pop))
+
+
 # Loop through API-generated files
 for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
   object_name <- gsub("\\.rds$", "", file_name)
@@ -72,13 +95,36 @@ UHC_estimate <- UHC_all |>
   filter(IndicatorCode == "UHC_INDEX_REPORTED",
          country_name == params$country_name,
          YEAR == max(YEAR)
-         )
+  )
 
-life_expectancy_C <- life_expectancy |> 
-  filter(iso3 == iso3_SUR)
+life_expectancy_C <- life_expectancy |> filter(iso3 == iso3_SUR)
+life_expectancy_text <- paste0(life_expectancy_C |> 
+                                 filter(year==max(year)) |>  
+                                 pull(e0B) |> round(1), 
+                               " years in ",
+                               life_expectancy_C |> 
+                                 filter(year==max(year)) |> 
+                                 pull(year),
+                               " (",
+                               life_expectancy_C |> 
+                                 filter(year==min(year)) |>  
+                                 pull(e0B) |> round(1),
+                               " years in ",
+                               life_expectancy_C |> 
+                                 filter(year==min(year)) |> 
+                                 pull(year),
+                               ")")
 
 pop_C <- pop_wpp |> 
   filter(iso3==iso3_SUR)
+pop_text <- paste0(round(pop_C |> filter(year==max(year)) |> pull(pop)/1000,1),
+                   " million in ",
+                   pop_C |> filter(year==max(year)) |> pull(year),
+                   " (",
+                   (round(pop_C |> filter(year==max(year)) |> pull(pop)/pop_C |> filter(year==min(year)) |> pull(pop),1)-1)*100,
+                   "% growth since ",
+                   pop_C |> filter(year==min(year)) |> pull(year),
+                   ")")
 ```
 
 \maketitle
@@ -93,30 +139,141 @@ p1<-UHC_all |>
   ggplot(aes(x = YEAR, y= NumericValue))+geom_line()+
   theme_void()
 
+#####################
 HPV_coverage_C <- HPV_coverage |> filter(SpatialDim==iso3_SUR)
-adolescent_birth_rate_C <- adolescent_birth_rate |> filter(SpatialDim==iso3_SUR) |> filter(YEAR == max(YEAR))
+HPV_coverage_text <- if(is_empty(HPV_coverage_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue))){
+  "Data not available"
+} else{
+  paste0(HPV_coverage_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue), 
+         "% in ", HPV_coverage_C |> filter(YEAR == max(YEAR)) |> pull(YEAR))
+}
+
+####################
+adolescent_birth_rate_C <- adolescent_birth_rate |> filter(SpatialDim==iso3_SUR)
+adolescent_birth_rate_text_10_14 <- if(is_empty(adolescent_birth_rate_C |> 
+                                                filter(Dim2=="AGEGROUP_YEARS10-14") |> 
+                                                filter(YEAR == max(YEAR)) |> 
+                                                pull(NumericValue))){
+  "Data not available"
+} else{
+  paste0(adolescent_birth_rate_C |> 
+           filter(Dim2=="AGEGROUP_YEARS10-14") |> 
+           filter(YEAR == max(YEAR)) |> 
+           pull(Value), 
+         " per 1,000 women in ", 
+         adolescent_birth_rate_C |> 
+           filter(Dim2=="AGEGROUP_YEARS10-14") |> 
+           filter(YEAR == max(YEAR)) |> 
+           pull(YEAR)
+  )
+}
+adolescent_birth_rate_text_15_19 <- if(is_empty(adolescent_birth_rate_C |> 
+                                                filter(Dim2=="AGEGROUP_YEARS15-19") |> 
+                                                filter(YEAR == max(YEAR)) |> 
+                                                pull(NumericValue))){
+  "Data not available"
+} else{
+  paste0(adolescent_birth_rate_C |> 
+           filter(Dim2=="AGEGROUP_YEARS15-19") |> 
+           filter(YEAR == max(YEAR)) |> 
+           pull(Value), 
+         " per 1,000 women in ", 
+         adolescent_birth_rate_C |> 
+           filter(Dim2=="AGEGROUP_YEARS15-19") |> 
+           filter(YEAR == max(YEAR)) |> 
+           pull(YEAR)
+  )
+}
+
+##############
 contraceptive_prevalence_C <- contraceptive_prevalence |> 
   filter(Dim1Type == "AGEGROUP") |> 
-  filter(SpatialDim==iso3_SUR) |> 
-  filter(YEAR==max(YEAR))
+  filter(SpatialDim==iso3_SUR)
+
+contraceptive_prevalence_text_15_19 <- 
+  if(is_empty(contraceptive_prevalence_C |> 
+              filter(Dim1=="AGEGROUP_YEARS15-19") |> 
+              filter(YEAR == max(YEAR)) |> 
+              pull(NumericValue))){
+    "Data not available"
+  } else{
+    paste0(contraceptive_prevalence_C |> 
+             filter(Dim1=="AGEGROUP_YEARS15-19") |> 
+             filter(YEAR == max(YEAR)) |> 
+             pull(Value), 
+           "% in ", 
+           contraceptive_prevalence_C |> 
+             filter(Dim1=="AGEGROUP_YEARS15-19") |> 
+             filter(YEAR == max(YEAR)) |> 
+             pull(YEAR)
+    )
+  }
+contraceptive_prevalence_text_20_49 <- 
+  if(is_empty(contraceptive_prevalence_C |> 
+              filter(Dim1=="AGEGROUP_YEARS20-49") |> 
+              filter(YEAR == max(YEAR)) |> 
+              pull(NumericValue))){
+    "Data not available"
+  } else{
+    paste0(contraceptive_prevalence_C |> 
+             filter(Dim1=="AGEGROUP_YEARS20-49") |> 
+             filter(YEAR == max(YEAR)) |> 
+             pull(Value), 
+           "% in ", 
+           contraceptive_prevalence_C |> 
+             filter(Dim1=="AGEGROUP_YEARS20-49") |> 
+             filter(YEAR == max(YEAR)) |> 
+             pull(YEAR)
+    )
+  }
 ```
 
-\textcolor{fgcolor}{\textbf{\hlCeHDIRed{At a glance:}}}  
+```{=latex}
+\begin{multicols}{2}
+\raggedcolumns     %new code
+\interlinepenalty=10000
+```
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Demographics}}}\end{center}  
+\textcolor{fgcolor}{\hlCeHDIBlue{Population:}} `r pop_text`  
+```{r, out.width="70%"}
+apyramid::age_pyramid(data = pop_age_wpp_C,
+                      age_group = "age",
+                      split_by = "Sex",
+                      proportional = TRUE,
+                      count = prop)+
+  theme_classic()+
+  labs(y = "Percent of total", x = "Age group", title = "Age and gender distribution in 2020")+
+  theme(
+    legend.position = "inside", 
+    legend.justification = c(1,1),
+    legend.position.inside = c(1,1), 
+    legend.background = element_rect(color = NA, fill = NA), 
+    legend.key = element_rect(color = NA, fill=NA),
+    plot.background = element_rect(color = "#1c164d", fill = NA),
+    panel.background = element_rect(color = "#1c164d", fill=NA)
+  )
+```
 
-***Population***: `r round(pop_C |> filter(year==max(year)) |> pull(pop)/1000,1)`  million in `r pop_C |> filter(year==max(year)) |> pull(year)` (`r (round(pop_C |> filter(year==max(year)) |> pull(pop)/pop_C |> filter(year==min(year)) |> pull(pop),1)-1)*100`% growth since `r pop_C |> filter(year==min(year)) |> pull(year)`)
+\columnbreak
 
-***Key Health Indicators***  
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Key Health Indicators}}}\end{center}  
 <!-- Maternal Mortality Ratio:   -->
 <!-- Under-Five Mortality Rate   -->
-Adolescent Birth Rate (aged 10-14):  `r adolescent_birth_rate_C |> filter(Dim2=="AGEGROUP_YEARS10-14") |> pull(Value)` per 1,000 women in `r adolescent_birth_rate_C |> filter(Dim2=="AGEGROUP_YEARS10-14") |> pull(YEAR)`  
-Adolescent Birth Rate (aged 15-19):  `r adolescent_birth_rate_C |> filter(Dim2=="AGEGROUP_YEARS15-19") |> pull(Value)` per 1,000 women in `r adolescent_birth_rate_C |> filter(Dim2=="AGEGROUP_YEARS15-19") |> pull(YEAR)`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Adolescent Birth Rate:}}  
+Aged 10 to 14:  `r adolescent_birth_rate_text_10_14`  
+Aged 15to 19:  `r adolescent_birth_rate_text_15_19`  
 
-Contraceptive Prevalence (aged 15-19):  `r round(contraceptive_prevalence_C |> filter(Dim1=="AGEGROUP_YEARS15-19") |> pull(NumericValue),1)`% in `r contraceptive_prevalence_C |> filter(Dim1=="AGEGROUP_YEARS15-19") |> pull(YEAR)`  
-Contraceptive Prevalence (aged 20-49):  `r round(contraceptive_prevalence_C |> filter(Dim1=="AGEGROUP_YEARS20-49") |> pull(NumericValue),1)`% in `r contraceptive_prevalence_C |> filter(Dim1=="AGEGROUP_YEARS20-49") |> pull(YEAR)`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Contraceptive Prevalence:}}  
+Aged 15 to 19:  `r contraceptive_prevalence_text_15_19`  
+Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`  
 
-HPV Immunization Coverage (9-14 year old girls):  `r HPV_coverage_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue)`% in `r HPV_coverage_C |> filter(YEAR == max(YEAR)) |> pull(YEAR)`  
+\textcolor{fgcolor}{\hlCeHDIBlue{HPV Coverage (9-14 year old girls):}}  `r HPV_coverage_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}} `r life_expectancy_C |> filter(year==max(year)) |>  pull(e0B) |> round(1)` years in `r life_expectancy_C |> filter(year==max(year)) |> pull(year)` (`r life_expectancy_C |> filter(year==min(year)) |>  pull(e0B) |> round(1)` years in `r life_expectancy_C |> filter(year==min(year)) |> pull(year)`)
+\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}} `r life_expectancy_text`  
+
+```{=latex}
+\end{multicols}
+```
 
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{colortest}} -->
 <!-- \textcolor{fgcolor}{\textbf{\hlCeHDIBlue{colortest}}} -->

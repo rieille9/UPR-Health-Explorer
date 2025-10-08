@@ -881,7 +881,7 @@ server <- function(input, output, session) {
         # Copy Rmd and other relevant files into that directory.
         temp_report_path <- file.path(temp_dir, "report-template.Rmd")
         file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
-        file.copy("preamble-b.tex", temp_dir, overwrite = TRUE)
+        file.copy("preamble.tex", temp_dir, overwrite = TRUE)
         file.copy("logo.png", temp_dir, overwrite = TRUE)
         file.copy("logo2.png", temp_dir, overwrite = TRUE)
         file.copy(source_flag, temp_dir, overwrite = TRUE)

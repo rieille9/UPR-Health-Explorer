@@ -1,27 +1,119 @@
-% Preamble for UPR Health Profile PDF Report
+% =============================================================================
+% Preamble for CeHDI Country Profile
+% =============================================================================
+
+% -- Required Packages --
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{tikz}
+\usetikzlibrary{calc} % Needed for coordinate calculations
+\usepackage{color,soul} % for text highlighting
 
 % -- Color Definitions --
-\usepackage{xcolor}
-\definecolor{bgcolor}{HTML}{1c164d}
 \definecolor{fgcolor}{HTML}{FFFFFF}
+\definecolor{CeHDIRed}{HTML}{ec5557}
+\definecolor{CeHDIBlue}{HTML}{1c164d}
+% \definecolor{bgcolor}{HTML}{F8F8F8} % grey
+% \definecolor{bgcolor}{HTML}{FFF8E7} % linen
+\definecolor{bgcolor}{HTML}{F9F9F6} % light yellow
+\newcommand{\redrule}{{\color{CeHDIRed}\rule{\linewidth}{.5pt}}}
+
+
+% Set the main page and text colors
 \pagecolor{bgcolor}
-\color{fgcolor}
+\color{CeHDIBlue}
+\newcommand{\hlCeHDIBlue}[1]{{\sethlcolor{CeHDIBlue}\hl{#1}}}
+\newcommand{\hlCeHDIRed}[1]{{\sethlcolor{CeHDIRed}\hl{#1}}}
 
 
+% -- Page Geometry --
+% This is handled in the Rmd YAML header, no need to set it here.
 
-% -- Custom Header with Logo --
-\usepackage{fancyhdr}
+% -- Font Setup (For XeLaTeX engine) --
+% You can uncomment these lines and choose modern fonts if you like
+\usepackage{fontspec}
+\setmainfont{Lato} % Example: sets the main font to Lato
+\setsansfont{Lato}  % Example: sets the sans-serif font to Lato
 
-\newgeometry{top=2cm, bottom=1.5cm, left=1.5cm,right=1.5cm}
+% -- Two-Column Settings --
+\setlength\columnsep{15pt}
+\setlength\columnseprule{.3pt}
+\renewcommand{\columnseprulecolor}{\color{CeHDIRed}}
 
-\usepackage{graphicx}
-% \usepackage{eso-pic}
+% Give a bit more flexibility in page setting
+% \raggedbottom % allows for uneven bottoms
+% \clubpenalty=10000
+% \widowpenalty=10000
 
-\graphicspath{ {./} }
+% =============================================================================
+% SECTION HEADING STYLING (NEW SECTION)
+% =============================================================================
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering} % format
+  {\thesection} % label
+  {1em} % separation
+  {} % before-code
+  
+% \usepackage{sectsty}
+% 
+% % Center the main section headings (#)
+% \sectionfont{\centering} 
+% % You can also center subsections (##) and subsubsections (###) if needed
+% \subsectionfont{\centering}
+% \subsubsectionfont{\centering}
+
+% =============================================================================
+% HEADER AND FOOTER DEFINITIONS
+% =============================================================================
+
+% ----- Part 1: Header/Footer for ALL PAGES EXCEPT THE FIRST -----
 \pagestyle{fancy}
-\fancyhf{}
-\lhead{ \fancyplain{}{Country Profiles: Right to Health} }
-\rhead{\includegraphics[width=2cm]{logo}}
-\rfoot{ \fancyplain{}{\thepage} }
-% \setlength{\headheight}{21pt}
-\addtolength{\topmargin}{-8.5pt}
+\fancyhf{} % Clear all existing header and footer fields
+\fancyhead[L]{\sffamily\color{CeHDIBlue}Country Profiles: The UPR and Maternal Health} % Left header text
+\rhead{\includegraphics[width=2cm]{logo2}}
+% \fancyfoot[C]{\color{fgcolor}\thepage} % Page number in the center of the footer
+\renewcommand{\headrulewidth}{0.4pt} % A thin line under the header
+\renewcommand{\headrule}{\color{CeHDIRed}\hrule} % Make the line red
+
+% ----- Part 2: Custom Title Block for the FIRST PAGE ONLY -----
+% We need \makeatletter to access internal LaTeX commands like \@title
+\makeatletter
+\renewcommand{\maketitle}{%
+  % On the first page, we want a blank canvas, so we use the 'empty' pagestyle
+  \thispagestyle{empty}
+  % Draw the custom title block using tikz
+  \begin{tikzpicture}[remember picture, overlay]
+    
+    % The red title box
+    \node[
+        anchor=north west, % Pin the box from its top-left corner
+        fill=CeHDIBlue,      % Set the background color
+        text=fgcolor,       % Set the text color
+        minimum width=\paperwidth, % Make the box span the full page width
+        minimum height=2cm,      % Set the height of the box
+        font=\Huge\bfseries\sffamily % Set the font style (Huge, Bold, Sans-Serif)
+    ] 
+    at (current page.north west) % Position the box at the top-left of the page
+    {\@title}; % This places the document title from the YAML inside the box
+
+    % The logo in the top left
+    \node[
+        anchor=north west, % Anchor the image from its top-left corner
+    ] 
+    at ($(current page.north west) + (0cm, -0.45cm)$) % Position it with an offset from the page corner
+    {\includegraphics[height=1cm]{logo.png}};
+    
+    \node[
+        anchor=north east, % Anchor the image from its top-left corner
+    ]
+    at ($(current page.north east) + (0cm, -0.15cm)$) % Position it with an offset from the page corner
+    {\includegraphics[height=1.5cm]{countryflag.png}};
+
+  \end{tikzpicture}
+  % Add some vertical space after the title block before the content starts
+  \vspace*{-0.8cm} 
+}
+\makeatother
