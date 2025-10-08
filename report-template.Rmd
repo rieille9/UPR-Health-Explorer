@@ -30,7 +30,7 @@ pacman::p_load(
   rlang,
   ggtext, 
   patchwork,
-  apyramid,
+  # apyramid,
   sf
 )
 
@@ -66,19 +66,21 @@ pop_age_wpp_C <- popAge5dt |>
             join_by(country_code==loc_id)) |> 
   filter(
     !is.na(iso3),
-    year>=2005
+    year %in% c(2005,2020)
   ) |> 
   filter(iso3 == iso3_SUR) |> 
-  filter(year==max(year)) |> 
+  # filter(year==max(year)) |> 
   select(name, year, age, popM, popF) |> 
   rename(Male=popM, Female=popF) |> 
   mutate(age = fct_inorder(age)) |> 
   pivot_longer(cols = Male:Female,
-               names_to = "Sex",
+               names_to = "Gender",
                values_to = "pop"
   ) |> 
-  mutate(Sex=fct(Sex)) |> 
-  mutate(prop = pop/sum(pop))
+  mutate(Gender=fct(Gender)) |> 
+  group_by(year) |> 
+  mutate(prop = pop/sum(pop, na.rm = TRUE)) |> 
+  ungroup()
 ```
 
 ```{r}
@@ -226,23 +228,102 @@ contraceptive_prevalence_text_20_49 <-
 ```
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Demographics}}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{Population:}} `r pop_text`  
+
+<!-- ```{r, out.width="70%"} -->
+<!-- apyramid::age_pyramid(data = pop_age_wpp_C |> filter(year==2020), -->
+<!--                       age_group = "age", -->
+<!--                       split_by = "Gender", -->
+<!--                       proportional = TRUE, -->
+<!--                       count = prop)+ -->
+<!--   theme_classic()+ -->
+<!--   labs(y = "Percent of total", x = "Age group", title = "Age and gender distribution in 2020")+ -->
+<!--   theme( -->
+<!--     legend.position = "inside", -->
+<!--     legend.justification = c(1,1), -->
+<!--     legend.position.inside = c(1,1), -->
+<!--     legend.background = element_rect(color = NA, fill = NA), -->
+<!--     legend.key = element_rect(color = NA, fill=NA), -->
+<!--     plot.background = element_rect(color = "#1c164d", fill = NA), -->
+<!--     panel.background = element_rect(color = "#1c164d", fill=NA) -->
+<!--   ) -->
+<!-- ``` -->
+
 ```{r, out.width="70%"}
-apyramid::age_pyramid(data = pop_age_wpp_C,
-                      age_group = "age",
-                      split_by = "Sex",
-                      proportional = TRUE,
-                      count = prop)+
-  theme_classic()+
-  labs(y = "Percent of total", x = "Age group", title = "Age and gender distribution in 2020")+
+pop_age_wpp_C_split <- pop_age_wpp_C |> 
+  mutate(prop = case_when(Gender == "Male" ~ -prop*100, .default = prop*100))
+
+max_per <- max(pop_age_wpp_C_split$prop, na.rm=T)
+min_per <- min(pop_age_wpp_C_split$prop, na.rm=T)
+# begin ggplot
+##############
+ggplot()+  # default x-axis is age in years;
+
+  # population data graph
+  geom_col(
+    data = pop_age_wpp_C_split |> filter(year == 2005),
+    mapping = aes(
+      x = age,
+      y = prop,
+      fill = Gender),
+    colour = "black",                               # black color around bars
+    alpha = 0.2,                                    # more transparent
+    width = 1)+                                     # full width
+  
+  # case data graph
+  geom_col(
+    data = pop_age_wpp_C_split |> filter(year == 2020), 
+    mapping = aes(
+      x = age,                               # age categories as original X axis
+      y = prop,                                # % as original Y-axis
+      fill = Gender),                             # fill of bars by gender
+    colour = "black",                               # black color around bars
+    alpha = 1,                                      # not transparent 
+    width = 0.4)+                                   # half width
+  
+  # flip the X and Y axes to make pyramid vertical
+  coord_flip()+
+  
+  # manually ensure that age-axis is ordered correctly
+  scale_x_discrete(limits = levels(pop_age_wpp_C_split$age))+     # defined in chunk above
+  
+  # set percent-axis
+  scale_y_continuous(
+    limits = c(min_per, max_per),                                      # min and max defined above
+    breaks = seq(floor(min_per), ceiling(max_per), by = 1),                # from min% to max% by 2
+    labels = paste0(                                                       # for the labels, paste together...
+              abs(seq(floor(min_per), ceiling(max_per), by = 1)), "%")
+    )+
+
+  # designate colors and legend labels manually
+  scale_fill_manual(
+    # values = c("#7fc97f", "#beaed4")
+    values = c("#1c164d", "#ec5557")
+  ) +
+
+  # plot labels, titles, caption    
+  labs(
+    title = "Age and gender distribution in 2020, drawn over baseline in 2005",
+    x = "Age category",
+    y = "Percent of total",
+    fill = NULL) +
+  
+  # optional aesthetic themes
   theme(
-    legend.position = "inside", 
+    legend.position = "inside",
     legend.justification = c(1,1),
     legend.position.inside = c(1,1), 
     legend.background = element_rect(color = NA, fill = NA), 
     legend.key = element_rect(color = NA, fill=NA),
+    legend.text = element_text(size=11, color = "#1c164d"),
+    axis.text = element_text(size=10, color = "#1c164d"),
+    axis.title = element_text(size=11, color = "#1c164d"),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
     plot.background = element_rect(color = "#1c164d", fill = NA),
-    panel.background = element_rect(color = "#1c164d", fill=NA)
-  )
+    panel.background = element_rect(color = "#1c164d", fill=NA),
+    axis.line = element_line(colour = "#1c164d"),
+    plot.title = element_text(hjust = 0, color = "#1c164d"), 
+    plot.caption = element_text(hjust=0, size=11, face = "italic"))
 ```
 
 \columnbreak
@@ -278,8 +359,6 @@ Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`
 \interlinepenalty=10000
 ```
 
-This plot shows all health-related recommendations received by the selected state across all UPR cycles.
-
 ```{r, fig.width=6, fig.height=5.5}
 print(params$upr_all+
         theme(
@@ -291,7 +370,7 @@ print(params$upr_all+
 )
 ```
 
-```{r, fig.width=4, fig.height=3.5}
+```{r, fig.width=4, fig.height=3.5, out.width="70%"}
 print(
   params$rec_plot+
     labs(y="Recommendations (N)")+
