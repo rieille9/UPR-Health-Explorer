@@ -135,6 +135,12 @@ country_list <- tibble(
 # # Save as RDS
 # saveRDS(maternal_disorders_longitudinal, file = here("data", "GBD", "maternal_disorders", "maternal_disorders_deaths_longitudinal.rds"))
 
+GBD_deaths_2021 <- readRDS(here("data", "GBD", "GBD_deaths_2021.rds")) |> 
+  left_join(country_list, join_by(location_name == english_formal)) |> 
+  mutate(country = case_when(location_name == "Global" ~ "Global", 
+                             .default = country)) |> 
+  filter(!is.na(country))
+
 maternal_disorders_DALY <- readRDS(here("data", "GBD", "maternal_disorders", "maternal_disorders_DALY.rds")) |> 
   left_join(country_list, join_by(location_name == english_formal)) |> 
   mutate(country = case_when(location_name == "Global" ~ "Global", 
