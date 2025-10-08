@@ -124,7 +124,6 @@ pop_text <- paste0(round(pop_C |> filter(year==max(year)) |> pull(pop)/1000,1),
 # `r params$country_name`  
 
 <!-- Some brief text here, for context, that runs the \textcolor{CeHDIRed}{entire width of the page}. Indicator results, tables, and figures can go into the columns below. -->
-
 ```{r, out.width="30%", warning=FALSE}
 p1<-UHC_all |> 
   filter(country_name == params$country_name, 
@@ -220,7 +219,6 @@ contraceptive_prevalence_text_20_49 <-
     )
   }
 ```
-
 ```{=latex}
 \begin{multicols}{2}
 \raggedcolumns     %new code
@@ -228,26 +226,6 @@ contraceptive_prevalence_text_20_49 <-
 ```
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Demographics}}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{Population:}} `r pop_text`  
-
-<!-- ```{r, out.width="70%"} -->
-<!-- apyramid::age_pyramid(data = pop_age_wpp_C |> filter(year==2020), -->
-<!--                       age_group = "age", -->
-<!--                       split_by = "Gender", -->
-<!--                       proportional = TRUE, -->
-<!--                       count = prop)+ -->
-<!--   theme_classic()+ -->
-<!--   labs(y = "Percent of total", x = "Age group", title = "Age and gender distribution in 2020")+ -->
-<!--   theme( -->
-<!--     legend.position = "inside", -->
-<!--     legend.justification = c(1,1), -->
-<!--     legend.position.inside = c(1,1), -->
-<!--     legend.background = element_rect(color = NA, fill = NA), -->
-<!--     legend.key = element_rect(color = NA, fill=NA), -->
-<!--     plot.background = element_rect(color = "#1c164d", fill = NA), -->
-<!--     panel.background = element_rect(color = "#1c164d", fill=NA) -->
-<!--   ) -->
-<!-- ``` -->
-
 ```{r, out.width="70%"}
 pop_age_wpp_C_split <- pop_age_wpp_C |> 
   mutate(prop = case_when(Gender == "Male" ~ -prop*100, .default = prop*100))
@@ -342,23 +320,19 @@ Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`
 \textcolor{fgcolor}{\hlCeHDIBlue{HPV Coverage (9-14 year old girls):}}  `r HPV_coverage_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`  
 \textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}} `r life_expectancy_text`  
-
 ```{=latex}
 \end{multicols}
 ```
-
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{colortest}} -->
 <!-- \textcolor{fgcolor}{\textbf{\hlCeHDIBlue{colortest}}} -->
 <!-- \textcolor{fgcolor}{\hlCeHDIRed{colortest}} -->
 <!-- \textcolor{fgcolor}{\textbf{\hlCeHDIRed{colortest}}} -->
-
 \redrule
 ```{=latex}
 \begin{multicols}{2}
 \raggedcolumns     %new code
 \interlinepenalty=10000
 ```
-
 ```{r, fig.width=6, fig.height=5.5}
 print(params$upr_all+
         theme(
@@ -398,6 +372,7 @@ print(
     )
 )
 ```
+\columnbreak
 
 ```{r, fig.width=6}
 print(
