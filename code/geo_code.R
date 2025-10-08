@@ -12,8 +12,9 @@ pacman::p_load(
 # world1 <- giscoR::gisco_get_countries()
 
 # WPP Locations
-
-httr::GET("https://population.un.org/wpp/assets/Excel%20Files/4_Metadata/WPP2024_F01_LOCATIONS.xlsx", httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
+# https://population.un.org/wpp/downloads?folder=Documentation&group=Documentation
+httr::GET("https://population.un.org/wpp/assets/Excel%20Files/4_Metadata/WPP2024_F01_LOCATIONS.xlsx", 
+          httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
 locations <-  read_xlsx(tf, sheet = "DB") |>
   janitor::clean_names() |> 
   filter(!is.na(iso3_code)) |> 
