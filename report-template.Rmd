@@ -90,6 +90,12 @@ UHC_estimate <- UHC_all |>
          YEAR == max(YEAR)
   )
 
+UHC_RMNCH_estimate <- UHC_all |>
+  filter(IndicatorCode == "UHC_SCI_RMNCH",
+         country_name == params$country_name,
+         YEAR == max(YEAR)
+  )
+
 antenatal_WHO_C <- antenatal_WHO |> filter(country_iso_3_code == iso3_SUR)
 antenatal_WHO_text <- if(is_empty(antenatal_WHO_C |> 
                                                 filter(year == max(year)) |> 
@@ -159,6 +165,14 @@ HPV_coverage_text <- if(is_empty(HPV_coverage_C |> filter(YEAR == max(YEAR)) |> 
          "% in ", HPV_coverage_C |> filter(YEAR == max(YEAR)) |> pull(YEAR))
 }
 
+
+HPV_national_C <- HPV_national |> filter(SpatialDim==iso3_SUR)
+HPV_national_text <- if(is_empty(HPV_national_C |> filter(YEAR == max(YEAR)) |> pull(Value))){
+  "Data not available"
+} else{
+  paste0(HPV_national_C |> filter(YEAR == max(YEAR)) |> pull(Value), 
+         " (evaluated in ", HPV_national_C |> filter(YEAR == max(YEAR)) |> pull(YEAR), ")")
+}
 ####################
 adolescent_birth_rate_C <- adolescent_birth_rate |> filter(SpatialDim==iso3_SUR)
 adolescent_birth_rate_text_10_14 <- if(is_empty(adolescent_birth_rate_C |> 
@@ -325,19 +339,21 @@ ggplot()+  # default x-axis is age in years;
 
 \columnbreak
 
-\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Key Health Indicators}}}\end{center}  
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Key Health Indicators (latest available data)}}}\end{center}  
 <!-- Maternal Mortality Ratio:   -->
 <!-- Under-Five Mortality Rate   -->
 \textcolor{fgcolor}{\hlCeHDIBlue{Adolescent Birth Rate:}}  
 Aged 10 to 14:  `r adolescent_birth_rate_text_10_14`  
-Aged 15to 19:  `r adolescent_birth_rate_text_15_19`  
+Aged 15 to 19:  `r adolescent_birth_rate_text_15_19`  
 
 \textcolor{fgcolor}{\hlCeHDIBlue{Contraceptive Prevalence:}}  
 Aged 15 to 19:  `r contraceptive_prevalence_text_15_19`  
 Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`  
 
 \textcolor{fgcolor}{\hlCeHDIBlue{HPV Coverage (9-14 year old girls):}}  `r HPV_coverage_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{National HPV vaccination program:}}  `r HPV_national_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`  
+\textcolor{fgcolor}{\hlCeHDIBlue{UHC Sub-Index on RMNCH:}} `r UHC_RMNCH_estimate |> pull(Value)` in `r UHC_RMNCH_estimate |> pull(YEAR)`  
 \textcolor{fgcolor}{\hlCeHDIBlue{Antenatal care coverage (\ge 4 visits):}} `r antenatal_WHO_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}} `r life_expectancy_text`  
 ```{=latex}
