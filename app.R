@@ -125,6 +125,7 @@ map_insetting <- function(
     title = p_title_text,
     caption = p_caption_text,
     theme = theme(
+      plot.background = element_rect(color = "#1c164d", fill=NA),
       plot.title = element_textbox_simple(
         size = title_size,
         margin = margin(t = title_margin, b = title_margin, r=0, l=0, unit = "pt")
@@ -1857,10 +1858,12 @@ server <- function(input, output, session) {
       # scale_linewidth_manual(values = c(0.8, 0.3)) +
       # scale_color_manual(values = c("blue3", "grey90")) +
       scale_fill_brewer(palette = "YlOrRd", na.value = "grey80", labels = relabel_na) +
-      theme_bw() +
+      theme_void() +
       theme(
-        panel.grid = element_blank(),
-        axis.text = element_blank(), axis.ticks = element_blank(),
+        # panel.grid = element_blank(),
+        panel.background = element_rect(color="#1c164d"),
+        plot.background = element_rect(color = "#1c164d"),
+        # axis.text = element_blank(), axis.ticks = element_blank(),
         legend.position = "right",
         legend.background = element_blank()
       ) +
