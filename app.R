@@ -132,7 +132,7 @@ map_insetting <- function(
       ),
       plot.caption = element_textbox_simple(
         size = caption_size, halign = 0.5,
-        margin = margin(t = 5, b = 0, r=0, l=0, unit = "pt")
+        margin = margin(t = 10, b = 2, r=0, l=0, unit = "pt")
       )
     )
   )

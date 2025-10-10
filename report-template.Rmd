@@ -81,6 +81,16 @@ pop_age_wpp_C <- popAge5dt |>
   group_by(year) |> 
   mutate(prop = pop/sum(pop, na.rm = TRUE)) |> 
   ungroup()
+
+fertility_rate_C <- tfr1dt |> 
+  left_join(state_geo |> sf::st_drop_geometry() |> select(iso3,iso2, loc_id),
+            join_by(country_code==loc_id)) |> 
+  filter(
+    !is.na(iso3),
+    year>=2005
+  ) |> 
+  filter(iso3 == iso3_SUR) 
+
 ```
 
 ```{r}
@@ -143,6 +153,23 @@ pop_text <- paste0(round(pop_C |> filter(year==max(year)) |> pull(pop)/1000,1),
                    "% since ",
                    pop_C |> filter(year==min(year)) |> pull(year),
                    ")")
+
+fertility_rate_text <- paste0(fertility_rate_C |> 
+                                 filter(year==max(year)) |>  
+                                 pull(tfr) |> round(1), 
+                               " children per woman in ",
+                               fertility_rate_C |> 
+                                 filter(year==max(year)) |> 
+                                 pull(year),
+                               " (",
+                               fertility_rate_C |> 
+                                 filter(year==min(year)) |>  
+                                 pull(tfr) |> round(1),
+                               " in ",
+                               fertility_rate_C |> 
+                                 filter(year==min(year)) |> 
+                                 pull(year),
+                               ")")
 ```
 
 \maketitle
@@ -173,6 +200,25 @@ HPV_national_text <- if(is_empty(HPV_national_C |> filter(YEAR == max(YEAR)) |> 
   paste0(HPV_national_C |> filter(YEAR == max(YEAR)) |> pull(Value), 
          " (evaluated in ", HPV_national_C |> filter(YEAR == max(YEAR)) |> pull(YEAR), ")")
 }
+
+#####################
+DTP3_coverage_C <- DTP3_coverage |> filter(SpatialDim==iso3_SUR)
+DTP3_coverage_text <- if(is_empty(DTP3_coverage_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue))){
+  "Data not available"
+} else{
+  paste0(DTP3_coverage_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue), 
+         "% in ", DTP3_coverage_C |> filter(YEAR == max(YEAR)) |> pull(YEAR))
+}
+
+#####################
+nursing_density_C <- nursing_density |> filter(SpatialDim==iso3_SUR)
+nursing_density_text <- if(is_empty(nursing_density_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue))){
+  "Data not available"
+} else{
+  paste0(round(nursing_density_C |> filter(YEAR == max(YEAR)) |> pull(NumericValue),0), 
+         " in ", nursing_density_C |> filter(YEAR == max(YEAR)) |> pull(YEAR))
+}
+
 ####################
 adolescent_birth_rate_C <- adolescent_birth_rate |> filter(SpatialDim==iso3_SUR)
 adolescent_birth_rate_text_10_14 <- if(is_empty(adolescent_birth_rate_C |> 
@@ -259,7 +305,7 @@ contraceptive_prevalence_text_20_49 <-
 ```
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Demographics}}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{Population:}} `r pop_text`  
-```{r, out.width="70%"}
+```{r, out.width="90%"}
 pop_age_wpp_C_split <- pop_age_wpp_C |> 
   mutate(prop = case_when(Gender == "Male" ~ -prop*100, .default = prop*100))
 
@@ -336,35 +382,36 @@ ggplot()+  # default x-axis is age in years;
     plot.title = element_text(hjust = 0, color = "#1c164d"), 
     plot.caption = element_text(hjust=0, size=11, face = "italic"))
 ```
-
+\textcolor{fgcolor}{\hlCeHDIBlue{Total Fertility Rate:}} `r fertility_rate_text`  
 \columnbreak
 
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Key Health Indicators (latest available data)}}}\end{center}  
+\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}} `r life_expectancy_text`
 <!-- Maternal Mortality Ratio:   -->
-<!-- Under-Five Mortality Rate   -->
+<!-- Under-Five Mortality Rate   -->  
 \textcolor{fgcolor}{\hlCeHDIBlue{Adolescent Birth Rate:}}  
-Aged 10 to 14:  `r adolescent_birth_rate_text_10_14`  
-Aged 15 to 19:  `r adolescent_birth_rate_text_15_19`  
+- Aged 10 to 14:  `r adolescent_birth_rate_text_10_14`  
+- Aged 15 to 19:  `r adolescent_birth_rate_text_15_19`  
 
 \textcolor{fgcolor}{\hlCeHDIBlue{Contraceptive Prevalence (modern methods):}}  
-Aged 15 to 19:  `r contraceptive_prevalence_text_15_19`  
-Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`  
-
-\textcolor{fgcolor}{\hlCeHDIBlue{HPV Coverage (9-14 year old girls):}}  `r HPV_coverage_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{National HPV vaccination program:}}  `r HPV_national_text`  
+- Aged 15 to 19:  `r contraceptive_prevalence_text_15_19`  
+- Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{Health Services Coverage (latest available data)}}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`  
 \textcolor{fgcolor}{\hlCeHDIBlue{UHC Sub-Index on RMNCH:}} `r UHC_RMNCH_estimate |> pull(Value)` in `r UHC_RMNCH_estimate |> pull(YEAR)`  
 \textcolor{fgcolor}{\hlCeHDIBlue{Antenatal care coverage (\ge 4 visits):}} `r antenatal_WHO_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}} `r life_expectancy_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Nursing/midwifery personnel (per 10,000):}}  `r nursing_density_text`  
+
+\textcolor{fgcolor}{\hlCeHDIBlue{HPV Coverage (9-14 year old girls):}}  `r HPV_coverage_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{National HPV vaccination program:}}  `r HPV_national_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{DTP3 Coverage (among 1-year-olds):}}  `r DTP3_coverage_text`  
 ```{=latex}
 \end{multicols}
 ```
-<!-- \textcolor{fgcolor}{\hlCeHDIBlue{colortest}} -->
-<!-- \textcolor{fgcolor}{\textbf{\hlCeHDIBlue{colortest}}} -->
-<!-- \textcolor{fgcolor}{\hlCeHDIRed{colortest}} -->
-<!-- \textcolor{fgcolor}{\textbf{\hlCeHDIRed{colortest}}} -->
 \redrule
 ```{=latex}
+\setlength\columnseprule{.3pt}
+\renewcommand{\columnseprulecolor}{\color{CeHDIRed}}
 \begin{multicols}{2}
 \raggedcolumns     %new code
 \interlinepenalty=10000
