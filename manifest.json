@@ -6071,7 +6071,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "4302ec7daa0eace2b38388833e01ca6c"
+      "checksum": "ed2d610c5cffef0b62a7b3be8e6504b3"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -6086,7 +6086,7 @@
       "checksum": "8952ddc95bdef9346124d5d4d53f6a37"
     },
     "code/external_data_OData.R": {
-      "checksum": "6cf17beb6089b01117e268c5f44ed3db"
+      "checksum": "94b9e6570771bb0869989065623d7a50"
     },
     "code/geo_code.R": {
       "checksum": "ff8fbd79f695ac6567035c92da1cd295"
@@ -6125,7 +6125,7 @@
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
     "data/antenatal_care_coverage_251009.xlsx": {
-      "checksum": "ea37a74215175424e2442c723389ea80"
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "data/API_data/abortion_rate.rds": {
       "checksum": "c5ea0154a82211b0ea5d3b1ceb105fd3"
@@ -6171,6 +6171,9 @@
     },
     "data/API_data/HPV_national.rds": {
       "checksum": "98083d5d9327566b8610922bb6049161"
+    },
+    "data/API_data/HPV_national_alt.rds": {
+      "checksum": "be51488c20312730305372ed1a4a2f54"
     },
     "data/API_data/informed_decisions.rds": {
       "checksum": "66f179afde7adce25181b0d7fbf8f446"
@@ -6263,7 +6266,7 @@
       "checksum": "486b51a238f0246b117d056751a791ff"
     },
     "data/constitutions/Constitutions Public Use Data Dictionary_31Jul25.docx": {
-      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+      "checksum": "2a0cb09923f6551c722e8fae3792fc6f"
     },
     "data/constitutions/Constitutions Public Use Data Dictionary_31Jul25.pdf": {
       "checksum": "504ff50ab3d90b1cdc88f1b2559a5a32"
@@ -6321,6 +6324,9 @@
     },
     "data/HDR25_Composite_indices_complete_time_series.csv": {
       "checksum": "4026e513775f3431488a2d77bc6b6a1d"
+    },
+    "data/HPV_introduction.xlsx": {
+      "checksum": "ab88ec566248f9c80afee7d5230b09ac"
     },
     "data/NMIRF_status.csv": {
       "checksum": "c1e6c6a36ef7f3f1324b6d2966774bdf"
@@ -7148,22 +7154,25 @@
       "checksum": "63ade0b3d27362a3fc170b4481439254"
     },
     "preamble.tex": {
-      "checksum": "b4f8d3c9f82db3105dd6596208a4af18"
+      "checksum": "2bbbed44754f0462ecb57b32ac1ee5e4"
     },
     "README.md": {
       "checksum": "17aebe0c4de1aa1626e5bcce1b9d0af9"
     },
+    "report-template.ent": {
+      "checksum": "68b329da9893e34099c7d8ad5cb9c940"
+    },
     "report-template.pdf": {
-      "checksum": "08f30fa2156a43266651ad2f147b5937"
+      "checksum": "5177b95d9ceb5e6e1040e86655fbd1ec"
     },
     "report-template.Rmd": {
-      "checksum": "401efb9d2dc2d5216f60a99b5994b0ba"
+      "checksum": "5879e9599c3816dbb035a86333b16a68"
     },
     "report-template.tex": {
-      "checksum": "4605906b8a4fbe399933b7de3ee4f64f"
+      "checksum": "be94c2260fbeff1101324514827c3edd"
     },
     "report-template_files/figure-latex/unnamed-chunk-3-1.pdf": {
-      "checksum": "5431d3190796092c85d23dab5d8bb188"
+      "checksum": "53daea66eb5557ab7583ec189bd57890"
     },
     "report-template_files/figure-latex/unnamed-chunk-4-1.pdf": {
       "checksum": "c8b99da6fc10aaeca5f067e21d0b029f"
