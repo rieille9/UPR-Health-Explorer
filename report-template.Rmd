@@ -567,7 +567,7 @@ print(params$upr_all+
 ```
 \columnbreak
 
-```{r, fig.width=4, fig.height=3.5, out.width="70%"}
+```{r, fig.width=4, fig.height=3.5, out.width="50%"}
 print(
   params$rec_plot+
     labs(y="Recommendations (N)")+
