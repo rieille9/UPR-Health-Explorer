@@ -6071,7 +6071,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "ed2d610c5cffef0b62a7b3be8e6504b3"
+      "checksum": "8eb3f7a3c15d036ea7bd57f154882133"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -7166,7 +7166,7 @@
       "checksum": "5177b95d9ceb5e6e1040e86655fbd1ec"
     },
     "report-template.Rmd": {
-      "checksum": "5879e9599c3816dbb035a86333b16a68"
+      "checksum": "afa397f7febd67589459f0d46a9ef90a"
     },
     "report-template.tex": {
       "checksum": "be94c2260fbeff1101324514827c3edd"
