@@ -264,7 +264,7 @@ ui <- page_navbar(
     ### PDF downloader ------------------------
     downloadButton(
       outputId = "download_report",
-      label = "Download Report (IN DEVELOPMENT)"
+      label = "Download Report (THIS FUNCTIONALITY IS UNDER ACTIVE DEVELOPMENT)"
       # ,style = "width: 100%;" # Make the button full-width
     ),
     
