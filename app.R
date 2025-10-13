@@ -59,7 +59,8 @@ relabel_na <- function(x) {
 }
 
 map_insetting <- function(
-    p1, plot_dat,
+    p1, 
+    plot_dat,
     bbox_SUR_region_dynamic, bbox_sur, sur_area, 
     p_title_text="Update this text", 
     p_caption_text = "Update this text",
@@ -67,7 +68,9 @@ map_insetting <- function(
     caption_size=14
 ) {
   p2 <- p1 + 
-    geom_sf(data=plot_dat, color="grey80", fill="transparent")+
+    geom_sf(
+      # data=plot_dat, 
+      color="grey80", fill="transparent")+
     coord_sf(
       # expand = FALSE,
       xlim = c(bbox_SUR_region_dynamic[[1]],bbox_SUR_region_dynamic[[3]]),
@@ -91,7 +94,9 @@ map_insetting <- function(
   
   p3 <- p1 + guides(fill="none")+
     ggnewscale::new_scale_fill()+ 
-    geom_sf(data=plot_dat, aes(geometry=polygon, fill = selected_sur),
+    geom_sf(
+      # data=plot_dat, 
+      aes(geometry=polygon, fill = selected_sur),
             color = "transparent")+ 
     scale_fill_manual(values=c("transparent", "white"))+
     # scale_linewidth_manual(values = c(0.2, 0.1)) +
@@ -901,7 +906,10 @@ server <- function(input, output, session) {
             country_name = input$selected_SUR,
             upr_all = upr_themes_all_object(),
             rec_plot = rec_plot_object(),
-            mmr_map_plot = mmr_map_object()
+            mmr_map_plot = mmr_map_object(),
+            bbox_selected_SUR = bbox_selected_SUR(),
+            sur_area = sur_area(),
+            bbox_SUR_region_dynamic = bbox_SUR_region_dynamic()
           ),
           envir = new.env(parent = globalenv())
         )
@@ -1832,7 +1840,21 @@ server <- function(input, output, session) {
   ### MMR Outputs -------------------------------------------------------------
   #### Map ----------------------------------
   output$mmr_map <- renderPlot({
-    mmr_map_object()
+    
+    mmr_estimate_2023 = mmr_map_object()@data |>
+      filter(country_name == input$selected_SUR, 
+             YEAR == "2023") |>
+      pull(NumericValue) |>
+      round(0)
+    
+    map_insetting(
+      p1 = mmr_map_object(), 
+      p_caption_text = paste0(input$selected_SUR, ": ", mmr_estimate_2023, " per 100,000 live births"),
+      p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
   })
   
   mmr_map_object <- reactive({
@@ -1878,14 +1900,6 @@ server <- function(input, output, session) {
     #   ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
     # )
     
-    map_insetting(
-      p1, plot_dat = mmr_dat,
-      p_caption_text = paste0(input$selected_SUR, ": ", mmr_estimate_2023, " per 100,000 live births"),
-      p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
-      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
-      bbox_sur = bbox_selected_SUR(), 
-      sur_area =sur_area()
-    )
     
     # if(sur_area() > 10^11){p2<-p1} else{p2<-p1+geom_rect(
     #   aes(

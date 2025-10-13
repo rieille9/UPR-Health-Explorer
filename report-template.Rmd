@@ -5,6 +5,9 @@ params:
   upr_all: NULL
   rec_plot: NULL
   mmr_map_plot: NULL
+  bbox_SUR_region_dynamic: NULL
+  bbox_selected_SUR: NULL
+  sur_area: NULL
 documentclass: article
 # classoption: twocolumn
 output: 
@@ -90,6 +93,113 @@ fertility_rate_C <- tfr1dt |>
     year>=2005
   ) |> 
   filter(iso3 == iso3_SUR) 
+
+
+map_insetting <- function(
+    p1, 
+    plot_dat,
+    bbox_SUR_region_dynamic, bbox_sur, sur_area, 
+    p_title_text="Update this text", 
+    p_caption_text = "Update this text",
+    title_size=14, title_margin=17,
+    caption_size=14
+) {
+  p2 <- p1 + 
+    geom_sf(
+      # data=plot_dat, 
+      color="grey80", fill="transparent")+
+    coord_sf(
+      # expand = FALSE,
+      xlim = c(bbox_SUR_region_dynamic[[1]],bbox_SUR_region_dynamic[[3]]),
+      ylim = c(bbox_SUR_region_dynamic[[2]], bbox_SUR_region_dynamic[[4]])
+      
+      # Alternative mapping centered on the selected State
+      # xlim = c(max(-180, bbox_selected_SUR()[[1]] - 20), min(180, bbox_selected_SUR()[[3]] + 20)),
+      # ylim = c(max(-55.67295, bbox_selected_SUR()[[2]] - 20), min(83.6341, bbox_selected_SUR()[[4]] + 20))
+    )+
+    geom_rect(
+      aes(
+        xmin = bbox_sur["xmin"] - 0.7,
+        xmax = bbox_sur["xmax"] + 0.7,
+        ymin = bbox_sur["ymin"] - 0.7,
+        ymax = bbox_sur["ymax"] + 0.7
+      ),
+      fill = "transparent",
+      color = "red",
+      linewidth = 0.5
+    )
+  
+  p3 <- p1 + guides(fill="none")+
+    ggnewscale::new_scale_fill()+ 
+    geom_sf(
+      # data=plot_dat, 
+      aes(geometry=polygon, fill = selected_sur),
+            color = "transparent")+ 
+    scale_fill_manual(values=c("transparent", "white"))+
+    # scale_linewidth_manual(values = c(0.2, 0.1)) +
+    coord_sf(
+      expand=FALSE,
+      xlim = c(bbox_sur[[1]]-.11, bbox_sur[[3]]+.11),
+      ylim = c(bbox_sur[[2]]-.11, bbox_sur[[4]]+.11)
+    ) +
+    theme_void()+
+    theme(
+      panel.background = element_rect(fill="white"), 
+      panel.border = element_rect(color = "red")
+    )+
+    geom_rect(
+      aes(
+        xmin = bbox_sur["xmin"]-.1,
+        xmax = bbox_sur["xmax"]+.1,
+        ymin = bbox_sur["ymin"]-.1,
+        ymax = bbox_sur["ymax"]+.1
+      ),
+      fill = "transparent",
+      color = "red",
+      linewidth = 0.5
+    )+
+    guides(fill = "none") +
+    labs(
+      # subtitle = "(map zoom)", 
+      caption = NULL)
+  
+  p_title <- plot_annotation(
+    title = p_title_text,
+    caption = p_caption_text,
+    theme = theme(
+      plot.background = element_rect(color = "#1c164d", fill=NA),
+      plot.title = element_textbox_simple(
+        size = title_size,
+        margin = margin(t = title_margin, b = title_margin, r=0, l=0, unit = "pt")
+      ),
+      plot.caption = element_textbox_simple(
+        size = caption_size, halign = 0.5,
+        margin = margin(t = 10, b = 2, r=0, l=0, unit = "pt")
+      )
+    )
+  )
+  
+  # Calculate Inset dimensions for lower left
+  a<-ggplot_build(p2)
+  b<-ggplot_build(p3)
+  multiplier_a <- abs(a$layout$coord$limits$x[1]-a$layout$coord$limits$x[2])/abs(a$layout$coord$limits$y[1]-a$layout$coord$limits$y[2])
+  multiplier_b <- abs(b$layout$coord$limits$x[1]-b$layout$coord$limits$x[2])/abs(b$layout$coord$limits$y[1]-b$layout$coord$limits$y[2])
+  
+  area_a <- abs(a$layout$coord$limits$x[1]-a$layout$coord$limits$x[2])*abs(a$layout$coord$limits$y[1]-a$layout$coord$limits$y[2])
+  area_b <- abs(b$layout$coord$limits$x[1]-b$layout$coord$limits$x[2])*abs(b$layout$coord$limits$y[1]-b$layout$coord$limits$y[2])
+  
+  key_dim <- 0.3/(multiplier_a/multiplier_b)
+  inset_dimensions <- if(multiplier_b<=3){c(0,0,key_dim,key_dim*multiplier_a/multiplier_b)}else{c(0,0,key_dim*multiplier_a/multiplier_b,0.2)}
+  
+  if (
+    # sur_area > 11^11 | 
+    area_b > 0.02*area_a
+  ) {
+    p2 + p_title
+  } else {
+    p2 + inset_element(p3, inset_dimensions[1], inset_dimensions[2],inset_dimensions[3],inset_dimensions[4]) + p_title
+  }
+}
 
 ```
 
@@ -304,7 +414,7 @@ contraceptive_prevalence_text_20_49 <-
 \interlinepenalty=10000
 ```
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Demographics \ \ \ \ }}}\end{center}  
-\textcolor{fgcolor}{\hlCeHDIBlue{Population:}} `r pop_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Population:}}\footnote[1]{sometext here} `r pop_text`  
 ```{r, out.width="90%"}
 pop_age_wpp_C_split <- pop_age_wpp_C |> 
   mutate(prop = case_when(Gender == "Male" ~ -prop*100, .default = prop*100)) |>
@@ -478,18 +588,29 @@ print(
 )
 ```
 \columnbreak
-
 ```{r, fig.width=6}
-print(
-  params$mmr_map_plot
-  # params$mmr_map_plot+theme(
+mmr_estimate_2023 = params$mmr_map_plot@data |>
+      filter(country_name == params$country_name, 
+             YEAR == "2023") |>
+      pull(NumericValue) |>
+      round(0)
+    
+    map_insetting(
+      p1 = params$mmr_map_plot, 
+      p_caption_text = paste0(params$country_name, ": ", mmr_estimate_2023, " per 100,000 live births"),
+      p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
+      bbox_SUR_region_dynamic = params$bbox_SUR_region_dynamic, 
+      bbox_sur = params$bbox_selected_SUR, 
+      sur_area = params$sur_area
+    )
+  
+    # params$mmr_map_plot+theme(
   #   plot.background = element_blank()
   # )&
   # plot_annotation(theme = theme(
   #   plot.background = element_rect(color = "#1c164d", fill=NA)
   #   )
   #   )
-)
 ```
 
 
