@@ -597,20 +597,20 @@ print(
 ```
 
 ```{r, fig.width=6}
-# mmr_estimate_2023 = params$mmr_map_plot@data |>
-#   filter(country_name == params$country_name,
-#          YEAR == "2023") |>
-#   pull(NumericValue) |>
-#   round(0)
-# 
-# map_insetting(
-#   p1 = params$mmr_map_plot,
-#   p_caption_text = paste0(params$country_name, ": ", mmr_estimate_2023, " per 100,000 live births"),
-#   p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
-#   bbox_SUR_region_dynamic = params$bbox_SUR_region_dynamic,
-#   bbox_sur = params$bbox_selected_SUR,
-#   sur_area = params$sur_area
-# )
+mmr_estimate_2023 = params$mmr_map_plot@data |>
+  filter(country_name == params$country_name,
+         YEAR == "2023") |>
+  pull(NumericValue) |>
+  round(0)
+
+map_insetting(
+  p1 = params$mmr_map_plot,
+  p_caption_text = paste0(params$country_name, ": ", mmr_estimate_2023, " per 100,000 live births"),
+  p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
+  bbox_SUR_region_dynamic = params$bbox_SUR_region_dynamic,
+  bbox_sur = params$bbox_selected_SUR,
+  sur_area = params$sur_area
+)
 
 # params$mmr_map_plot+theme(
 #   plot.background = element_blank()
