@@ -6071,7 +6071,7 @@
   },
   "files": {
     "app.R": {
-      "checksum": "8eb3f7a3c15d036ea7bd57f154882133"
+      "checksum": "1d02f529fc0158405ef97929b46e9c4b"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -7154,7 +7154,7 @@
       "checksum": "63ade0b3d27362a3fc170b4481439254"
     },
     "preamble.tex": {
-      "checksum": "2bbbed44754f0462ecb57b32ac1ee5e4"
+      "checksum": "0b161f93630f563010fd8a881c9da132"
     },
     "README.md": {
       "checksum": "17aebe0c4de1aa1626e5bcce1b9d0af9"
@@ -7162,17 +7162,20 @@
     "report-template.ent": {
       "checksum": "68b329da9893e34099c7d8ad5cb9c940"
     },
+    "report-template.log": {
+      "checksum": "55d3625c0aa02819e953dad93d54d5bf"
+    },
     "report-template.pdf": {
-      "checksum": "5177b95d9ceb5e6e1040e86655fbd1ec"
+      "checksum": "0381464896abcca3427782ea38e9ffeb"
     },
     "report-template.Rmd": {
-      "checksum": "afa397f7febd67589459f0d46a9ef90a"
+      "checksum": "2a812fb5d7c2c1c0cf834ac6613c6f01"
     },
     "report-template.tex": {
-      "checksum": "be94c2260fbeff1101324514827c3edd"
+      "checksum": "5b9382d79240f0c2284f5995adc966b3"
     },
     "report-template_files/figure-latex/unnamed-chunk-3-1.pdf": {
-      "checksum": "53daea66eb5557ab7583ec189bd57890"
+      "checksum": "5869825743d1663d6a53f9a24b097294"
     },
     "report-template_files/figure-latex/unnamed-chunk-4-1.pdf": {
       "checksum": "c8b99da6fc10aaeca5f067e21d0b029f"
@@ -7206,6 +7209,15 @@
     },
     "www/UPR_review_banner2.png": {
       "checksum": "e204d570b21ab2df6348cd6414256f8d"
+    },
+    "www/WHO_UPR-removebg.png": {
+      "checksum": "bf476c0ffb7489adcc9ef20ff04c2be5"
+    },
+    "www/WHO_UPR-removebg2.png": {
+      "checksum": "9868cae7a2eddbe76fa92f6720ecaeb7"
+    },
+    "www/WHO_UPR-removebg3.png": {
+      "checksum": "567d3b27ccf64ddbef9d03a5b19b6cb3"
     },
     "www/WHO_UPR.png": {
       "checksum": "a7e0045f05d6a778b259924dee1a1110"
