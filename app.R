@@ -317,7 +317,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                        fill = FALSE,
                        card_header("The Right to Health"),
                        card_body(markdown(
-                         "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+                         "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
                            
 Under the Right to Health, States have the following obligations:  
 -  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
@@ -891,6 +891,8 @@ server <- function(input, output, session) {
         file.copy("preamble.tex", temp_dir, overwrite = TRUE)
         file.copy("logo.png", temp_dir, overwrite = TRUE)
         file.copy("logo2.png", temp_dir, overwrite = TRUE)
+        file.copy(here("www", "WHO_UPR_nobg.png"), temp_dir, overwrite = TRUE)
+        file.copy(here("www", "WHO_UPR-removebg3.png"), temp_dir, overwrite = TRUE)
         file.copy(source_flag, temp_dir, overwrite = TRUE)
         file.rename(file.path(temp_dir, flag_filename), 
                     file.path(temp_dir, "countryflag.png"))
@@ -1571,7 +1573,7 @@ server <- function(input, output, session) {
       ggplot(aes(x = perc, y = fct_rev(theme_label))) +
       geom_col(aes(fill = response_upr)) +
       labs(
-        x = "Proportion of all recommendations per UPR cycle (%)", y = NULL,
+        x = "Proportion of all recommendations (%)", y = NULL,
         fill = "State's response",
         title = paste("All health-related recommendations of the UPR\n", input$selected_SUR),
         caption = "*Numbers after the bars indicate N (% supported)"

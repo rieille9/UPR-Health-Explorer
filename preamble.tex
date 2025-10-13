@@ -49,8 +49,21 @@
 % \clubpenalty=10000
 % \widowpenalty=10000
 
+
 % =============================================================================
-% SECTION HEADING STYLING (NEW SECTION)
+% LIST STYLING
+% =============================================================================
+
+\newenvironment{myitemize}
+{ \begin{itemize}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}     
+    \setlength{\baselineskip}{0pt}}
+{ \end{itemize}                   } 
+
+% =============================================================================
+% SECTION HEADING STYLING
 % =============================================================================
 \usepackage{titlesec}
 \titleformat{\section}
@@ -74,13 +87,16 @@
 % ----- Part 1: Header/Footer for ALL PAGES EXCEPT THE FIRST -----
 \pagestyle{fancy}
 \fancyhf{} % Clear all existing header and footer fields
-\fancyhead[L]{\sffamily\color{CeHDIBlue}Country Profiles: The UPR and Maternal Health} % Left header text
+\fancyhead[L]{\sffamily\color{CeHDIBlue}Country Profiles: Maternal Health and the UPR} % Left header text
 \rhead{\includegraphics[width=2cm]{logo2}}
 % \fancyfoot[C]{\color{fgcolor}\thepage} % Page number in the center of the footer
 \renewcommand{\headrulewidth}{0.4pt} % A thin line under the header
 \renewcommand{\headrule}{\color{CeHDIRed}\hrule} % Make the line red
 
 % ----- Part 2: Custom Title Block for the FIRST PAGE ONLY -----
+
+% \title{Maternal Health, Family Planning, and the UPR}
+
 % We need \makeatletter to access internal LaTeX commands like \@title
 \makeatletter
 \renewcommand{\maketitle}{%
@@ -97,9 +113,12 @@
         minimum width=\paperwidth, % Make the box span the full page width
         minimum height=2cm,      % Set the height of the box
         font=\Huge\bfseries\sffamily % Set the font style (Huge, Bold, Sans-Serif)
+        % ,text width=\paperwidth-5cm, % Set the text box width to be the page width minus padding
+        % align=center                % Center the (now potentially multi-line) text
     ] 
     at (current page.north west) % Position the box at the top-left of the page
     {\@title}; % This places the document title from the YAML inside the box
+
 
     % The logo in the top left
     \node[

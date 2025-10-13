@@ -1,5 +1,5 @@
 ---
-title: "The UPR & Maternal Health"
+title: "Maternal Health and the UPR"
 params:
   country_name: "Switzerland"
   upr_all: NULL
@@ -548,6 +548,7 @@ ggplot()+  # default x-axis is age in years;
 \end{multicols}
 ```
 \redrule
+
 ```{=latex}
 \setlength\columnseprule{.3pt}
 \renewcommand{\columnseprulecolor}{\color{CeHDIRed}}
@@ -555,8 +556,56 @@ ggplot()+  # default x-axis is age in years;
 \raggedcolumns     %new code
 \interlinepenalty=10000
 ```
+<!-- \columnbreak -->
+
+```{r, fig.width=6}
+# mmr_estimate_2023 = params$mmr_map_plot@data |>
+#   filter(country_name == params$country_name,
+#          YEAR == "2023") |>
+#   pull(NumericValue) |>
+#   round(0)
+# 
+# map_insetting(
+#   p1 = params$mmr_map_plot,
+#   p_caption_text = paste0(params$country_name, ": ", mmr_estimate_2023, " per 100,000 live births"),
+#   p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
+#   bbox_SUR_region_dynamic = params$bbox_SUR_region_dynamic,
+#   bbox_sur = params$bbox_selected_SUR,
+#   sur_area = params$sur_area
+# )
+
+params$mmr_map_plot
+
+# params$mmr_map_plot+theme(
+#   plot.background = element_blank()
+# )&
+# plot_annotation(theme = theme(
+#   plot.background = element_rect(color = "#1c164d", fill=NA)
+#   )
+#   )
+```
+
+\pagebreak
+
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ The Right to Health \ \ \ \ }}}\end{center}  
+As enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, the right to health is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health.  
+
+It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+
+Under the Right to Health, States have the following obligations:
+\begin{myitemize}
+\item \textcolor{fgcolor}{\hlCeHDIBlue{Respect:}} refrain from directly or indirectly interfering with the enjoyment of the right to health.  
+\item \textcolor{fgcolor}{\hlCeHDIBlue{Protect:}} take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
+\item \textcolor{fgcolor}{\hlCeHDIBlue{Fulfill:}} adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.
+\end{myitemize}  
+
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ The Universal Periodic Review (UPR) \ \ \ \ }}}\end{center}  
+The UPR is a **State-led mechanism** that aims to evaluate each State’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
+\includegraphics[width=\columnwidth]{WHO_UPR-removebg3.png}
+An analysis of recommendations from all cycles of the UPR was used to identify health-related recommendations within the following themes:\footnote{Visit \href{https://cehdi-har.share.connect.posit.cloud/}{cehdi-har.share.connect.posit.cloud} for more details.\label{fn:cehdiHAR}}
 ```{r, fig.width=6, fig.height=5.5}
 print(params$upr_all+
+        labs(title = params$country_name)+
         theme(
           axis.title.x = element_text(color = "black"),
           plot.background = element_rect(color = "#1c164d", fill = NA),
@@ -565,8 +614,8 @@ print(params$upr_all+
         )
 )
 ```
-\columnbreak
 
+**Note:** See wrapfig package: <https://latex-tutorial.com/wrap-image-text/>
 ```{r, fig.width=4, fig.height=3.5, out.width="50%"}
 print(
   params$rec_plot+
@@ -595,32 +644,6 @@ print(
     )
 )
 ```
-
-```{r, fig.width=6}
-mmr_estimate_2023 = params$mmr_map_plot@data |>
-  filter(country_name == params$country_name,
-         YEAR == "2023") |>
-  pull(NumericValue) |>
-  round(0)
-
-map_insetting(
-  p1 = params$mmr_map_plot,
-  p_caption_text = paste0(params$country_name, ": ", mmr_estimate_2023, " per 100,000 live births"),
-  p_title_text = "Maternal mortality ratio (MMR) estimates in 2023",
-  bbox_SUR_region_dynamic = params$bbox_SUR_region_dynamic,
-  bbox_sur = params$bbox_selected_SUR,
-  sur_area = params$sur_area
-)
-
-# params$mmr_map_plot+theme(
-#   plot.background = element_blank()
-# )&
-# plot_annotation(theme = theme(
-#   plot.background = element_rect(color = "#1c164d", fill=NA)
-#   )
-#   )
-```
-
 
 <!-- ```{r, fig.height=3, out.width="80%"} -->
 <!-- penguins |> ggplot(aes(x = island, y = bill_len, fill=species))+geom_violin() -->
