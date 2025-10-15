@@ -544,7 +544,7 @@ dat_plot |>
   scale_fill_manual(values = c("#ec5557", "#1c164d")) +
   guides(color = "none", lwd = "none", fill = "none") +
   facet_wrap(. ~ country_name, nrow=1, scales = "free",
-             labeller = labeller(country_name = label_wrap_gen(15))) +
+             labeller = labeller(country_name = label_wrap_gen(21))) +
   geom_hline(data = hline_data, aes(yintercept = NumericValue), lty = 2) +
   theme_bw()+
   theme(
