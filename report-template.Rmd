@@ -548,6 +548,7 @@ dat_plot |>
   geom_hline(data = hline_data, aes(yintercept = NumericValue), lty = 2) +
   theme_bw()+
   theme(
+    plot.margin = margin(0,0,0,0),
     axis.text = element_text(color = "#1c164d"),
     axis.title = element_text(color = "#1c164d"),
     axis.line = element_line(color = "#1c164d"),
@@ -571,29 +572,43 @@ dat_plot |>
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Health Services Coverage (latest available data) \ \ \ \ }}}\end{center}  
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`   -->
 \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage}}\textsuperscript{\ref{fn:whoGHO}} (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`):
-```{r, fig.align="center", fig.width=10, fig.height=2, out.width="90%"}
+```{r, fig.align="center", fig.width=7, fig.height=1.5, out.width="90%"}
 uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
   p_data <- dat |> 
     filter(COUNTRY == iso3_SUR)
-  label_data <- p_data |> 
-    filter(YEAR %in% c(max(YEAR), min(YEAR)))
+  label_data_1 <- p_data |> 
+    filter(YEAR %in% c(min(YEAR)))
+  label_data_2 <- p_data |> 
+    filter(YEAR %in% c(max(YEAR)))
   p1<-p_data |> 
     # mutate(val_maxtime = NumericValue[TimeDim==max(TimeDim)])
     ggplot(aes(x=YEAR, y= NumericValue))+
     geom_hline(aes(yintercept = yMAX), color = "green", lty=2, lwd=1)+
     geom_line(color = "#ec5557", lwd=1, fill=NA)+
     geom_text(
-      data = label_data, # Use the special, single-row data frame
+      data = label_data_1, # Use the special, single-row data frame
       aes(label = Value, # The text for the label
-          nudge_y = -4),      # Nudge the label slightly
-      size=6,
+          nudge_y = if_else(label_data_1$NumericValue> 30, -12,13)
+          ),      # Nudge the label slightly
+      size=5, hjust = 0,
       color = "#1c164d", # Match theme color
-      fontface = "bold" # Make it stand out
+      # fontface = "bold" # Make it stand out
+    )+
+    geom_text(
+      data = label_data_2, # Use the special, single-row data frame
+      aes(label = Value, # The text for the label
+          nudge_y = if_else(label_data_2$NumericValue> 30, -12,13)
+          ),      # Nudge the label slightly
+      size=5, hjust = 1,
+      color = "#1c164d", # Match theme color
+      # fontface = "bold" # Make it stand out
     )+
     scale_y_continuous(limits = c(0,yMAX))+
     theme_void()+
     labs(title = title_text)+
-    theme(axis.line = element_line(color = "#1c164d"))+
+    theme(
+      axis.line = element_line(color = "#1c164d"),
+      plot.title = element_text(color = "#1c164d", size = 10, hjust = 0.5))+
     coord_cartesian(clip = "off")
   p1
 }
@@ -603,11 +618,11 @@ p1<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_INDEX_REPORTED"),
 p2<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_CAPACITY"), 
               title_text = "Sub-index on service\ncapacity and access")
 p3<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_INFECT"), 
-              title_text = "Sub-index\non infectious diseases")
+              title_text = "Sub-index on\ninfectious diseases")
 p4<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_NCD"), 
-              title_text = "Sub-index\non NCDs")
+              title_text = "Sub-index on NCDs")
 p5<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_RMNCH"), 
-              title_text = "Sub-index on reproduct-\nive, maternal, newborn,\nand child health")
+              title_text = "Sub-index on RMNCH")
 
 (p1 | p2 | p3 | p4 | p5)+plot_annotation(
   theme = theme(plot.margin = margin(0,0,0,0), 
