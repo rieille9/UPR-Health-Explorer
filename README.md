@@ -13,11 +13,10 @@ install.packages("pacman")
 install.packages("shiny")
 ```
 
-### Any optional sections
-
 ## Usage
+The Shiny script to run the dashboard is contained within the `app.R` file, found in the main directory.  
 
+It's important to note that for the dashboard to properly deploy, we need to make sure that any new data files that are needed by the app are pushed to GitHub so they can be accessed online. Additionally, the `manifest.json` file should be routinely updated to account for package and other dependencies by running the below script and then committing and pushing the updated `manifest.json` file.
 ```
+rsconnect::writeManifest()
 ```
-
-### Any optional sections
