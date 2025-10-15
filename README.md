@@ -11,6 +11,7 @@ All of the code is executed in R, using the RStudio IDE. Ensure that the followi
 ```
 install.packages("pacman")
 install.packages("shiny")
+install.packages("rsconnect")
 ```
 
 ## Usage
