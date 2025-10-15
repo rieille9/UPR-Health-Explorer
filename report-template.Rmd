@@ -614,7 +614,7 @@ uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
 }
 
 p1<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_INDEX_REPORTED"), 
-              title_text = "Services Coverage\nIndex", yMAX = 80)
+              title_text = "Services Coverage\nIndex (max: 80)", yMAX = 80)
 p2<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_CAPACITY"), 
               title_text = "Sub-index on service\ncapacity and access")
 p3<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_INFECT"), 
