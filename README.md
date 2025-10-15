@@ -2,7 +2,7 @@
 
 ## Background
 This repository hosts the code and files used to develop the "Health & Rights Observatory", accessible at:  
-<https://cehdi-haro.share.connect.posit.cloud/>
+<https://cehdi-har.share.connect.posit.cloud/>
 
 ## Install
 
