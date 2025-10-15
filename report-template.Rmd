@@ -377,7 +377,7 @@ print(params$upr_all+
         )
 )
 ```
-\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Legal Basis for Health \ \ \ \ }}}\end{center}  
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Legal Basis for Health in `r params$country_name` \ \ \ \ }}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{Constitutional guarantees for citizens (as of June 2024):}}\footnote{\href{https://www.worldpolicycenter.org/maps-data/data-download/constitutions-data-download}{worldpolicycenter.org} \label{fn:worldpolicy}}  
 \ \ - Right to health: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_health)`  
 \ \ - Right to public health: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_publichealth)`  
