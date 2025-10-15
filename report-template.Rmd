@@ -532,7 +532,7 @@ dat_plot |>
   ggplot(aes(x = YEAR, y = NumericValue)) +
   labs(
     # title = paste0("Trends in MMR, neighboring States plotted for comparison"),
-    x = NULL, y = "MMR estimate",
+    x = NULL, y = "MMR",
     color = NULL,
     fill = NULL
   ) +
