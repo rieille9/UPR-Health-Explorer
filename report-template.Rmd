@@ -484,6 +484,7 @@ print(params$upr_all+
 \textcolor{fgcolor}{\hlCeHDIBlue{Total fertility rate:}}\textsuperscript{\ref{fn:WPP}} `r fertility_rate_text`  
 
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Key Health Indicators (latest available data) \ \ \ \ }}}\end{center}  
+\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{Maternal mortality ratio (MMR):}}\textsuperscript{\ref{fn:whoGHO}} `r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2023) |> pull(NumericValue) |> round(digits = 0)` maternal deaths per 100,000 live births in 2023 (`r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2005) |> pull(NumericValue) |> round(digits = 0)` in 2005)  
 ```{r, }
 # mmr_estimate_2023 = params$mmr_map_plot@data |>
@@ -594,10 +595,9 @@ if (
 #   )
 #   )
 ```
-\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`
 <!-- Maternal Mortality Ratio:   -->
 <!-- Under-Five Mortality Rate   -->  
-\textcolor{fgcolor}{\hlCeHDIBlue{Adolescent birth rate:}}\footnote{\href{https://www.who.int/data/gho/info/gho-odata-api}{WHO Global Health Observatory (accessed through API)} \label{fn:whoGHO}}  
+\textcolor{fgcolor}{\hlCeHDIBlue{Adolescent birth rate:}}\footnote{\href{https://www.who.int/data/gho/info/gho-odata-api}{WHO Global Health Observatory} \label{fn:whoGHO}}  
 \ \ - Aged 10 to 14: `r adolescent_birth_rate_text_10_14`  
 \ \ - Aged 15 to 19: `r adolescent_birth_rate_text_15_19`  
 
@@ -606,7 +606,7 @@ if (
 \ \ - Aged 20 to 49:  `r contraceptive_prevalence_text_20_49`
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Health Services Coverage (latest available data) \ \ \ \ }}}\end{center}  
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`   -->
-\textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage:}} (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`)\textsuperscript{\ref{fn:whoGHO}}
+\textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage}}\textsuperscript{\ref{fn:whoGHO}} (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`):
 ```{r, fig.align="center", fig.width=10, fig.height=2, out.width="90%"}
 uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
   p_data <- dat |> 
@@ -621,8 +621,9 @@ p1<-p_data |>
   geom_text(
     data = label_data, # Use the special, single-row data frame
     aes(label = Value, # The text for the label
-    nudge_y = -4),      # Nudge the label up slightly
-    color = "#1c164d", # Match your theme color
+    nudge_y = -4),      # Nudge the label slightly
+    size=6,
+    color = "#1c164d", # Match theme color
     fontface = "bold" # Make it stand out
   )+
   scale_y_continuous(limits = c(0,yMAX))+

@@ -95,6 +95,11 @@
 \renewcommand{\headrulewidth}{0.4pt} % A thin line under the header
 \renewcommand{\headrule}{\color{CeHDIRed}\hrule} % Make the line red
 
+% footnote styling (remove spaces after symbols)
+\let\svfootnote\footnote
+\renewcommand\footnote[2][\relax]{\ifx\relax#1%
+  \svfootnote{\kern-4.5pt#2}\else\svfootnote[#1]{\kern-4.5pt#2}\fi}
+
 % ----- Part 2: Custom Title Block for the FIRST PAGE ONLY -----
 
 % \title{Maternal Health, Family Planning, and the UPR}
