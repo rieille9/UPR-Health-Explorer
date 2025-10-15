@@ -37,6 +37,8 @@ pacman::p_load(
   sf
 )
 
+sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
+  mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 iso3_SUR <- state_geo |> filter(country==params$country_name) |> pull(iso3)
@@ -48,7 +50,20 @@ for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$
 }
 
 # UPR plot data
-health_rec_C <- params$rec_plot@data |> ungroup()
+health_rec_C <- sdg_data |> 
+  filter(state_under_review == params$country_name) |> 
+      droplevels() |>
+      group_by(cycle, state_under_review) |>
+      count(health_related, .drop = FALSE) |> 
+      group_by(cycle) |>
+      mutate(
+        n_tot = sum(n),
+        perc = (n / n_tot) * 100,
+        perc = case_when(
+          health_related == "Other" ~ "",
+          .default = paste0(sprintf("%1.0f", perc), "%")
+        )
+      ) |> ungroup()
 
 # Life expectancy
 life_expectancy <- e01dt |> 
@@ -441,13 +456,10 @@ contraceptive_prevalence_text_20_49 <-
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ The Right to Health \ \ \ \ }}}\end{center}  
 As enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, the right to health is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health.  
 
-Under the Right to Health, States have the following obligations:
-\begin{myitemize}
-\item \textcolor{fgcolor}{\hlCeHDIBlue{Respect:}} refrain from directly or indirectly interfering with the enjoyment of the right to health.  
-\item \textcolor{fgcolor}{\hlCeHDIBlue{Protect:}} take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
-\item \textcolor{fgcolor}{\hlCeHDIBlue{Fulfill:}} adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.
-\end{myitemize}  
-
+Under the Right to Health, States have the following obligations:  
+\ \ - \textcolor{fgcolor}{\hlCeHDIBlue{Respect:}} refrain from directly or indirectly interfering with the enjoyment of the right to health.  
+\ \ - \textcolor{fgcolor}{\hlCeHDIBlue{Protect:}} take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
+\ \ - \textcolor{fgcolor}{\hlCeHDIBlue{Fulfill:}} adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ The Universal Periodic Review (UPR) \ \ \ \ }}}\end{center}  
 The UPR is a **State-led mechanism** that aims to evaluate each State’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to **"Support"** or **"Note"** those recommendations.  
 
@@ -503,15 +515,10 @@ p1<-MMR |>
   geom_sf(aes(fill=mmr_cat), color = NA)+
   scale_fill_brewer(palette = "YlOrRd", na.value = "grey80", labels = relabel_na)+
   theme_void()+
-  labs(fill="MMR\nin 2023")+
-  coord_sf(
-    # expand = FALSE,
-    xlim = c(params$bbox_SUR_region_dynamic[[1]],params$bbox_SUR_region_dynamic[[3]]),
-    ylim = c(params$bbox_SUR_region_dynamic[[2]], params$bbox_SUR_region_dynamic[[4]])
-  )
+  labs(fill="MMR\nin 2023")
 
 p2 <- p1 +
-  # geom_sf(color="black", fill=NA)+
+  geom_sf(color="grey70", fill=NA)+
   geom_rect(
     aes(
       xmin = params$bbox_selected_SUR["xmin"] - 0.7,
@@ -522,6 +529,11 @@ p2 <- p1 +
     fill = "transparent",
     color = "red",
     linewidth = 0.5
+  )+
+  coord_sf(
+    # expand = FALSE,
+    xlim = c(params$bbox_SUR_region_dynamic[[1]],params$bbox_SUR_region_dynamic[[3]]),
+    ylim = c(params$bbox_SUR_region_dynamic[[2]], params$bbox_SUR_region_dynamic[[4]])
   )
 
 p3<-p1+
@@ -601,6 +613,13 @@ if (
 \textcolor{fgcolor}{\hlCeHDIBlue{HPV coverage (9-14 year old girls):}}\textsuperscript{\ref{fn:whoGHO}}  `r HPV_coverage_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{HPV vaccine introduction:}}\footnote{\href{https://immunizationdata.who.int}{immunizationdata.who.int} \label{fn:whoimmunization}} `r HPV_national_alt_text`  
 \textcolor{fgcolor}{\hlCeHDIBlue{DTP3 coverage (among 1-year-olds):}}\textsuperscript{\ref{fn:whoGHO}} `r DTP3_coverage_text`  
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Legal Basis for Health \ \ \ \ }}}\end{center}  
+\textcolor{fgcolor}{\hlCeHDIBlue{Constitutional guarantees for citizens (as of June 2024):}}\footnote{\href{https://www.worldpolicycenter.org/maps-data/data-download/constitutions-data-download}{worldpolicycenter.org} \label{fn:worldpolicy}}  
+\ \ - Right to health: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_health)`  
+\ \ - Right to public health: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_publichealth)`  
+\ \ - Right to medical care: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_medcare)`  
+\ \ - Right to a healthy environment: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_enviro)`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Legal status of abortion (as of June 2023):}}\footnote{\href{https://reproductiverights.org/wp-content/uploads/2023/12/WALM_2023-v3-Updated_12-20-23.pdf}{reproductiverights.org} \label{fn:reproductiverights}} `r world_abortion_laws |> filter(country == params$country_name) |> pull(category)`  
 ```{=latex}
 \end{multicols}
 ```
