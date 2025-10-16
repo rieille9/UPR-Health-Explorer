@@ -28,8 +28,13 @@ pacman::p_load(
 source(here("code", "external_data_GBD.R"))
 
 # Read in pre-processed datasets
-sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
-  mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
+# sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
+#   mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
+sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
+  mutate(response_upr = fct_recode(response_upr, 
+                                      "Noted" = "Partially supported"),
+         response_upr = fct_relevel(response_upr, "Noted")) |> 
+  droplevels()
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 theme_labels <- source(here("code", "theme_labels.R"))$value
@@ -290,15 +295,24 @@ ui <- page_navbar(
       width = 390,
       accordion_panel(
         "Disclaimer and data sources",
-        markdown("This dashboard displays the results of a **preliminary** analysis regarding recommendations from the first four cycles of the Universal Periodic Review (UPR). ***Results are subject to change as the classification methodology continues to be refined***.
+        markdown("This dashboard displays the results of a **preliminary** analysis regarding recommendations from the first four cycles of the Universal Periodic Review (UPR). ***Results are subject to change as the classification methodology continues to be refined and as data sources are updated***.
 
-UPR recommendations were downloaded from a database maintained by the Danish Institute for Human Rights: the ['SDG-Human Rights Data Explorer'](https://www.humanrights.dk/sdg-human-rights-data-explorer). Their database in turn relies partly on UPR Info's [Database of Recommendations](https://upr-info-database.uwazi.io/).
+UPR recommendations were downloaded directly from the [Universal Human Rights Index](https://uhri.ohchr.org/en/our-data-api), maintained by the Office of the High Commissioner for Human Rights.
 
 Data related to various indicators (e.g. maternal mortality ratio and estimated abortion rates) were accessed via the [Global Health Observatory's API](https://www.who.int/data/gho/info/gho-odata-api), and data regarding the causes of maternal death were obtained using the [IHME's GBD Results tool](https://vizhub.healthdata.org/gbd-results/).
 
 Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
 
 **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
+#         markdown("This dashboard displays the results of a **preliminary** analysis regarding recommendations from the first four cycles of the Universal Periodic Review (UPR). ***Results are subject to change as the classification methodology continues to be refined***.
+# 
+# UPR recommendations were downloaded from a database maintained by the Danish Institute for Human Rights: the ['SDG-Human Rights Data Explorer'](https://www.humanrights.dk/sdg-human-rights-data-explorer). Their database in turn relies partly on UPR Info's [Database of Recommendations](https://upr-info-database.uwazi.io/).
+# 
+# Data related to various indicators (e.g. maternal mortality ratio and estimated abortion rates) were accessed via the [Global Health Observatory's API](https://www.who.int/data/gho/info/gho-odata-api), and data regarding the causes of maternal death were obtained using the [IHME's GBD Results tool](https://vizhub.healthdata.org/gbd-results/).
+# 
+# Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
+# 
+# **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
       )
     )
   ),
@@ -1643,8 +1657,9 @@ server <- function(input, output, session) {
       mutate(state_under_review = factor(state_under_review)) |>
       select(
         text, cycle, response_upr, health_related:maternal_health,
-        state_under_review, document_code, paragraph
+        state_under_review,recommending_state_upr_comma, document_code, paragraph
       ) |>
+      rename(recommending_states = recommending_state_upr_comma) |> 
       DT::datatable(
         # extensions = "Responsive",
         filter = "top",

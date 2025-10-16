@@ -37,8 +37,13 @@ pacman::p_load(
   sf
 )
 
-sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
-  mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
+# sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
+#   mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
+sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
+  mutate(response_upr = fct_recode(response_upr, 
+                                      "Noted" = "Partially supported"),
+         response_upr = fct_relevel(response_upr, "Noted")) |> 
+  droplevels()
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 iso3_SUR <- state_geo |> filter(country==params$country_name) |> pull(iso3)
@@ -183,7 +188,7 @@ pop_text <- paste0(round(pop_C |> filter(year==max(year)) |> pull(pop)/1000,1),
 fertility_rate_text <- paste0(fertility_rate_C |> 
                                 filter(year==max(year)) |>  
                                 pull(tfr) |> round(1), 
-                              " children per woman in ",
+                              " births per woman in ",
                               fertility_rate_C |> 
                                 filter(year==max(year)) |> 
                                 pull(year),
@@ -387,12 +392,15 @@ print(params$upr_all+
 \columnbreak
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Demographics \ \ \ \ }}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{Population:}}\footnote{\href{https://population.un.org/wpp}{population.un.org/wpp} \label{fn:WPP}} `r pop_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Sexual and Reproductive Health \ \ \ \ }}}\end{center}  
 \textcolor{fgcolor}{\hlCeHDIBlue{Total fertility rate:}}\textsuperscript{\ref{fn:WPP}} `r fertility_rate_text`  
-
-\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Key Health Indicators (latest available data) \ \ \ \ }}}\end{center}  
-\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Met need for family planning:}}\textsuperscript{\ref{fn:whoGHO}} `r family_planning_text`  
+\textcolor{fgcolor}{\hlCeHDIBlue{Adolescent birth rate:}}\footnote{\href{https://www.who.int/data/gho/info/gho-odata-api}{WHO Global Health Observatory} \label{fn:whoGHO}}  
+\ \ - Aged 10 to 14: `r adolescent_birth_rate_text_10_14`  
+\ \ - Aged 15 to 19: `r adolescent_birth_rate_text_15_19`  
 \textcolor{fgcolor}{\hlCeHDIBlue{Maternal mortality ratio (MMR):}}\textsuperscript{\ref{fn:whoGHO}} `r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2023) |> pull(NumericValue) |> round(digits = 0)` maternal deaths per 100,000 live births in 2023 (`r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2005) |> pull(NumericValue) |> round(digits = 0)` in 2005)  
-```{r, }
+```{r, out.width="90%"}
 # mmr_estimate_2023 = params$mmr_map_plot@data |>
 #   filter(country_name == params$country_name,
 #          YEAR == "2023") |>
@@ -561,17 +569,12 @@ dat_plot |>
   )+
   coord_cartesian(clip="off")
 ```
-
-\textcolor{fgcolor}{\hlCeHDIBlue{Met need for family planning:}}\textsuperscript{\ref{fn:whoGHO}} `r family_planning_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Adolescent birth rate:}}\footnote{\href{https://www.who.int/data/gho/info/gho-odata-api}{WHO Global Health Observatory} \label{fn:whoGHO}}  
-\ \ - Aged 10 to 14: `r adolescent_birth_rate_text_10_14`  
-\ \ - Aged 15 to 19: `r adolescent_birth_rate_text_15_19`  
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{Contraceptive prevalence (modern methods):}}\textsuperscript{\ref{fn:whoGHO}}   -->
 <!-- \ \ - Aged 15 to 19:  `r contraceptive_prevalence_text_15_19`   -->
 <!-- \ \ - Aged 20 to 49:  `r contraceptive_prevalence_text_20_49` -->
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Health Services Coverage (latest available data) \ \ \ \ }}}\end{center}  
 <!-- \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`   -->
-\textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage}}\textsuperscript{\ref{fn:whoGHO}} (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`):
+\textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`):}}\textsuperscript{\ref{fn:whoGHO}}
 ```{r, fig.align="center", fig.width=7, fig.height=1.5, out.width="90%"}
 uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
   p_data <- dat |> 
