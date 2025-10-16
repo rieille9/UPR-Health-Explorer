@@ -206,17 +206,24 @@ data(e01dt);data(pop1dt);data(popAge5dt);data(tfr1dt)
 #   text_2 = str_replace(text_2, ". national", "a national")
 #   ) |>
 #   filter(!str_starts(text, "Response of "),
-#          response_upr != "Concerns/Observations") |> 
-#   rowid_to_column() |> 
-#   
+#          response_upr != "Concerns/Observations") |>
+#   rowid_to_column() |>
+# 
 #   # Create a new column that lists recommending states by commas
-#   mutate(recommending_state_upr_comma = recommending_state_upr) |> 
-#   separate_wider_delim(recommending_state_upr_comma, delim = "-", names_sep = "_", too_few = "align_start") |> 
-#   mutate(across(starts_with("recommending_state_upr_comma"), ~ str_squish(.))) |> 
-#   unite(col = "recommending_state_upr_comma", sep = ", ", starts_with("recommending_state_upr_comma"), na.rm = TRUE) |> 
-#   relocate(text_2, .after = text) |> 
-#   relocate(recommending_state_upr_comma, recommending_states_count, .after= recommending_state_upr) |> 
-#   mutate(recommending_state_upr_comma = case_when(recommending_state_upr_comma == "" ~ NA, .default = recommending_state_upr_comma))
+#   mutate(recommending_state_upr_comma = recommending_state_upr) |>
+#   separate_wider_delim(recommending_state_upr_comma, delim = "-", names_sep = "_", too_few = "align_start") |>
+#   mutate(across(starts_with("recommending_state_upr_comma"), ~ str_squish(.))) |>
+#   unite(col = "recommending_state_upr_comma", sep = ", ", starts_with("recommending_state_upr_comma"), na.rm = TRUE) |>
+#   relocate(text_2, .after = text) |>
+#   relocate(recommending_state_upr_comma, recommending_states_count, .after= recommending_state_upr) |>
+#   mutate(recommending_state_upr_comma = case_when(recommending_state_upr_comma == "" ~ NA, .default = recommending_state_upr_comma)) |> 
+#   mutate(response_upr = factor(
+#     case_when(
+#       response_upr == "Supported/Noted" ~ "Partially supported",
+#       .default = response_upr),
+#       levels = c("Supported", "Partially supported", "Noted")
+#     )
+#   )
 # 
 # saveRDS(df, here("data", "UHRI_full.rds"))
 # saveRDS(df, here("data", paste0("UHRI_full_", Sys.Date(), ".rds")))
