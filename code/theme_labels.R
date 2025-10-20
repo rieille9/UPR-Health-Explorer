@@ -22,6 +22,6 @@ theme_labels <- tribble(
   "nutrition", "Nutrition",
   "maternal_health", "Maternal health",
   "abortion", "Abortion",
-  "contraception", "Contraception / Family Planning",
+  "contraception", "Family Planning",
   "incarcerated", "Health of incarcerated persons"
 )

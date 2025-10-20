@@ -32,7 +32,7 @@ source(here("code", "external_data_GBD.R"))
 #   mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
 sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
   mutate(response_upr = fct_recode(response_upr, 
-                                      "Noted" = "Partially supported"),
+                                   "Noted" = "Partially supported"),
          response_upr = fct_relevel(response_upr, "Noted")) |> 
   droplevels()
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
@@ -102,7 +102,7 @@ map_insetting <- function(
     geom_sf(
       # data=plot_dat, 
       aes(geometry=polygon, fill = selected_sur),
-            color = "transparent")+ 
+      color = "transparent")+ 
     scale_fill_manual(values=c("transparent", "white"))+
     # scale_linewidth_manual(values = c(0.2, 0.1)) +
     coord_sf(
@@ -304,15 +304,15 @@ Data related to various indicators (e.g. maternal mortality ratio and estimated 
 Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
 
 **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
-#         markdown("This dashboard displays the results of a **preliminary** analysis regarding recommendations from the first four cycles of the Universal Periodic Review (UPR). ***Results are subject to change as the classification methodology continues to be refined***.
-# 
-# UPR recommendations were downloaded from a database maintained by the Danish Institute for Human Rights: the ['SDG-Human Rights Data Explorer'](https://www.humanrights.dk/sdg-human-rights-data-explorer). Their database in turn relies partly on UPR Info's [Database of Recommendations](https://upr-info-database.uwazi.io/).
-# 
-# Data related to various indicators (e.g. maternal mortality ratio and estimated abortion rates) were accessed via the [Global Health Observatory's API](https://www.who.int/data/gho/info/gho-odata-api), and data regarding the causes of maternal death were obtained using the [IHME's GBD Results tool](https://vizhub.healthdata.org/gbd-results/).
-# 
-# Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
-# 
-# **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
+        #         markdown("This dashboard displays the results of a **preliminary** analysis regarding recommendations from the first four cycles of the Universal Periodic Review (UPR). ***Results are subject to change as the classification methodology continues to be refined***.
+        # 
+        # UPR recommendations were downloaded from a database maintained by the Danish Institute for Human Rights: the ['SDG-Human Rights Data Explorer'](https://www.humanrights.dk/sdg-human-rights-data-explorer). Their database in turn relies partly on UPR Info's [Database of Recommendations](https://upr-info-database.uwazi.io/).
+        # 
+        # Data related to various indicators (e.g. maternal mortality ratio and estimated abortion rates) were accessed via the [Global Health Observatory's API](https://www.who.int/data/gho/info/gho-odata-api), and data regarding the causes of maternal death were obtained using the [IHME's GBD Results tool](https://vizhub.healthdata.org/gbd-results/).
+        # 
+        # Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
+        # 
+        # **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
       )
     )
   ),
@@ -444,11 +444,19 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                          # This sets a 3:2 height ratio
                          style = css(grid_template_rows = "3fr 1fr"),
                          card(
+                           # fill = FALSE,
                            full_screen = TRUE,
-                           card_header("Health-Related Recommendations"),
-                           card_body(plotOutput("global_plot"))
-                         )
-                         ,card(
+                           card_header("Recommending States (top 20)"),
+                           card_body(
+                             # markdown("(Themes of maternal health, family planning, and abortion)"),
+                             plotOutput("recommending_states_REGION"))
+                         ),
+                         # card(
+                         #   full_screen = TRUE,
+                         #   card_header("Health-Related Recommendations"),
+                         #   card_body(plotOutput("global_plot"))
+                         # ),
+                         card(
                            full_screen = TRUE,
                            # card_header("Regional map"),
                            card_body(plotOutput("regional_map"))
@@ -488,18 +496,25 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                          nav_panel("Data Table", DTOutput("DT_table"))
                        ),
                        layout_column_wrap(
-                         style = css(grid_template_rows = "1fr 1fr"),
+                         # width=1,
+                         style = css(grid_template_rows = "1fr 2fr"),
                          card(
                            # fill = FALSE,
                            full_screen = TRUE,
                            card_header("Health-Related Recommendations"),
-                           card_body(plotOutput("plot", height = "700px")),
+                           card_body(plotOutput("plot")),
                            card_footer(
                              downloadButton(
                                outputId = "download_rec_plot_object",
                                label = "Download as PNG"
                              )
                            )
+                         ),
+                         card(
+                           # fill = FALSE,
+                           full_screen = TRUE,
+                           card_header("Recommending States"),
+                           card_body(plotOutput("recommending_states_SUR"))
                          )
                        )
                      )
@@ -1317,6 +1332,74 @@ server <- function(input, output, session) {
     }
   )
   
+  ### MH recommending states --------------------------
+  output$recommending_states_REGION <- renderPlot({
+    req(nrow(filtered_upr()) > 0)
+    upr_rec_countries <- filtered_upr_region() |>
+      filter(!is.na(recommending_state_upr)) |> 
+      filter(response_upr == "Supported") |> 
+      filter(if_any(any_of(c(theme_labels$variable)), ~ .x != "Other")) |> 
+      # select(cycle, recommending_state_upr) |> 
+      separate_longer_delim(cols = c(recommending_state_upr), delim="-") |> 
+      mutate(recommending_state_upr = str_trim(recommending_state_upr)) |> 
+      group_by(cycle, recommending_state_upr) |> count(across(any_of(theme_labels$variable))) |> 
+      pivot_longer(cols = !c(cycle, recommending_state_upr, n),
+                   names_to = "variable",
+                   values_to = "theme") |> 
+      filter(theme!="Other") |> 
+      left_join(theme_labels) |> 
+      group_by(cycle, recommending_state_upr, variable) |> 
+      mutate(n=sum(n)) |> 
+      ungroup() |> 
+      distinct()
+    
+    c_plot <- upr_rec_countries |> 
+      filter(variable %in% c("abortion", 
+                             "maternal_health", 
+                             "contraception")) |> 
+      select(-cycle) |> 
+      group_by(recommending_state_upr, theme) |> 
+      mutate(n=sum(n)) |> 
+      ungroup() |> 
+      distinct() |> 
+      arrange(theme, -n) |> 
+      mutate(recommending_state_upr = str_wrap(recommending_state_upr, 20)) |> 
+      group_by(recommending_state_upr) |> 
+      mutate(n_tot = sum(n)) |> 
+      ungroup() |> 
+      arrange(-n_tot) |> 
+      ungroup()
+    
+    ccp <- c_plot |> select(recommending_state_upr, n_tot) |> distinct() |> 
+      arrange(-n_tot) |>
+    slice_head(n=20)
+    
+    c_plot |> 
+      filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
+      ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label))+
+      geom_col(alpha = 0.8, width = 0.8)+
+      scale_fill_manual(values = c(
+        "Maternal health" = "#7570b3",
+        "Family Planning" = "#1b9e77",
+        "Abortion" = "#d95f02"
+      ))+
+      scale_y_continuous(expand = c(0, 0.1)) +
+      tidytext::scale_x_reordered() +
+      coord_flip()+
+      theme_minimal() +
+      guides(fill=guide_legend(reverse=TRUE))+
+      theme(
+        strip.text.y = element_text(angle = 270, face = "bold"),
+        strip.placement = "outside",
+        panel.grid.major.y = element_blank(),
+        # legend.position = c(0.99, 0.01),
+        legend.position = "top",
+        legend.justification = c("left", "bottom"),
+        legend.background = element_blank())+
+      labs(y="Supported recommendations (N)", x=NULL,
+           fill=NULL)
+  })
+  
   ## UPR: SUR Outputs --------------------------------------------------------
   ### General plot --------------------------
   #### Plot object ----------------------------
@@ -1414,7 +1497,7 @@ server <- function(input, output, session) {
             strip.text = element_blank(),
             plot.title = element_blank()
           )
-          ,
+        ,
         width = 5,
         height = 3.3,
         dpi = 300,
@@ -1678,6 +1761,73 @@ server <- function(input, output, session) {
         rownames = FALSE,
         class = 'cell-border stripe hover compact'
       )
+  })
+  
+  ### MH recommending states --------------------------
+  output$recommending_states_SUR <- renderPlot({
+    req(nrow(filtered_upr()) > 0)
+    upr_rec_countries <- filtered_upr() |>
+      filter(response_upr == "Supported") |> 
+      filter(if_any(any_of(c(theme_labels$variable)), ~ .x != "Other")) |> 
+      # select(cycle, recommending_state_upr) |> 
+      separate_longer_delim(cols = c(recommending_state_upr), delim="-") |> 
+      mutate(recommending_state_upr = str_trim(recommending_state_upr)) |> 
+      group_by(state_under_review, cycle, recommending_state_upr) |> count(across(any_of(theme_labels$variable))) |> 
+      pivot_longer(cols = !c(state_under_review,cycle, recommending_state_upr, n),
+                   names_to = "variable",
+                   values_to = "theme") |> 
+      filter(theme!="Other") |> 
+      left_join(theme_labels) |> 
+      group_by(state_under_review, cycle, recommending_state_upr, variable) |> 
+      mutate(n=sum(n)) |> 
+      ungroup() |> 
+      distinct()
+    
+   c_plot <- upr_rec_countries |> 
+      filter(variable %in% c("abortion", 
+                             "maternal_health", 
+                             "contraception")) |> 
+      select(-cycle) |> 
+      group_by(recommending_state_upr, theme) |> 
+      mutate(n=sum(n)) |> 
+      ungroup() |> 
+      distinct() |> 
+      arrange(theme, -n) |> 
+      mutate(recommending_state_upr = str_wrap(recommending_state_upr, 20)) |> 
+      group_by(recommending_state_upr) |> 
+      mutate(n_tot = sum(n)) |> 
+      ungroup() |> 
+      arrange(-n_tot) |> 
+      ungroup()
+    
+    ccp <- c_plot |> select(recommending_state_upr, n_tot) |> distinct() |> 
+      arrange(-n_tot) #|>
+      # slice_head(n=15)
+    
+    c_plot |> 
+      filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
+      ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label))+
+      geom_col(alpha = 0.8, width = 0.8)+
+      scale_fill_manual(values = c(
+        "Maternal health" = "#7570b3",
+        "Family Planning" = "#1b9e77",
+        "Abortion" = "#d95f02"
+      ))+
+      scale_y_continuous(expand = c(0, 0.1)) +
+      tidytext::scale_x_reordered() +
+      coord_flip()+
+      theme_minimal() +
+      guides(fill=guide_legend(reverse=TRUE))+
+      theme(
+        strip.text.y = element_text(angle = 270, face = "bold"),
+        strip.placement = "outside",
+        panel.grid.major.y = element_blank(),
+        # legend.position = c(0.99, 0.01),
+        legend.position = "top",
+        legend.justification = c("left", "bottom"),
+        legend.background = element_blank())+
+      labs(y="Supported recommendations (N)", x=NULL,
+           fill=NULL)
   })
   
   ## UHC Outputs ----------------------------------------------------------
