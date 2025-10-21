@@ -671,3 +671,34 @@ p5<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_RMNCH"),
 ```{=latex}
 \end{multicols}
 ```
+\newpage
+\begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ Recommendations from the UPR, on the themes of maternal health, family planning, and abortion \ \ \ }}}\end{center}  
+```{r}
+table_data <- sdg_data |> 
+  filter(iso3==iso3_SUR) |> 
+  filter(if_any(any_of(c("maternal_health", "abortion", "contraception")), ~ .x != "Other")) |>
+  # filter(maternal_health != "Other") |> 
+  select(text_2, cycle, response_upr
+         # , recommending_state_upr_comma
+         # , maternal_health, abortion, contraception
+         ) |> 
+  rename(
+    Recommendation  = text_2,
+    Cycle = cycle,
+    Response = response_upr
+    # , `Recommending State(s)` = recommending_state_upr_comma
+  )
+
+kableExtra::kbl(
+  table_data, 
+  format = "latex", 
+  longtable = TRUE,
+  booktabs = TRUE) |> 
+  kableExtra::kable_styling(
+    latex_options = c("striped"),
+    stripe_color = "#b7b4cc", 
+    font_size = 10
+    # ,position = "left"
+  ) |> 
+  column_spec(1,width = "45em")
+```

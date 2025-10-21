@@ -48,13 +48,14 @@ pacman::p_load(
 
 # Load in custom functions
 # source(here("utils.R"))
-
 ```
 
 ### Download and pre-process the UPR data from UHRI  
 Download the full UHRI dataset from <https://uhri.ohchr.org/en/our-data-api>
 The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-results/export-full-en.xlsx>
 ```{r}
+state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
+
 # httr::GET("https://dataex.ohchr.org/uhri/export-results/export-full-en.xlsx", httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
 # df_0 <-  read_xlsx(tf,
 #                    # Specify the column types, otherwise some show up as NA in R
@@ -68,12 +69,30 @@ The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-
 #          reccomending_body = str_remove(reccomending_body, "- ")
 #   ) |>
 #   mutate(
-#     text = str_remove_all(text, "&nbsp;"),
+#     text1 = text,
+#     # text = str_remove_all(text, "&nbsp;"),
+#     # text = str_remove_all(text, "&nbsp"),
+#     text = str_replace_all(text, "&nbsp;", " "),
+#     text = str_replace_all(text, "&nbsp", " "),
+#     text = str_replace_all(text, "&rsquo;", "'"),
+#     text = str_replace_all(text, "&ndash;|&#8209;", "-"),
+#     text = str_replace_all(text, "&ocirc;", "ô"),
+#     text = str_replace_all(text, "&ldquo;|&rdquo;", "'"),
+#     text = str_replace_all(text, "&uacute;", "ú"),
+#     text = str_replace_all(text, "&uuml;", "ü"),
+#     text = str_replace_all(text, "&amp;", "&"),
+#     text = str_replace_all(text, "&deg;", "°"),
+#     text = str_replace_all(text, "&eacute;", "é"),
+#     text = str_replace_all(text, "&egrave;", "è"),
+#     text = str_replace_all(text, "&lrm;", ""),
+#     text = str_replace_all(text, "&iacute;", "í"),
+# 
+#     text = str_squish(text),
 #     text = case_when(str_starts(text, "R ") ~ str_remove(text, "R "),
 #                      .default = text),
-#     text = str_replace(text, " . ", ". "),
-#     text = str_replace(text, ":.", ":"),
-#     text = str_replace(text, ",.", ":"),
+#     # text = str_replace(text, " . ", ". "),
+#     # text = str_replace(text, ":.", ":"),
+#     # text = str_replace(text, ",.", ":"),
 #     text = str_remove_all(text, "\\[...\\]")
 #   ) |>
 #   arrange(countries_concerned, reccomending_body, document_publication_date) |>
@@ -96,25 +115,25 @@ The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-
 #         matches <- str_match(text, "para\\.\\s*(\\d+).*?(\\d+)\\.")
 #         paste(matches[, 2], matches[, 3], sep = ".")
 #       },
-# 
+#       
 #       # NEW CASE: The text starts with "Recommendations contained in para."
 #       # str_detect(text, "^Recommendations contained in para") ~ str_match(text, "para\\.\\s*(\\d+)")[, 2],
 #       # str_detect(text, "^Recommendation(s)? contained in para(graph)?") ~ str_match(text, "[Pp]ara(?:graph)?\\s*(\\d+\\(?[a-z]?\\)?)")[, 2],
 #       str_detect(text, "^Recommendation(s)? (?:contained in|from) para(graph)?") ~ str_match(text, "[Pp]ara(?:graph)?\\s*(.*?):")[, 2],
 #       str_detect(text, "^Recommendation(s)? contained in ") ~ str_match(text, "contained in\\s*(\\d+\\(?[a-z]?\\)?)")[, 2],
-# 
+#       
 #       # CASE 2: The text starts with "para" or "paragraph"
 #       # This is the new case to handle paragraph-only identifiers.
 #       str_detect(text, "^[Pp]ara") ~ str_match(text, "[Pp]ara(?:graph)?\\.?\\s*(\\d+)")[, 2],
-# 
+#       
 #       # CASE 3: The text starts with a "number.number" format (e.g., "136.1 ...")
 #       # This must come before the single-number check to be matched correctly.
 #       str_detect(text, "^\\d+\\.\\d+") ~ str_extract(text, "^\\d+\\.\\d+"),
-# 
+#       
 #       # CASE 4: The text starts with just one number (e.g., "1 ...")
 #       # This is the new case to handle single leading numbers.
 #       str_detect(text, "^\\d+") ~ str_extract(text, "^\\d+"),
-# 
+#       
 #       # If none of the above patterns match, return NA
 #       TRUE ~ NA_character_
 #     ),
@@ -141,7 +160,7 @@ The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-
 #   mutate(
 #     upr_session = fct_inorder(upr_session),
 #     upr_cycle = fct_inorder(upr_cycle)
-#     ) |>
+#   ) |>
 #   # select(-title_a, -title_b) |>
 #   relocate(paragraph, .after=document) |>
 #   relocate(title_2, upr_position, type, .after = paragraph) |>
@@ -157,6 +176,7 @@ The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-
 #   left_join(state_geo |> select(country, iso3, iso2) |> st_drop_geometry(),
 #             by = join_by(state_under_review == country))
 # 
+# 
 # # Filter for only the UPR dataset
 # upr_df <- df |> filter(body == "UPR") |> droplevels() |>
 #   mutate(
@@ -165,53 +185,59 @@ The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-
 #       is.na(recommending_state_upr) ~ NA,
 #       .default = str_count(recommending_state_upr, "-") %>% coalesce(0L)+1
 #     ),
-#   text_2 = case_when(
-#     # CASE 1: Remove "Recommendation No. ..." prefix
-#     str_detect(text, "^Recommendation No") ~ str_remove(text, "^Recommendation No.*?\\d+\\.\\s*"),
-#     # str_detect(text, "^Recommendations contained in para") ~ str_remove(text, "^Recommendations contained in para\\.\\s*\\d+:\\s*"),
-#     str_detect(text, "^Recommendation(s)? contained in para(graph)?") ~ str_remove(text, "^Recommendation(?:s)? contained in para(?:graph)?.*?\\:\\s*"),
-#     str_detect(text, "^Recommendation(s)? contained in ") ~ str_remove(text, "^Recommendation(?:s)? contained in .*?\\:\\s*"),
-# 
-#     # CASE 2: Remove "para. ..." prefix
-#     str_detect(text, "^[Pp]ara") ~ str_remove(text, "^[Pp]ara(?:graph)?\\.?\\s*(\\d+\\.?)\\s*"),
-#     # CASE 3: Remove "number.number" prefix
-#     str_detect(text, "^\\d+\\.\\d+") ~ str_remove(text, "^\\d+\\.\\d+\\.?\\s*"),
-#     # CASE 4: Remove single number prefix
-#     str_detect(text, "^\\d+") ~ str_remove(text, "^\\d+\\.?\\s*"),
-#     # If no pattern matches, just keep the original text
-#     TRUE ~ text
-#   ),
-#   text_2 = case_when(
-#     str_detect(text_2, "^\\d+") ~ str_remove(text_2, "^\\d+\\.?\\s*"),
-#     TRUE ~ text_2
-#   ),
-#   text_2 = str_remove(text_2,"^. "),
-#   text_2 = str_squish(str_trim(text_2)),
-#   text_2 = str_replace(text_2, ". visit", "a visit"),
-#   text_2 = str_replace(text_2, ". standing", "a standing"),
-#   text_2 = str_replace(text_2, ". method", "a method"),
-#   text_2 = str_replace(text_2, ". dialogue", "a dialogue"),
-#   text_2 = str_replace(text_2, ". comprehensive", "a comprehensive"),
-#   text_2 = str_replace(text_2, ". national", "a national")
+#     text_2 = case_when(
+#       # CASE 1: Remove "Recommendation No. ..." prefix
+#       str_detect(text, "^Recommendation No") ~ str_remove(text, "^Recommendation No.*?\\d+\\.\\s*"),
+#       # str_detect(text, "^Recommendations contained in para") ~ str_remove(text, "^Recommendations contained in para\\.\\s*\\d+:\\s*"),
+#       str_detect(text, "^Recommendation(s)? contained in para(graph)?") ~ str_remove(text, "^Recommendation(?:s)? contained in para(?:graph)?.*?\\:\\s*"),
+#       str_detect(text, "^Recommendation(s)? contained in ") ~ str_remove(text, "^Recommendation(?:s)? contained in .*?\\:\\s*"),
+#       
+#       # CASE 2: Remove "para. ..." prefix
+#       str_detect(text, "^[Pp]ara") ~ str_remove(text, "^[Pp]ara(?:graph)?\\.?\\s*(\\d+\\.?)\\s*"),
+#       # CASE 3: Remove "number.number" prefix
+#       str_detect(text, "^\\d+\\.\\d+") ~ str_remove(text, "^\\d+\\.\\d+\\.?\\s*"),
+#       # CASE 4: Remove single number prefix
+#       str_detect(text, "^\\d+") ~ str_remove(text, "^\\d+\\.?\\s*"),
+#       # If no pattern matches, just keep the original text
+#       TRUE ~ text
+#     ),
+#     text_2 = case_when(
+#       str_detect(text_2, "^\\d+") ~ str_remove(text_2, "^\\d+\\.?\\s*"),
+#       TRUE ~ text_2
+#     ),
+#     text_2 = case_when(
+#       str_detect(text_2, "^\\d+") ~ str_remove(text_2, "^\\d+\\.?\\s*"),
+#       TRUE ~ text_2
+#     ),
+#     text_2 = str_remove(text_2,"^\\."),
+#     text_2 = str_remove(text_2,"^\\:"),
+#     text_2 = str_remove(text_2,"^\\;"),
+#     text_2 = str_squish(text_2),
+#     # text_2 = str_replace(text_2, ". visit", "a visit"),
+#     # text_2 = str_replace(text_2, ". standing", "a standing"),
+#     # text_2 = str_replace(text_2, ". method", "a method"),
+#     # text_2 = str_replace(text_2, ". dialogue", "a dialogue"),
+#     # text_2 = str_replace(text_2, ". comprehensive", "a comprehensive"),
+#     # text_2 = str_replace(text_2, ". national", "a national")
 #   ) |>
 #   filter(!str_starts(text, "Response of "),
 #          response_upr != "Concerns/Observations") |>
 #   rowid_to_column() |>
-# 
+#   
 #   # Create a new column that lists recommending states by commas
 #   mutate(recommending_state_upr_comma = recommending_state_upr) |>
 #   separate_wider_delim(recommending_state_upr_comma, delim = "-", names_sep = "_", too_few = "align_start") |>
 #   mutate(across(starts_with("recommending_state_upr_comma"), ~ str_squish(.))) |>
 #   unite(col = "recommending_state_upr_comma", sep = ", ", starts_with("recommending_state_upr_comma"), na.rm = TRUE) |>
-#   relocate(text_2, .after = text) |>
+#   relocate(text1, text_2, .after = text) |>
 #   relocate(recommending_state_upr_comma, recommending_states_count, .after= recommending_state_upr) |>
-#   mutate(recommending_state_upr_comma = case_when(recommending_state_upr_comma == "" ~ NA, .default = recommending_state_upr_comma)) |> 
+#   mutate(recommending_state_upr_comma = case_when(recommending_state_upr_comma == "" ~ NA, .default = recommending_state_upr_comma)) |>
 #   mutate(response_upr = factor(
 #     case_when(
 #       response_upr == "Supported/Noted" ~ "Partially supported",
 #       .default = response_upr),
-#       levels = c("Supported", "Partially supported", "Noted")
-#     )
+#     levels = c("Supported", "Partially supported", "Noted")
+#   )
 #   )
 # 
 # saveRDS(df, here("data", "UHRI_full.rds"))
@@ -472,7 +498,7 @@ incarcerated_keywords <- " prison|imprison|detention|detaine|incarcer"
 
 #### Maternal health
 ```{r}
-maternal_keywords <- "abortion|maternal|pregnan|reproductive|sex education|sexuality education|sex education|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|eclampsia|obstetric|intrapartum|postpartum|post-partum|contracept|breastfe"
+maternal_keywords <- "maternal|pregnan|reproductive|sex education|sexuality education|sex education|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|eclampsia|obstetric|intrapartum|postpartum|post-partum|breastfe"
 ```
 
 #### Abortion
@@ -1084,23 +1110,118 @@ p1<-a |>
 ```
 
 #### Recommending countries
+See <https://mattherman.info/blog/fix-facet-width/>
 ```{r}
 c<-sdg_data |> 
-  filter(state_under_review == "Brazil") |> 
-  filter(maternal_health != "Other") |> 
+  # filter(state_under_review == "Brazil") |> 
+  # filter(maternal_health != "Other") |> 
   filter(response_upr == "Supported") |> 
-  select(cycle, recommending_state_upr) |> 
+  filter(if_any(any_of(c(theme_labels$variable)), ~ .x != "Other")) |> 
+  # select(cycle, recommending_state_upr) |> 
   separate_longer_delim(cols = c(recommending_state_upr), delim="-") |> 
-  mutate(recommending_state_upr = str_trim(recommending_state_upr))
+  mutate(recommending_state_upr = str_trim(recommending_state_upr)) |> 
+  group_by(state_under_review, cycle, recommending_state_upr) |> count(across(any_of(theme_labels$variable))) |> 
+  pivot_longer(cols = !c(state_under_review,cycle, recommending_state_upr, n),
+               names_to = "variable",
+               values_to = "theme") |> 
+  filter(theme!="Other") |> 
+  left_join(theme_labels) |> 
+  group_by(state_under_review, cycle, recommending_state_upr, variable) |> 
+  mutate(n=sum(n)) |> 
+  ungroup() |> 
+  distinct()
 
-c |> group_by(recommending_state_upr) |> count(cycle) |> 
+c_plot <- c |> 
+  filter(state_under_review == "Tonga") |>
+  filter(variable %in% c("abortion", "maternal_health", "contraception")) |> 
+  select(-cycle, -state_under_review) |> 
+  group_by(recommending_state_upr, theme) |> 
+  mutate(n=sum(n)) |> 
+  ungroup() |> 
+  distinct() |> 
+  group_by(recommending_state_upr) |> 
   mutate(n_tot = sum(n)) |> 
   ungroup() |> 
-  slice_max(order_by = n, n=4) 
-  ggplot(aes(x=reorder(recommending_state_upr, n_tot), y=n_tot, fill= cycle))+
-  geom_col()+
+  arrange(-n_tot) |>
+  # arrange(theme, -n) |> 
+  # group_by(theme) |> 
+  # slice_head(n = 10) |>
+  ungroup()
+
+ccp <- c_plot |> 
+  arrange(theme, -n) |> 
+  group_by(theme) |> 
+  # select(recommending_state_upr, n_tot) |> distinct() |>
+  # arrange(-n_tot) |> 
+  slice_head(n=10)
+
+c_plot |> 
+  filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
+  # ggplot(aes(x= tidytext::reorder_within(recommending_state_upr, n, theme_label), y=n, fill=theme_label))+
+  ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label))+
+  geom_col(alpha = 0.8, width = 0.8)+
+  # scale_fill_brewer(palette = "Dark2") +
+  scale_fill_manual(values = c(
+    "Maternal health" = "#7570b3",
+    "Family Planning" = "#1b9e77",
+    "Abortion" = "#d95f02"
+  ))+
+  scale_y_continuous(expand = c(0, 0.1)) +
+  tidytext::scale_x_reordered() +
   coord_flip()+
-  theme_classic()+
-  labs(y="Number of issued recommendations that were supported", x=NULL)
+  theme_minimal() +
+  # facet_wrap(.~theme_label, scales = "free_y", strip.position="left", space = "free_y",
+  #            labeller = labeller(theme_label = label_wrap_gen(10)))+
+  guides(fill=guide_legend(reverse=TRUE))+
+  theme(
+    strip.text.y = element_text(angle = 270, face = "bold"),
+    strip.placement = "outside",
+    panel.grid.major.y = element_blank(),
+    # legend.position = c(0.99, 0.01),
+    legend.position = "top",
+    legend.justification = c("left", "bottom"),
+    legend.margin = margin(0,0,0,0), 
+    legend.box.margin = margin(0,0,0,0), 
+    legend.box.spacing = unit(0,"pt"),
+    legend.background = element_blank())+
+  labs(y="Number of issued recommendations that were supported", x=NULL,
+       fill=NULL)
 ```
 
+```{r}
+d <- c |> 
+  filter(variable %in% c("abortion", "maternal_health", "contraception")) |> 
+  group_by(recommending_state_upr, variable) |> 
+  summarise(n = sum(n)) |>
+  arrange(variable, -n) |> 
+  group_by(variable) |> slice_head(n=10) |> 
+  ungroup() |> 
+  left_join(theme_labels)
+
+d |> 
+  mutate(recommending_state_upr = str_wrap(recommending_state_upr,20)) |> 
+  ggplot(aes(x=tidytext::reorder_within(recommending_state_upr, n, theme_label), y=n))+
+  geom_col()+
+  tidytext::scale_x_reordered() +
+  coord_flip()+
+  theme_classic()+
+  facet_wrap(.~theme_label, scales = "free_y")+
+  # guides(fill="none")+
+  labs(y="Number of issued recommendations that were supported", 
+       x=NULL)
+
+
+
+
+#   arrange(cycle, variable, -n) |>
+#   group_by(cycle, variable) |> 
+#   # slice_head(n = 10) #|> 
+# ggplot(aes(x= tidytext::reorder_within(recommending_state_upr, n_tot, theme_label), y=n_tot))+
+#   geom_col()+
+#   tidytext::scale_x_reordered() +
+#   coord_flip()+
+#   theme_classic()+
+#   facet_wrap(.~theme_label, scales = "free_y")+
+#   # guides(fill="none")+
+#   labs(y="Number of issued recommendations that were supported", x=NULL)
+```
