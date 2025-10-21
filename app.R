@@ -264,7 +264,8 @@ ui <- page_navbar(
                 choices = c("Global", "WHO regions", "World Bank regions", 
                             "Sub-regions (UN M49)",
                             # "ECSA-HC Membership", 
-                            # "CARICOM Membership", "South Centre Membership", 
+                            "CARICOM Membership",
+                            # "South Centre Membership", 
                             # "OACPS Membership", "OACPS Member regions", 
                             # "COMESA Membership", 
                             "Fragile and Conflict-affected States (2026)"
@@ -288,7 +289,7 @@ ui <- page_navbar(
     ### PDF downloader ------------------------
     downloadButton(
       outputId = "download_report",
-      label = "Download Report (THIS FUNCTIONALITY IS UNDER ACTIVE DEVELOPMENT)"
+      label = "Download Report (functionality under active development)"
       # ,style = "width: 100%;" # Make the button full-width
     ),
     
