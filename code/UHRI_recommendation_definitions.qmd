@@ -272,8 +272,8 @@ health_keywords <- "health|sanitation|sanitary|safe water|clean water|right to w
 # "well-being|wellbeing|disaster|disabled|disabili"
 
 # Define combinations of keywords for the right to health
-keywords_comb1a <- "child|girl|women|sexual|domestic|gender|marital|lgbt"
-keywords_comb1b <- "abuse|maltreatment|violence|sexual|same-sex"
+keywords_comb1a <- "child|girl|women|sexual|domestic|gender|marital|lgbt|same-sex"
+keywords_comb1b <- "abuse|maltreatment|violence|sexual"
 
 keywords_comb2a <- "forced|minimum"
 keywords_comb2b <- "marriage"
@@ -294,7 +294,7 @@ hss_keywords <- "health worker|uhc|universal health|health system|healthcare sys
 hss_other_keywords <- "data"
 
 hss_keywords_comb1a <- "health"
-hss_keywords_comb1b <- "capacity-building|coverage|universal access|affordab|facilities"
+hss_keywords_comb1b <- "capacity-building|coverage|universal access|affordab|facilities| access "
 
 hss_keywords_comb2a <- "health"
 hss_keywords_comb2b <- "sector"
@@ -401,20 +401,20 @@ women_keywords_comb1b <- "death|mortality|health"
 > This category covers issues relating to maternal, foetal, newborn, infant, child and adolescent health. Also included in this category are recommendations relating to the ratification of the Convention on the Rights of the Child (CRC) and its optional protocol regarding the sale of children.
 
 ```{r}
-MCAH_keywords <- "newborn|foetal|fetal|fetus|foetus| infant|maternal|pregnan|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|child birth|eclampsia|obstet|intrapartum|postpartum|post-partum|contracept|breastfe|rights of the child| crc|sale of children|trafficking of children|child traffic|child protection|protection of children|protection of women and children"
+MCAH_keywords <- "newborn|foetal|fetal|fetus|foetus| infant|maternal|pregnan|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|child birth|eclampsia|obstet|intrapartum|postpartum|post-partum|contracept|breastfe|rights of the child| crc|sale of children|trafficking of children|child traffic|child protection|protection of children|protection of women and children|trafficking of minor|exploitation of child"
 
 MCAH_keywords_comb1a <- "maternal|child|infant|adolescent| teen"
 MCAH_keywords_comb1b <- "death|mortality|health|pregnan"
 
 MCAH_keywords_comb2a <- " child"
-MCAH_keywords_comb2b <- " traffic"
+MCAH_keywords_comb2b <- " traffic|violen|prostitut"
 ```
 
 #### Essential medicines and health products
 > The issue of essential medicines covers the availability of essential medicines within the context of functioning health systems. Ideally, essential medicines are available at all times in adequate amounts, in the appropriate dosage forms, with assured quality, and at a price the individual and the community can afford.
 
 ```{r}
-essential_medicines_keywords <- "medicine"
+essential_medicines_keywords <- "medicine|antibiotic|antimicrobial"
 ```
 
 
@@ -438,7 +438,7 @@ Also need to refine for health-related rights vs rights in general
 LGBTI_keywords <- "lgbti|reassignment|intersex|same sex|same-sex"
 
 LGBTI_keywords_comb1a <- "lgbt|lgtb| gay|lesbian|transgender|intersex|same sex|same-sex|gender"
-LGBTI_keywords_comb1b <- "health|surgery|reassignment"
+LGBTI_keywords_comb1b <- "health|surgery|reassignment|forced"
 ```
 
 #### HIV/AIDS and STIs
@@ -498,7 +498,7 @@ incarcerated_keywords <- " prison|imprison|detention|detaine|incarcer"
 
 #### Maternal health
 ```{r}
-maternal_keywords <- "maternal|pregnan|reproductive|sex education|sexuality education|sex education|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|eclampsia|obstetric|intrapartum|postpartum|post-partum|breastfe"
+maternal_keywords <- "maternal|pregnan|reproductive|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|eclampsia|obstetric|intrapartum|postpartum|post-partum|breastfe"
 ```
 
 #### Abortion
@@ -662,7 +662,7 @@ sdg_data <- uhri_upr |>
   # Health of LGBTI persons
   mutate(
     LGBTI = factor(case_when(
-      str_detect(tolower(text), LGBTI_keywords) ~ "LGBTI",
+      # str_detect(tolower(text), LGBTI_keywords) ~ "LGBTI",
       # Combo 1
       str_detect(tolower(text), LGBTI_keywords_comb1a)&
         str_detect(tolower(text), LGBTI_keywords_comb1b)~ "LGBTI",
@@ -1159,30 +1159,38 @@ c_plot |>
   filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
   # ggplot(aes(x= tidytext::reorder_within(recommending_state_upr, n, theme_label), y=n, fill=theme_label))+
   ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label))+
-  geom_col(alpha = 0.8, width = 0.8)+
+  geom_col(alpha = 0.8, width = 0.85)+
   # scale_fill_brewer(palette = "Dark2") +
   scale_fill_manual(values = c(
     "Maternal health" = "#7570b3",
     "Family Planning" = "#1b9e77",
     "Abortion" = "#d95f02"
   ))+
-  scale_y_continuous(expand = c(0, 0.1)) +
+  scale_y_continuous(
+    expand = c(0, 0.1), 
+    breaks = c(0:max(c_plot$n_tot))
+                     ) +
   tidytext::scale_x_reordered() +
   coord_flip()+
   theme_minimal() +
   # facet_wrap(.~theme_label, scales = "free_y", strip.position="left", space = "free_y",
   #            labeller = labeller(theme_label = label_wrap_gen(10)))+
-  guides(fill=guide_legend(reverse=TRUE))+
+  guides(fill=guide_legend(reverse=TRUE, nrow=1))+
   theme(
     strip.text.y = element_text(angle = 270, face = "bold"),
+    panel.grid.minor = element_blank(),
     strip.placement = "outside",
     panel.grid.major.y = element_blank(),
+    axis.text = element_text(size=11),
+    axis.title = element_text(size=11),
+    legend.text = element_text(size=12),
     # legend.position = c(0.99, 0.01),
     legend.position = "top",
     legend.justification = c("left", "bottom"),
     legend.margin = margin(0,0,0,0), 
     legend.box.margin = margin(0,0,0,0), 
     legend.box.spacing = unit(0,"pt"),
+    aspect.ratio = 0.04*n_distinct(ccp$recommending_state_upr),
     legend.background = element_blank())+
   labs(y="Number of issued recommendations that were supported", x=NULL,
        fill=NULL)
