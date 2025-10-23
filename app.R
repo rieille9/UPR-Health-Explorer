@@ -489,7 +489,7 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
            nav_panel(title = "By State", icon = icon("flag"),
                      markdown("UPR Recommendations **by State**"),
                      layout_column_wrap(
-                       style = css(grid_template_columns = "2fr 1fr"),
+                       style = css(grid_template_columns = "1fr 1fr"),
                        navset_card_tab(
                          full_screen = TRUE,
                          # title = "SUR Recommendation Details",
@@ -531,10 +531,10 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                            )
                          ),
                          card(
-                           # fill = FALSE,
+                           # fill = FALSE, 
                            full_screen = TRUE,
                            card_header("Recommending States"),
-                           card_body(plotOutput("recommending_states_SUR"))
+                           card_body(fillable = FALSE, plotOutput("recommending_states_SUR"))
                          )
                        )
                      )
@@ -1392,7 +1392,7 @@ server <- function(input, output, session) {
     
     ccp <- c_plot |> select(recommending_state_upr, n_tot) |> distinct() |> 
       arrange(-n_tot) |>
-    slice_head(n=20)
+      slice_head(n=20)
     
     c_plot |> 
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
@@ -1805,7 +1805,7 @@ server <- function(input, output, session) {
       ungroup() |> 
       distinct()
     
-   c_plot <- upr_rec_countries |> 
+    c_plot <- upr_rec_countries |> 
       filter(variable %in% c("abortion", 
                              "maternal_health", 
                              "contraception")) |> 
@@ -1824,18 +1824,21 @@ server <- function(input, output, session) {
     
     ccp <- c_plot |> select(recommending_state_upr, n_tot) |> distinct() |> 
       arrange(-n_tot) #|>
-      # slice_head(n=15)
+    # slice_head(n=15)
     
     c_plot |> 
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
       ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label))+
-      geom_col(alpha = 0.8, width = 0.8)+
+      geom_col(alpha = 0.8, width = 0.85)+
       scale_fill_manual(values = c(
         "Maternal health" = "#7570b3",
         "Family Planning" = "#1b9e77",
         "Abortion" = "#d95f02"
       ))+
-      scale_y_continuous(expand = c(0, 0.1)) +
+      scale_y_continuous(
+        expand = c(0, 0.1),
+        breaks = c(0:max(c_plot$n_tot))
+      ) +
       tidytext::scale_x_reordered() +
       coord_flip()+
       theme_minimal() +
@@ -1844,6 +1847,12 @@ server <- function(input, output, session) {
         strip.text.y = element_text(angle = 270, face = "bold"),
         strip.placement = "outside",
         panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title = element_text(size=13),
+        axis.text = element_text(size=13),
+        aspect.ratio = 0.09*n_distinct(ccp$recommending_state_upr),
+        plot.margin = margin(0,0,0,0),
+        legend.text = element_text(size=11),
         legend.position = "top",
         legend.justification = c("left", "bottom"),
         legend.margin = margin(0,0,0,0), 
