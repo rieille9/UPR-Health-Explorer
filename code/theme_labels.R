@@ -1,5 +1,6 @@
 theme_labels <- tribble(
   ~"variable", ~"theme_label",
+  "health_related", "Health-related",
   "health_systems", "Health systems and services",
   "emergencies", "Health security, emergencies, and disaster relief",
   "ncd", "Non-communicable diseases",
@@ -9,7 +10,10 @@ theme_labels <- tribble(
   "SOCED", "Social and economic determinants of health",
   "GBV", "Gender-based violence",
   "women", "Women's health",
-  "MCAH", "Maternal, child, and adolescent health",
+  "MCAH", "Child, and adolescent health",
+  "maternal_health", "Maternal health",
+  "abortion", "Abortion",
+  "contraception", "Family planning",
   "essential_medicines", "Essential medicines and health products",
   "disabilities", "Disabilities and health",
   "LGBTI", "Health of LGBTI persons",
@@ -18,10 +22,10 @@ theme_labels <- tribble(
   "NTD", "Neglected tropical diseases",
   "TB_malaria_NTD", "TB, malaria, and neglected tropical diseases",
   "vaccinations", "Vaccinations",
-  "WASH", "Water and Sanitation",
+  "WASH", "Water and sanitation",
   "nutrition", "Nutrition",
-  "maternal_health", "Maternal health",
-  "abortion", "Abortion",
-  "contraception", "Family Planning",
-  "incarcerated", "Health of incarcerated persons"
+  "incarcerated", "Health of incarcerated persons",
+  "occupational_health", "Occupational health",
+  "migrant_health", "Migrant health",
+  "other_health_related", "Other health-related"
 )

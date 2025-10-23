@@ -884,8 +884,15 @@ sdg_data <- uhri_upr |>
       levels = c("Other", "Health-related"))
   )|> 
   
+  mutate(
+    other_health_related = factor(case_when(
+      if_all(c(health_systems:maternal_health), ~ .x == "Other") & health_related != "Other" ~ "Other health-related",
+      .default = "Other"),
+      levels = c("Other", "Other health-related"))
+  )|> 
+  
   # Reorder columns
-  relocate(health_systems:maternal_health, .after = text) |> 
+  relocate(health_systems:maternal_health, other_health_related, .after = text) |> 
   relocate(health_related, .after = text)
 
 saveRDS(sdg_data, file = here("output", "UHRI_UPR_enhanced.rds"))
@@ -985,25 +992,25 @@ sdg_data |>
 #### By theme
 ```{r}
 a_1 <- sdg_data |>
-      select(cycle, health_related:maternal_health, response_upr) |>
+      select(cycle, health_related:other_health_related, response_upr) |>
       group_by(response_upr) |>
-      summarise(across(c(health_related:maternal_health), ~ sum(.x != "Other"))) |>
+      summarise(across(c(health_related:other_health_related), ~ sum(.x != "Other"))) |>
       ungroup() |>
       filter(response_upr %in% c("Supported", "Noted")) |>
       pivot_longer(
-        cols = health_related:maternal_health,
+        cols = health_related:other_health_related,
         names_to = "theme",
         values_to = "n"
       )
     
     a_2 <- sdg_data |>
-      select(cycle, health_related:maternal_health, response_upr) |>
+      select(cycle, health_related:other_health_related, response_upr) |>
       group_by(response_upr) |>
-      summarise(across(c(health_related:maternal_health), ~ sum(.x == "Other"))) |>
+      summarise(across(c(health_related:other_health_related), ~ sum(.x == "Other"))) |>
       ungroup() |>
       filter(response_upr %in% c("Supported", "Noted")) |>
       pivot_longer(
-        cols = health_related:maternal_health,
+        cols = health_related:other_health_related,
         names_to = "theme",
         values_to = "n_other"
       )
@@ -1084,26 +1091,26 @@ a_1 <- sdg_data |>
 
 a_1<-sdg_data |> 
   # filter(state_under_review == "Nigeria") |> 
-  select(cycle, state_under_review, health_related:maternal_health, response_upr) |> 
-  # mutate(across(c(health_related:maternal_health), ~ .x != "Other")) |> 
+  select(cycle, state_under_review, health_related:other_health_related, response_upr) |> 
+  # mutate(across(c(health_related:other_health_related), ~ .x != "Other")) |> 
   group_by(cycle, response_upr) |> 
-  summarise(across(c(health_related:maternal_health), ~ sum(.x !="Other"))) |> 
+  summarise(across(c(health_related:other_health_related), ~ sum(.x !="Other"))) |> 
   ungroup() |> 
   filter(response_upr %in% c("Supported", "Noted")) |>
-  pivot_longer(cols = health_related:maternal_health, 
+  pivot_longer(cols = health_related:other_health_related, 
                names_to = "theme", 
                values_to = "n"
   )
 
 a_2<-sdg_data |> 
   # filter(state_under_review == "Nigeria") |> 
-  select(cycle, state_under_review, health_related:maternal_health, response_upr) |> 
-  # mutate(across(c(health_related:maternal_health), ~ .x != "Other")) |> 
+  select(cycle, state_under_review, health_related:other_health_related, response_upr) |> 
+  # mutate(across(c(health_related:other_health_related), ~ .x != "Other")) |> 
   group_by(cycle, response_upr) |> 
-  summarise(across(c(health_related:maternal_health), ~ sum(.x =="Other"))) |> 
+  summarise(across(c(health_related:other_health_related), ~ sum(.x =="Other"))) |> 
   ungroup() |> 
   filter(response_upr %in% c("Supported", "Noted")) |>
-  pivot_longer(cols = health_related:maternal_health, 
+  pivot_longer(cols = health_related:other_health_related, 
                names_to = "theme", 
                values_to = "n_other"
   )
