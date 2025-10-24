@@ -658,15 +658,15 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
            )
   ),
   ## Family planning ------------------
-  nav_panel(title = "Family Planning", icon = icon("people-group"),
-            # "Family Planning",
+  nav_panel(title = "Family planning", icon = icon("people-group"),
+            # "Family planning",
             layout_column_wrap(
               full_screen = TRUE,
               style = css(grid_template_columns = "1fr 1fr"),
               card(
                 fill = FALSE,
                 full_screen = TRUE,
-                card_header("Met Need for Family Planning (%)"),
+                card_header("Met Need for Family planning (%)"),
                 plotOutput("family_planning")
               )
             )
@@ -1400,7 +1400,7 @@ server <- function(input, output, session) {
       geom_col(alpha = 0.8, width = 0.8)+
       scale_fill_manual(values = c(
         "Maternal health" = "#7570b3",
-        "Family Planning" = "#1b9e77",
+        "Family planning" = "#1b9e77",
         "Abortion" = "#d95f02"
       ))+
       scale_y_continuous(expand = c(0, 0.1)) +
@@ -1832,7 +1832,7 @@ server <- function(input, output, session) {
       geom_col(alpha = 0.8, width = 0.85)+
       scale_fill_manual(values = c(
         "Maternal health" = "#7570b3",
-        "Family Planning" = "#1b9e77",
+        "Family planning" = "#1b9e77",
         "Abortion" = "#d95f02"
       ))+
       scale_y_continuous(
