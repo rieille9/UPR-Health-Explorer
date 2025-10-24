@@ -41,7 +41,9 @@ pacman::p_load(
 # sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
 #   mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
 sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
-  mutate(response_upr = fct_recode(response_upr, 
+  mutate(
+    response_upr_2 = response_upr,
+    response_upr = fct_recode(response_upr, 
                                       "Noted" = "Partially supported"),
          response_upr = fct_relevel(response_upr, "Noted")) |> 
   droplevels()
@@ -378,9 +380,9 @@ contraceptive_prevalence_text_20_49 <-
 As enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, the right to health is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health.  
 
 Under the Right to Health, States have the following obligations:  
-\ \ - \textcolor{fgcolor}{\hlCeHDIBlue{Respect:}} refrain from directly or indirectly interfering with the enjoyment of the right to health.  
-\ \ - \textcolor{fgcolor}{\hlCeHDIBlue{Protect:}} take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
-\ \ - \textcolor{fgcolor}{\hlCeHDIBlue{Fulfill:}} adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.
+\ \ - \textbf{{Respect:}} refrain from directly or indirectly interfering with the enjoyment of the right to health.  
+\ \ - \textbf{{Protect:}} take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
+\ \ - \textbf{{Fulfill:}} adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ The Universal Periodic Review (UPR) \ \ \ \ }}}\end{center}  
 The UPR is a **State-led mechanism** that aims to evaluate each State’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to **"Support"** or **"Note"** those recommendations.  
 
@@ -400,24 +402,24 @@ print(params$upr_all+
 )
 ```
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Legal Basis for Health in `r params$country_name` \ \ \ \ }}}\end{center}  
-\textcolor{fgcolor}{\hlCeHDIBlue{Constitutional guarantees for citizens (as of June 2024):}}\footnote{\href{https://www.worldpolicycenter.org/maps-data/data-download/constitutions-data-download}{worldpolicycenter.org} \label{fn:worldpolicy}}  
+\textbf{{Constitutional guarantees for citizens (as of June 2024):}}\footnote{\href{https://www.worldpolicycenter.org/maps-data/data-download/constitutions-data-download}{worldpolicycenter.org} \label{fn:worldpolicy}}  
 \ \ - Right to health: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_health)`  
 \ \ - Right to public health: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_publichealth)`  
 \ \ - Right to medical care: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_medcare)`  
 \ \ - Right to a healthy environment: `r constitutions |> filter(iso3 == iso3_SUR) |> pull(const_enviro)`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Legal status of abortion (as of June 2023):}}\footnote{\href{https://reproductiverights.org/wp-content/uploads/2023/12/WALM_2023-v3-Updated_12-20-23.pdf}{reproductiverights.org} \label{fn:reproductiverights}} `r world_abortion_laws |> filter(country == params$country_name) |> pull(category)`
+\textbf{{Legal status of abortion (as of June 2023):}}\footnote{\href{https://reproductiverights.org/wp-content/uploads/2023/12/WALM_2023-v3-Updated_12-20-23.pdf}{reproductiverights.org} \label{fn:reproductiverights}} `r world_abortion_laws |> filter(country == params$country_name) |> pull(category)`
 \columnbreak
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Demographics \ \ \ \ }}}\end{center}  
-\textcolor{fgcolor}{\hlCeHDIBlue{Population:}}\footnote{\href{https://population.un.org/wpp}{population.un.org/wpp} \label{fn:WPP}} `r pop_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`
+\textbf{{Population:}}\footnote{\href{https://population.un.org/wpp}{population.un.org/wpp} \label{fn:WPP}} `r pop_text`  
+\textbf{{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Sexual and Reproductive Health \ \ \ \ }}}\end{center}  
-\textcolor{fgcolor}{\hlCeHDIBlue{Total fertility rate:}}\textsuperscript{\ref{fn:WPP}} `r fertility_rate_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Met need for family planning:}}\textsuperscript{\ref{fn:whoGHO}} `r family_planning_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Adolescent birth rate:}}\footnote{\href{https://www.who.int/data/gho/info/gho-odata-api}{WHO Global Health Observatory} \label{fn:whoGHO}}  
+\textbf{{Total fertility rate:}}\textsuperscript{\ref{fn:WPP}} `r fertility_rate_text`  
+\textbf{{Met need for family planning:}}\textsuperscript{\ref{fn:whoGHO}} `r family_planning_text`  
+\textbf{{Adolescent birth rate:}}\footnote{\href{https://www.who.int/data/gho/info/gho-odata-api}{WHO Global Health Observatory} \label{fn:whoGHO}}  
 \ \ - Aged 10 to 14: `r adolescent_birth_rate_text_10_14`  
 \ \ - Aged 15 to 19: `r adolescent_birth_rate_text_15_19`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Births attended by skilled health personnel:}}\textsuperscript{\ref{fn:whoGHO}} `r skilled_birth_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Maternal mortality ratio (MMR):}}\textsuperscript{\ref{fn:whoGHO}} `r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2023) |> pull(NumericValue) |> round(digits = 0)` maternal deaths per 100,000 live births in 2023 (`r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2005) |> pull(NumericValue) |> round(digits = 0)` in 2005)  
+\textbf{{Births attended by skilled health personnel:}}\textsuperscript{\ref{fn:whoGHO}} `r skilled_birth_text`  
+\textbf{{Maternal mortality ratio (MMR):}}\textsuperscript{\ref{fn:whoGHO}} `r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2023) |> pull(NumericValue) |> round(digits = 0)` maternal deaths per 100,000 live births in 2023 (`r MMR |> filter(SpatialDim == iso3_SUR, YEAR == 2005) |> pull(NumericValue) |> round(digits = 0)` in 2005)  
 ```{r, out.width="90%"}
 # mmr_estimate_2023 = params$mmr_map_plot@data |>
 #   filter(country_name == params$country_name,
@@ -599,12 +601,12 @@ dat_plot |>
   )+
   coord_cartesian(clip="off")
 ```
-<!-- \textcolor{fgcolor}{\hlCeHDIBlue{Contraceptive prevalence (modern methods):}}\textsuperscript{\ref{fn:whoGHO}}   -->
+<!-- \textbf{{Contraceptive prevalence (modern methods):}}\textsuperscript{\ref{fn:whoGHO}}   -->
 <!-- \ \ - Aged 15 to 19:  `r contraceptive_prevalence_text_15_19`   -->
 <!-- \ \ - Aged 20 to 49:  `r contraceptive_prevalence_text_20_49` -->
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Health Services Coverage (latest available data) \ \ \ \ }}}\end{center}  
-<!-- \textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage index:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`   -->
-\textcolor{fgcolor}{\hlCeHDIBlue{UHC service coverage (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`):}}\textsuperscript{\ref{fn:whoGHO}}
+<!-- \textbf{{UHC service coverage index:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_estimate |> pull(Value)` in `r UHC_estimate |> pull(YEAR)`   -->
+\textbf{{UHC service coverage (`r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == min(YEAR)) |> pull(YEAR)` to `r UHC_all |> filter(COUNTRY == iso3_SUR, IndicatorCode == "UHC_INDEX_REPORTED", YEAR == max(YEAR)) |> pull(YEAR)`):}}\textsuperscript{\ref{fn:whoGHO}}
 ```{r, fig.align="center", fig.width=7, fig.height=1.5, out.width="90%"}
 uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
   p_data <- dat |> 
@@ -662,13 +664,13 @@ p5<-uhc_plots(UHC_all |> filter(IndicatorCode == "UHC_SCI_RMNCH"),
                 plot.background = element_blank()
   ))
 ```
-<!-- \textcolor{fgcolor}{\hlCeHDIBlue{UHC sub-index on RMNCH:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_RMNCH_estimate |> pull(Value)` in `r UHC_RMNCH_estimate |> pull(YEAR)`   -->
-\textcolor{fgcolor}{\hlCeHDIBlue{Antenatal care coverage (\ge 4 visits):}}\footnote{\href{https://platform.who.int/data/maternal-newborn-child-adolescent-ageing}{WHO MNCAH Data Portal} \label{fn:whoMNCAH}} `r antenatal_WHO_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{Nursing/midwifery personnel (per 10,000):}}\textsuperscript{\ref{fn:whoGHO}}  `r nursing_density_text`  
+<!-- \textbf{{UHC sub-index on RMNCH:}}\textsuperscript{\ref{fn:whoGHO}} `r UHC_RMNCH_estimate |> pull(Value)` in `r UHC_RMNCH_estimate |> pull(YEAR)`   -->
+\textbf{{Antenatal care coverage (\ge 4 visits):}}\footnote{\href{https://platform.who.int/data/maternal-newborn-child-adolescent-ageing}{WHO MNCAH Data Portal} \label{fn:whoMNCAH}} `r antenatal_WHO_text`  
+\textbf{{Nursing/midwifery personnel (per 10,000):}}\textsuperscript{\ref{fn:whoGHO}}  `r nursing_density_text`  
 
-\textcolor{fgcolor}{\hlCeHDIBlue{HPV coverage (9-14 year old girls):}}\textsuperscript{\ref{fn:whoGHO}}  `r HPV_coverage_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{HPV vaccine introduction:}}\footnote{\href{https://immunizationdata.who.int}{immunizationdata.who.int} \label{fn:whoimmunization}} `r HPV_national_alt_text`  
-\textcolor{fgcolor}{\hlCeHDIBlue{DTP3 coverage (among 1-year-olds):}}\textsuperscript{\ref{fn:whoGHO}} `r DTP3_coverage_text`
+\textbf{{HPV coverage (9-14 year old girls):}}\textsuperscript{\ref{fn:whoGHO}}  `r HPV_coverage_text`  
+\textbf{{HPV vaccine introduction:}}\footnote{\href{https://immunizationdata.who.int}{immunizationdata.who.int} \label{fn:whoimmunization}} `r HPV_national_alt_text`  
+\textbf{{DTP3 coverage (among 1-year-olds):}}\textsuperscript{\ref{fn:whoGHO}} `r DTP3_coverage_text`
 ```{=latex}
 \end{multicols}
 ```
