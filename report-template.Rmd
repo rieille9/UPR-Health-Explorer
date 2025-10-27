@@ -44,8 +44,8 @@ sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |>
   mutate(
     response_upr_2 = response_upr,
     response_upr = fct_recode(response_upr, 
-                                      "Noted" = "Partially supported"),
-         response_upr = fct_relevel(response_upr, "Noted")) |> 
+                              "Noted" = "Partially supported"),
+    response_upr = fct_relevel(response_upr, "Noted")) |> 
   droplevels()
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
@@ -388,18 +388,116 @@ The UPR is a **State-led mechanism** that aims to evaluate each State’s human 
 
 A CeHDI analysis of recommendations from all cycles of the UPR was used to identify health-related recommendations, which have globally gained prominence in the UPR over time (for `r params$country_name`, health-related recommendations accounted for `r health_rec_C |> filter(cycle == "Cycle 1", health_related == "Health-related") |> pull(perc)` of all recommendations in Cycle 1, and `r health_rec_C |> filter(health_related == "Health-related") |> slice_max(order_by = cycle) |> pull(perc)` in `r health_rec_C |> filter(health_related == "Health-related") |> slice_max(order_by = cycle) |> pull(cycle)`). These recommendations were further categorized into the following themes:\footnote{Visit \href{https://cehdi-har.share.connect.posit.cloud/}{cehdi-har.share.connect.posit.cloud} for more details.\label{fn:cehdiHAR}}
 ```{r, fig.width=5.2, fig.height=4}
-print(params$upr_all+
-        labs(title = params$country_name)+
-        theme(
-          axis.title.x = element_text(color = "#1c164d"),
-          axis.text = element_text(color = "#1c164d"),
-          plot.title = element_text(color = "#1c164d"),
-          plot.caption = element_text(color = "#1c164d"),
-          plot.background = element_rect(color = "#1c164d", fill = NA),
-          panel.background = element_blank(),
-          legend.background = element_blank()
-        )
-)
+a_1 <- 
+  sdg_data |>    
+  filter(state_under_review == params$country_name) |> 
+  select(cycle, state_under_review, health_related:maternal_health, response_upr) |>
+  group_by(response_upr) |>
+  summarise(across(c(health_related:maternal_health), ~ sum(.x != "Other"))) |>
+  ungroup() |>
+  filter(response_upr %in% c("Supported", "Noted")) |>
+  pivot_longer(
+    cols = health_related:maternal_health,
+    names_to = "theme",
+    values_to = "n"
+  )
+
+a_2 <- 
+  sdg_data |>    
+  filter(state_under_review == params$country_name) |> 
+  select(cycle, state_under_review, health_related:maternal_health, response_upr) |>
+  group_by(response_upr) |>
+  summarise(across(c(health_related:maternal_health), ~ sum(.x == "Other"))) |>
+  ungroup() |>
+  filter(response_upr %in% c("Supported", "Noted")) |>
+  pivot_longer(
+    cols = health_related:maternal_health,
+    names_to = "theme",
+    values_to = "n_other"
+  )
+
+a <- left_join(a_1, a_2) |>
+  group_by(theme) |>
+  mutate(
+    n_tot = sum(n) + sum(n_other),
+    n_tot_theme = sum(n)
+  ) |>
+  mutate(
+    perc = n / n_tot * 100,
+    perc_theme = n_tot_theme / n_tot * 100
+  ) |>
+  group_by(theme) |>
+  mutate(
+    n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
+    n_sup = case_when(n_tot_theme == 0 ~ "", .default = n_sup)
+  ) |>
+  ungroup() |>
+  filter(!theme %in% c("health_related", "TB_malaria", "NTD")) |>
+  left_join(theme_labels, by = c("theme" = "variable")) |>
+  arrange(-n_tot_theme) |>
+  mutate(
+    theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
+    theme_label = fct_inorder(theme_label)
+  )
+
+
+max_a <- max(a$perc_theme, na.rm = TRUE)
+a |>
+  ggplot(aes(x = perc, y = fct_rev(theme_label))) +
+  geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
+  scale_fill_manual(values = c("#ec5557", "#1c164d"))+
+  labs(
+    x = "Proportion of all recommendations (%)", y = NULL,
+    fill = "State's response",
+    title = paste("All health-related recommendations of the UPR\n", params$country_name),
+    caption = "*Numbers after the bars indicate N (% supported)"
+  ) +
+  theme_classic() +
+  scale_x_continuous(
+    labels = function(x) paste0(x, "%"),
+    # limits = c(0, max_a + 2),
+    expand = expansion(mult = c(0, 0.15))
+  ) +
+  coord_cartesian(clip = "off")+
+  theme(
+    plot.margin = margin(l=2,t=2,b=2, r = 30, unit = "pt"),
+    legend.position = c(0.99, 0.01),
+    legend.justification = c("right", "bottom"),
+    legend.margin = margin(0,0,0,0),
+    legend.frame = element_blank(),
+    legend.text = element_text(size = 9, color = "#1c164d"),
+    legend.title = element_text(size = 11, color = "#1c164d"),
+    legend.background = element_blank(),
+    axis.text.y = element_text(size = 9, color = "#1c164d"),
+    axis.text.x = element_text(size = 10, color = "#1c164d"),
+    plot.title = element_text(hjust = 0.5, face = "bold", color = "#1c164d"),
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(color = "#1c164d"),
+    plot.title.position = "plot",
+    panel.grid = element_blank(),
+    plot.caption = element_text(color = "#1c164d"),
+    plot.background = element_rect(color = "#1c164d", fill = NA),
+    panel.background = element_blank()
+  ) +
+  geom_text(
+    data = a |> filter(response_upr == "Supported"),
+    aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
+    hjust = -0.15, size = 3, vjust = 0.25, color = "#1c164d"
+  )
+
+
+# print(params$upr_all+
+#         labs(title = params$country_name)+
+#         theme(
+#           axis.title.x = element_text(color = "#1c164d"),
+#           axis.text = element_text(color = "#1c164d"),
+#           plot.title = element_text(color = "#1c164d"),
+#           plot.caption = element_text(color = "#1c164d"),
+#           plot.background = element_rect(color = "#1c164d", fill = NA),
+#           panel.background = element_blank(),
+#           legend.background = element_blank()
+#         )
+# )
 ```
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Legal Basis for Health in `r params$country_name` \ \ \ \ }}}\end{center}  
 \textbf{{Constitutional guarantees for citizens (as of June 2024):}}\footnote{\href{https://www.worldpolicycenter.org/maps-data/data-download/constitutions-data-download}{worldpolicycenter.org} \label{fn:worldpolicy}}  
@@ -575,7 +673,7 @@ dat_plot |>
   guides(color = "none", lwd = "none", fill = "none") +
   facet_wrap(. ~ country_name, nrow=1, scales = "free"
              # ,labeller = labeller(country_name = label_wrap_gen(21))
-             ) +
+  ) +
   geom_hline(data = hline_data, aes(yintercept = NumericValue), lty = 2) +
   theme_bw()+
   theme(
@@ -624,7 +722,7 @@ uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
       data = label_data_1, # Use the special, single-row data frame
       aes(label = Value, # The text for the label
           nudge_y = if_else(label_data_1$NumericValue> 30, -12,13)
-          ),      # Nudge the label slightly
+      ),      # Nudge the label slightly
       size=5, hjust = 0,
       color = "#1c164d", # Match theme color
       # fontface = "bold" # Make it stand out
@@ -633,7 +731,7 @@ uhc_plots <- function(dat, title_text = "Update title", yMAX = 100){
       data = label_data_2, # Use the special, single-row data frame
       aes(label = Value, # The text for the label
           nudge_y = if_else(label_data_2$NumericValue> 30, -12,13)
-          ),      # Nudge the label slightly
+      ),      # Nudge the label slightly
       size=5, hjust = 1,
       color = "#1c164d", # Match theme color
       # fontface = "bold" # Make it stand out
@@ -684,7 +782,7 @@ table_data <- sdg_data |>
   select(text_2, cycle, response_upr
          # , recommending_state_upr_comma
          # , maternal_health, abortion, contraception
-         ) |> 
+  ) |> 
   rename(
     Recommendation  = text_2,
     Cycle = cycle,
