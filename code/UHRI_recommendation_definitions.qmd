@@ -299,14 +299,14 @@ keywords_comb3b <- "surgery|sterili"
 When applying these definitions, I think we will need to first more generally define health-related recommendations, and then within that context we can apply the keywords below to define health systems and services.
 
 ```{r}
-hss_keywords <- "health worker|healthcare worker|health-care worker|uhc|universal health|health system|healthcare system|health-care system|health care system|health service|healthcare service|health-care service|health care service| oral health|health and education|health coverage|public health|free health|access to health|quality health|strenghthen health|right to health"
+hss_keywords <- "health worker|healthcare worker|health-care worker|uhc|universal health|health system|healthcare system|health-care system|health care system|health service|healthcare service|health-care service|health care service| oral health|health and education|health coverage|public health|free health|access to health|quality health|strenghthen health|right to health|rights to health|guarantee health|guarantee the rights of life, education and health|guarantee the right of health|guarantee the rights to education and health|rights of the Palestinian people, inter alia, to housing, education, health|improve its health - care service|guaranteeing the provision of health|guarantee health care and education|guarantee health assistance to all|achieving health-related goals|highest level of health possible|strengthen its policies in the fields of education and health|programmes aimed at guaranteeing the rights to education, health|programmes to guarantee the rights to education, health|guarantee essential health care for all citizens"
 hss_other_keywords <- "data"
 
 hss_keywords_comb1a <- "health"
-hss_keywords_comb1b <- "capacity-building|coverage|infrastructure|human resources|universal access|affordab|facilities| access | public |budget"
+hss_keywords_comb1b <- "capacity-building|coverage|infrastructure|human resources|universal access|affordab|facilities| access | public |budget|social and economic right"
 
 hss_keywords_comb2a <- "health"
-hss_keywords_comb2b <- "sector|system"
+hss_keywords_comb2b <- "sector|system|program"
 hss_keywords_comb2c <- "financ"
 
 ```
@@ -328,7 +328,7 @@ emergencies_keywords_comb2b <- "relief"
 > The four main types of noncommunicable diseases (NCD) are cardiovascular diseases (like heart attacks and stroke); cancers; chronic respiratory diseases (such as chronic obstructed pulmonary disease and asthma); diabetes; alcohol and drug use. But this category also includes other types of NCD.
 
 ```{r}
-ncd_keywords <- "non-communicable|cardiovascular|stroke|cancer|neoplasm|chronic diseas|hypertension|diabet|alcohol|tobacco|smoking|kidney| liver |air pollution|drug dependence"
+ncd_keywords <- "non-communicable|cardiovascular|stroke|cancer|neoplasm|chronic diseas|hypertension|diabet|alcohol|tobacco|smoking|kidney| liver |air pollution|drug dependence|polluted air"
 
 ncd_keywords_comb1a <- " drug"
 ncd_keywords_comb1b <- "addict|abuse| use |harm"
@@ -503,7 +503,7 @@ nutrition_keywords_comb1b <- ""
 
 #### Occupational health
 ```{r}
-occupational_health_keywords <- "health of workers|workers' health|occupational health"
+occupational_health_keywords <- "health of workers|workers' health|occupational health|safe and healthy work environment|safe work environment|healthy work environment"
 ```
 
 #### Refugee and Migrant health

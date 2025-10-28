@@ -172,11 +172,11 @@ map_insetting <- function(
 
 ## Plot resolutions ------------------------------------------
 upr_dpi <- 200
-upr_width <- 600
-upr_height <- 450
+upr_width <- 620
+upr_height <- 550
 
 upr_cycle_width <- 550
-upr_cycle_height <- 700
+upr_cycle_height <- 800
 
 # 2. UI: BSLIB USER INTERFACE (with page_navbar) ==============================
 
