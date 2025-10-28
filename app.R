@@ -14,6 +14,7 @@ pacman::p_load(
   ggtext, # allow dynamically wrapped plot titles
   janitor,
   DT, # interactive tables
+  openxlsx, # download as xlsx
   sf, # mapping features
   # necountries,
   patchwork,
@@ -489,7 +490,7 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
            nav_panel(title = "By State", icon = icon("flag"),
                      markdown("UPR Recommendations **by State**"),
                      layout_column_wrap(
-                       style = css(grid_template_columns = "1fr 1fr"),
+                       style = css(grid_template_columns = "3fr 1fr"),
                        navset_card_tab(
                          full_screen = TRUE,
                          # title = "SUR Recommendation Details",
@@ -513,7 +514,24 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                                         ))
                                    )
                          ),
-                         nav_panel("Data Table", DTOutput("DT_table"))
+                         nav_panel("Data Table", 
+                                   card(fill=TRUE,
+                                  card_body(DTOutput("DT_table")),
+                                   card_footer(
+                                     downloadButton(
+                                     outputId = "download_data_csv",
+                                     label = "State data (csv)"
+                                   ),
+                                   downloadButton(
+                                     outputId = "download_data_xlsx",
+                                     label = "State data (xlsx)"
+                                   ),
+                                   downloadButton(
+                                     outputId = "download_data_csv_all",
+                                     label = "All data (csv)"
+                                   )
+                                   )
+                                   ))
                        ),
                        layout_column_wrap(
                          width=1,
@@ -1471,10 +1489,11 @@ server <- function(input, output, session) {
         # legend.justification = c("left", "top"),
         legend.text = element_text(size = 18),
         legend.background = element_blank(),
-        plot.title = ggtext::element_textbox_simple(
-          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        # plot.title = ggtext::element_textbox_simple(
+        #   margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        # ),
+        plot.title= element_blank()
         )
-      )
     p
   })
   
@@ -1756,15 +1775,68 @@ server <- function(input, output, session) {
   )
   
   ### Data table ---------------------------
-  output$DT_table <- renderDT({
+  
+  #### Table object ----------------
+  DT_table_object <- reactive({
     req(nrow(filtered_upr()) > 0)
-    filtered_upr() |>
+    theme_labels_test <- theme_labels |> 
+      filter(!variable %in% c("TB_malaria_NTD"))
+    
+    table_upr <- 
+      # filtered_upr() |>
+      sdg_data_dashboard() |>
+      # filter(state_under_review == input$selected_SUR)
       mutate(state_under_review = factor(state_under_review)) |>
       select(
-        text, cycle, response_upr, health_related:maternal_health,
-        state_under_review,recommending_state_upr_comma, document_code, paragraph
+        # text, cycle, response_upr, health_related:maternal_health,
+        # state_under_review,recommending_state_upr_comma, document_code, paragraph
+        
+        text_2, cycle, response_upr,
+        any_of(theme_labels_test$variable), 
+        state_under_review, recommending_state_upr_comma, 
+        document_code, paragraph #, affected_persons, themes
       ) |>
-      rename(recommending_states = recommending_state_upr_comma) |> 
+      rename(
+        `Recommending State(s)` = recommending_state_upr_comma,
+        `State under Review` = state_under_review,
+        Document  = document_code,
+        Paragraph = paragraph,
+        Recommendation = text_2, 
+        Cycle = cycle, 
+        `State's response` = response_upr
+        )
+    
+    rename_map <- setNames(theme_labels_test$variable, theme_labels_test$theme_label)
+    table_upr |>
+      dplyr::rename(any_of(rename_map))
+    
+    # table_upr |> 
+    #   DT::datatable(
+    #     # extensions = "Responsive",
+    #     filter = "top",
+    #     options = list(
+    #       pageLength = 100,
+    #       deferRender = TRUE,
+    #       scrollY = 800,
+    #       scrollX = TRUE,
+    #       scroller = TRUE,
+    #       autoWidth = TRUE,
+    #       columnDefs = list(
+    #         list(width = '500px', targets = c(0))
+    #         # list(width = '200px', targets = c(1))
+    #       )
+    #     ),
+    #     rownames = FALSE,
+    #     class = 'cell-border stripe hover compact'
+    #   )
+  })
+  
+  
+  #### Render table ---------------------
+  output$DT_table <- renderDT({
+    req(nrow(filtered_upr()) > 0)
+    DT_table_object() |> 
+      filter(`State under Review` == input$selected_SUR) |> 
       DT::datatable(
         # extensions = "Responsive",
         filter = "top",
@@ -1776,14 +1848,100 @@ server <- function(input, output, session) {
           scroller = TRUE,
           autoWidth = TRUE,
           columnDefs = list(
-            list(width = '500px', targets = c(0))
-            # list(width = '200px', targets = c(1))
+            list(width = '400px', targets = c(0)),
+            list(width = '150px', targets = c(5,8,10)),
+            list(width = '100px', targets = c(4,17,26))
+            # , list(width = '300px', targets = c(21))
           )
         ),
         rownames = FALSE,
         class = 'cell-border stripe hover compact'
       )
   })
+  
+  #### Table downloader -----------------------------
+  ##### CSV --------------------
+  output$download_data_csv <- downloadHandler(
+    filename = function() {
+      # Create a dynamic filename
+      paste0("UPR-recommendations-", input$selected_SUR, ".csv")
+    },
+    content = function(file) {
+      # Use ggsave to save the reactive plot object to the temp file
+      write_csv(DT_table_object() |> filter(`State under Review` == input$selected_SUR), file)
+    }
+  )
+  
+  ##### CSV - ALL --------------------
+  output$download_data_csv_all <- downloadHandler(
+    filename = function() {
+      # Create a dynamic filename
+      paste0("UPR-recommendations-all", ".csv")
+    },
+    content = function(file) {
+      # Use ggsave to save the reactive plot object to the temp file
+      write_csv(DT_table_object(), file)
+    }
+  )
+  
+  ##### XLSX ---------------------
+  output$download_data_xlsx <- downloadHandler(
+    filename = function() {
+      # Create a dynamic filename
+      paste0("UPR-recommendations-", input$selected_SUR, ".xlsx")
+    },
+    content = function(file) {
+      wb <- createWorkbook()
+      addWorksheet(wb, "recommendations")
+      writeDataTable(wb, "recommendations", 
+                     DT_table_object() |> filter(`State under Review` == input$selected_SUR), 
+                     tableStyle = "TableStyleMedium15")
+      
+      setColWidths(
+        wb,
+        sheet = "recommendations",
+        cols = 1,      # Target the first column
+        widths = 50    # Set its width
+      )
+      setColWidths(
+        wb,
+        sheet = "recommendations",
+        cols = 2:(ncol(DT_table_object())-4),      #rest of the columns
+        widths = 12    # Set its width
+      )
+      setColWidths(
+        wb,
+        sheet = "recommendations",
+        cols = c(5,6,9,11,18,22),      #rest of the columns
+        widths = 20    # Set its width
+      )
+      setColWidths(
+        wb,
+        sheet = "recommendations",
+        cols = ncol(DT_table_object())-2,      #rest of the columns
+        widths = 20    # Set its width
+      )
+      
+      wrap_style <- createStyle(wrapText = TRUE)
+      addStyle(
+        wb,
+        sheet = "recommendations",
+        style = wrap_style,
+        rows = 1:(nrow(DT_table_object()) + 1), # all rows
+        cols = 1:ncol(DT_table_object()),          # all columns
+        gridExpand = TRUE                 # Ensure style is applied to all specified cells
+      )
+      
+      freezePane(
+        wb,
+        sheet = "recommendations",
+        firstActiveRow = 2, # The second row is the first one that moves
+        firstActiveCol = 2  # The second column is the first one that moves
+      )
+      
+      saveWorkbook(wb, file)
+    }
+  )
   
   ### MH recommending states --------------------------
   output$recommending_states_SUR <- renderPlot({

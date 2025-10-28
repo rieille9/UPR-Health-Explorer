@@ -54,8 +54,8 @@ pacman::p_load(
 Download the full UHRI dataset from <https://uhri.ohchr.org/en/our-data-api>
 The direct download of the excel file is: <https://dataex.ohchr.org/uhri/export-results/export-full-en.xlsx>
 ```{r}
-state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
-
+# state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
+# 
 # httr::GET("https://dataex.ohchr.org/uhri/export-results/export-full-en.xlsx", httr::write_disk(tf <- tempfile(fileext = ".xlsx")))
 # df_0 <-  read_xlsx(tf,
 #                    # Specify the column types, otherwise some show up as NA in R
@@ -72,6 +72,13 @@ state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 #     text1 = text,
 #     # text = str_remove_all(text, "&nbsp;"),
 #     # text = str_remove_all(text, "&nbsp"),
+#     text = str_replace_all(text, "’", "'"),
+#     text = str_replace_all(text, "“", "'"),
+#     text = str_replace_all(text, "”", "'"),
+#     text = str_replace_all(text, "\\( ", "\\("),
+#     text = str_replace_all(text, " \\)", "\\)"),
+#     text = str_replace_all(text, " ' s ", "'s"),
+#     text = str_replace_all(text, "' s ", "'s"),
 #     text = str_replace_all(text, "&nbsp;", " "),
 #     text = str_replace_all(text, "&nbsp", " "),
 #     text = str_replace_all(text, "&rsquo;", "'"),
@@ -86,7 +93,7 @@ state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 #     text = str_replace_all(text, "&egrave;", "è"),
 #     text = str_replace_all(text, "&lrm;", ""),
 #     text = str_replace_all(text, "&iacute;", "í"),
-# 
+#     
 #     text = str_squish(text),
 #     text = case_when(str_starts(text, "R ") ~ str_remove(text, "R "),
 #                      .default = text),
@@ -381,9 +388,9 @@ SOCED_keywords <- "social determinants|migrant|poverty| poor|destitut|inequality
 > This category includes any violence which has been perpetrated against another based on their sex, gender identity and expression, or their sexual orientation, as well as harmful practices such as female genital mutilation (FGM), female infanticide, sex-selective abortions, forced and early marriage, honour crimes or killings, polygamy, wife inheritance, virginity tests, breast ironing and similar practices.
 
 ```{r}
-GBV_keywords <- "child marriage|early marriage|child marriage|forced marriage|early marriage|mutilation| fgm |honor crime|honor killing|honour crime|honour killing|breast ironing|harmful practices|harmful traditional practices|violence against women|violence against children|domestic violence|family violence|violence in the family|gender-based violence|sexual violence|marital violence|partner violence|gender violence| rape|virginity|sexual abuse|femicide|polygam|sex selection|prenatal selection|prenatal genetic|dowry|bride kidnap|child bride|forced steril|istanbul convention| conversion therap"
+GBV_keywords <- "child marriage|early marriage|forced marriage|marriage of children|minimum age of marriage|minimum age for marriage|marriage for girls and boys under the age |mutilation| fgm |honor crime|honor killing|honour crime|honour killing|breast ironing|harmful practices|harmful traditional practices|violence against women|domestic violence|family violence|violence in the family|gender-based violence|sexual violence|marital violence|partner violence|gender violence| rape|virginity|sexual abuse|femicide|polygam|sex selection|prenatal selection|prenatal genetic|dowry|bride kidnap|child bride|forced steril|istanbul convention| conversion therap|sexual harassment"
 
-GBV_keywords_comb1a <- "forced|minimum"
+GBV_keywords_comb1a <- "forced|minimum|under the age of"
 GBV_keywords_comb1b <- "marriage|pregnancy"
 
 GBV_keywords_comb2a <- "girl|women|sexual|domestic|gender|marital|lgbt|same-sex"
@@ -406,13 +413,13 @@ women_keywords_comb1b <- "death|mortality|health"
 > This category covers issues relating to maternal, foetal, newborn, infant, child and adolescent health. Also included in this category are recommendations relating to the ratification of the Convention on the Rights of the Child (CRC) and its optional protocol regarding the sale of children.
 
 ```{r}
-MCAH_keywords <- "newborn| infant|breastfe|rights of the child| crc|sale of children|trafficking of children|child traffic|protection of women and children|trafficking of minor|exploitation of child|ill-treatment of girl"
+MCAH_keywords <- "newborn| infant|breastfe|rights of the child| crc|sale of children|trafficking of children|child traffic|protection of women and children|trafficking of minor|exploitation of child|ill-treatment of girl|bacha bazi|violence against children"
 
-MCAH_keywords_comb1a <- "child|infant|adolescent| teen"
-MCAH_keywords_comb1b <- "death|mortality|health|pregnan|corporal punishment"
+MCAH_keywords_comb1a <- "child|infant|adolescent| teen|boy|girl"
+MCAH_keywords_comb1b <- "death|mortality|pregnan|corporal punishment|health|traffic|violen|prostitut"
 
-MCAH_keywords_comb2a <- " child|girl| teen"
-MCAH_keywords_comb2b <- " traffic|violen|prostitut"
+# MCAH_keywords_comb2a <- "marriage"
+# MCAH_keywords_comb2b <- "under the age of"
 ```
 
 #### Essential medicines and health products
@@ -463,7 +470,7 @@ TB_malaria_keywords <- "tuberculosis|malaria| tb | tb,"
 
 NTD_keywords <- "buruli|chagas|dengue|chikungunya|dracunculiasis|echinococcosis|trematod|trypano|sleeping sickness|leishmaniasis|leprosy|leper|filariasis|mycetoma|chromoblastomycosis| noma |onchocerciasis|rabies|scabies|schistosomiasis|helminth|snakebite|snake|taenia|trachoma|yaws"
 ```
-#### Vaccinations
+#### Immunization, vaccines and pharmaceutical products
 > This category refers to any health issues related to immunization, vaccines and pharmaceutical products.
 
 ```{r}
@@ -515,7 +522,7 @@ incarcerated_keywords <- " prison|imprison|detention|detaine|incarcer"
 
 #### Maternal health
 ```{r}
-maternal_keywords <- "maternal|pregnan|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|child birth|child-birth|eclampsia|obstetric|miscarr|intrapartum|postpartum|post-partum|breastfe|safe motherhood|protecting maternity"
+maternal_keywords <- "maternal|pregnan|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|child birth|child-birth|eclampsia|obstetric|miscarr|intrapartum|postpartum|post-partum|breastfe|safe motherhood|protecting maternity|health of the mother|life of the mother|mothers' health|mother and child health|mothers and newborns to full health care|care for children and mothers"
 
 maternal_keywords_comb1a <- "motherhood"
 maternal_keywords_comb1b <- "health"
@@ -662,9 +669,9 @@ sdg_data <- uhri_upr |>
       str_detect(tolower(text_2), MCAH_keywords_comb1a)&
         str_detect(tolower(text_2), MCAH_keywords_comb1b)~ "MCAH",
       
-      # Combo 2
-      str_detect(tolower(text_2), MCAH_keywords_comb2a)&
-        str_detect(tolower(text_2), MCAH_keywords_comb2b)~ "MCAH",
+      # # Combo 2
+      # str_detect(tolower(text_2), MCAH_keywords_comb2a)&
+      #   str_detect(tolower(text_2), MCAH_keywords_comb2b)~ "MCAH",
       
       .default = "Other"
     ), levels = c("Other", "MCAH"))
