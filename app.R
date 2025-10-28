@@ -1848,10 +1848,10 @@ server <- function(input, output, session) {
           scroller = TRUE,
           autoWidth = TRUE,
           columnDefs = list(
-            list(width = '400px', targets = c(0)),
+            list(width = '350px', targets = c(0)),
             list(width = '150px', targets = c(5,8,10)),
             list(width = '100px', targets = c(4,17,26))
-            # , list(width = '300px', targets = c(21))
+            , list(width = '150px', targets = c(21))
           )
         ),
         rownames = FALSE,

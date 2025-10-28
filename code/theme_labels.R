@@ -21,7 +21,7 @@ theme_labels <- tribble(
   "TB_malaria", "TB and malaria",
   "NTD", "Neglected tropical diseases",
   "TB_malaria_NTD", "TB, malaria, and neglected tropical diseases",
-  "vaccinations", "Vaccines and Pharmaceuticals",
+  "vaccinations", "Vaccines, pharmaceuticals, and health products",
   "WASH", "Water and sanitation",
   "nutrition", "Nutrition",
   "incarcerated", "Health of incarcerated persons",

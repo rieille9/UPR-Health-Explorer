@@ -413,10 +413,10 @@ women_keywords_comb1b <- "mortality|health"
 > This category covers issues relating to maternal, foetal, newborn, infant, child and adolescent health. Also included in this category are recommendations relating to the ratification of the Convention on the Rights of the Child (CRC) and its optional protocol regarding the sale of children.
 
 ```{r}
-MCAH_keywords <- "newborn| infant|breastfe|rights of the child| crc|sale of children|trafficking of children|child traffic|protection of women and children|trafficking of minor|exploitation of child|ill-treatment of girl|bacha bazi|violence against children"
+MCAH_keywords <- "newborn| infant|neonatal|new-born|breastfe|rights of the child| crc|sale of children|trafficking of children|child traffic|protection of women and children|trafficking of minor|exploitation of child|ill-treatment of girl|bacha bazi|violence against children"
 
 MCAH_keywords_comb1a <- "child|infant|adolescent| teen|boy|girl"
-MCAH_keywords_comb1b <- "death|mortality|pregnan|corporal punishment|health|traffic|violen|prostitut"
+MCAH_keywords_comb1b <- "death|mortality|pregnan|corporal punishment|health|traffic|violen|prostitut|smuggling|sexual abuse|exploitation"
 
 # MCAH_keywords_comb2a <- "marriage"
 # MCAH_keywords_comb2b <- "under the age of"
@@ -474,7 +474,7 @@ NTD_keywords <- "buruli|chagas|dengue|chikungunya|dracunculiasis|echinococcosis|
 > This category refers to any health issues related to immunization, vaccines and pharmaceutical products.
 
 ```{r}
-vaccinations_keywords <- "vaccin|immunisation|immunization"
+vaccinations_keywords <- "vaccin|immunisation|immunization|medicine|antibiotic|antimicrobial|essential medicine"
 
 vaccinations_keywords_comb1a <- ""
 vaccinations_keywords_comb1b <- ""
@@ -522,10 +522,13 @@ incarcerated_keywords <- " prison|imprison|detention|detaine|incarcer"
 
 #### Maternal health
 ```{r}
-maternal_keywords <- "maternal|pregnan|midwif|midwiv|antenatal|neonatal|prenatal|postnatal|birth atten|childbirth|child birth|child-birth|eclampsia|obstetric|miscarr|intrapartum|postpartum|post-partum|breastfe|safe motherhood|protecting maternity|health of the mother|life of the mother|mothers' health|mother and child health|mothers and newborns to full health care|care for children and mothers"
+maternal_keywords <- "maternal|pregnan|midwif|midwiv|antenatal|prenatal|postnatal|birth atten|childbirth|child birth|child-birth|stillbirth|eclampsia|obstetric|miscarr|intrapartum|postpartum|post-partum|breastfe|safe motherhood|protecting maternity|health of the mother|life of the mother|mothers' health|mother and child health|mothers and newborns to full health care|care for children and mothers"
 
 maternal_keywords_comb1a <- "motherhood"
 maternal_keywords_comb1b <- "health"
+
+NOT_maternal_keywords <- "miscarriage of justice|miscarriages of justice"
+
 ```
 
 #### Abortion
@@ -677,16 +680,16 @@ sdg_data <- uhri_upr |>
     ), levels = c("Other", "MCAH"))
   ) |> 
   
-  # Essential medicines and health products
-  mutate(
-    essential_medicines = factor(case_when(
-      str_detect(tolower(text_2), essential_medicines_keywords) ~ "Essential medicines",
-      # # Combo 1
-      # str_detect(tolower(text_2), disabilities_keywords_comb1a)&
-      #   str_detect(tolower(text_2), disabilities_keywords_comb1b)~ "Essential medicines",
-      .default = "Other"), 
-      levels = c("Other", "essential_medicines_keywords"))
-  ) |> 
+  # # Essential medicines and health products
+  # mutate(
+  #   essential_medicines = factor(case_when(
+  #     str_detect(tolower(text_2), essential_medicines_keywords) ~ "Essential medicines",
+  #     # # Combo 1
+  #     # str_detect(tolower(text_2), disabilities_keywords_comb1a)&
+  #     #   str_detect(tolower(text_2), disabilities_keywords_comb1b)~ "Essential medicines",
+  #     .default = "Other"), 
+  #     levels = c("Other", "essential_medicines_keywords"))
+  # ) |> 
   
   # Disabilities and health
   mutate(
@@ -847,6 +850,7 @@ sdg_data <- uhri_upr |>
   # Maternal health
   mutate(
     maternal_health = factor(case_when(
+      str_detect(tolower(text_2), NOT_maternal_keywords) ~ "Other",
       str_detect(tolower(text_2), maternal_keywords) ~ "Maternal health",
       # Combo 1
       str_detect(tolower(text_2), maternal_keywords_comb1a)&
