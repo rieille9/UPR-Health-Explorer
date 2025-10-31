@@ -16,7 +16,7 @@ theme_labels <- tribble(
   "contraception", "Family planning",
   "essential_medicines", "Essential medicines and health products",
   "disabilities", "Disabilities and health",
-  "LGBTI", "Health of LGBTI persons",
+  "LGBTI", "Health of LGBTQIA+ persons",
   "HIV", "HIV/AIDS and STIs",
   "TB_malaria", "TB and malaria",
   "NTD", "Neglected tropical diseases",
