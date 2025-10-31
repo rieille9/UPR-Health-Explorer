@@ -38,7 +38,7 @@ sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |>
   droplevels()
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
-theme_labels <- source(here("code", "theme_labels.R"))$value
+source(here("code", "theme_labels.R"))
 
 # Loop through API-generated files
 for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
