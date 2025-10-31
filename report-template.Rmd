@@ -49,6 +49,7 @@ sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |>
   droplevels()
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
+source(here("code", "theme_labels.R"))
 iso3_SUR <- state_geo |> filter(country==params$country_name) |> pull(iso3)
 
 # Loop through API-generated files
