@@ -39,6 +39,15 @@ sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |>
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 source(here("code", "theme_labels.R"))
+theme_labels <- theme_labels |> 
+  filter(!variable %in% c(
+    "SRHR", "health_related", "SOCED",
+    "essential_medicines","TB_malaria", "NTD","vaccinations"
+  ))
+
+sdg_data <- sdg_data |> select(-any_of(c("SRHR", "SOCED",
+                                       "essential_medicines","TB_malaria", 
+                                       "NTD","vaccinations")))
 
 # Loop through API-generated files
 for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
@@ -287,12 +296,12 @@ ui <- page_navbar(
                   pull(country),
                 multiple = FALSE),
     
-    ### PDF downloader ------------------------
-    downloadButton(
-      outputId = "download_report",
-      label = "Download Report (under development)"
-      # ,style = "width: 100%;" # Make the button full-width
-    ),
+    # ### PDF downloader ------------------------
+    # downloadButton(
+    #   outputId = "download_report",
+    #   label = "Download Report (under development)"
+    #   # ,style = "width: 100%;" # Make the button full-width
+    # ),
     
     #### qmd --------------------------
     # downloadButton(
@@ -340,26 +349,24 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   
   ## Main Content Pages ------------------------------------------------------
   # Each nav_panel is now a separate page accessible from the top navbar
-  ### About page ------------------
-  nav_menu(title = "Health & Rights Observatory", icon = icon("info-circle"),
-           nav_panel(title = "About", icon = icon("info-circle"),
+  ### Landing page ------------------
+  nav_panel(title = "Health & Rights Observatory", icon = icon("info-circle"),
+           # nav_panel(title = "About", icon = icon("info-circle"),
                      # card(
                      #   fill = FALSE,
                      #   card_body(
                      markdown(
-                       "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity."),
+                       "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity. The platform is intended to empower diplomats and policymakers across the health, foreign affairs, and related sectors, as well as civil society actors, to advance the Right to Health within global and national human rights discussions."),
                      card(
                        fill = FALSE,
                        card_header("The Right to Health"),
                        card_body(markdown(
-                         "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in Article 12 of the International Convenant on Economic, Social and Cultural Rights, is an inclusive human right that extends beyond  timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+                         "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in <a href='https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights#article-12' target='_blank'>Article 12 of the International Convenant on Economic, Social and Cultural Rights</a>, is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
                            
 Under the Right to Health, States have the following obligations:  
 -  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
 -  **Protect**: take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
--  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health.  
-
-The platform is intended to empower diplomats, policymakers, decision-makers across the health, foreign affairs, and related sectors, as well as civil society actors, to advance the Right to Health within global and national human rights discussions."
+-  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health."
                          # ))
                        ))),
                      card(
@@ -367,14 +374,7 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                        card_header("The Right to Health and the Universal Periodic Review"),
                        card_body(
                          layout_columns(
-                           col_widths = c(10,2),
-                           markdown(
-                             "In the following pages, the platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
-                             
-                             **This platform us under active development**, and we encourage you to contact the CeHDI team at info@cehdi.org for more information or to give feedback."),
-                           
-                           
-                           # --- Column 2: Clickable Image ---
+                           col_widths = c(4,8),
                            # Wrap the image in an actionLink to make it clickable
                            actionLink(
                              inputId = "upr_image_expand", # Give a unique ID to the link
@@ -384,10 +384,16 @@ The platform is intended to empower diplomats, policymakers, decision-makers acr
                                , markdown("<a href='https://iris.who.int/handle/10665/277114' target='_blank'>Image: WHO</a>  
                                           More than 90,000 recommendations have been issued during the first three cycles of the UPR.")
                              )
-                           )
+                           ),
+                           
+                           markdown(
+                             "This platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
+                             
+                             Contact us at info[at]cehdi.org for more information or to give feedback."
+                             )
                          )
                        )
-                     )
+                     # )
            ),
            #            nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
            #                      card(fill = FALSE,
