@@ -19,7 +19,8 @@ pacman::p_load(
   # necountries,
   patchwork,
   pdftools,
-  tinytex
+  tinytex,
+  plotly
   # quarto
 )
 
@@ -437,24 +438,35 @@ Under the Right to Health, States have the following obligations:
            nav_panel(title = "By Region", icon = icon("globe-africa"),
                      markdown("UPR Recommendations **by Region**"),
                      layout_column_wrap(
-                       style = css(grid_template_columns = "2fr 1fr"),
+                       style = css(grid_template_columns = "1fr 1fr"),
                        navset_card_tab(
                          full_screen = TRUE,
                          # title = "Regional Recommendation Themes",
                          nav_panel("All Recommendations", 
                                    card(
-                                     fill = FALSE,
+                                     # fill = FALSE,
                                      card_body(
-                                       plotOutput("upr_themes_all_global"
-                                                  ,width = paste0(upr_width,"px")
-                                                  ,height =  paste0(upr_height,"px")
-                                       )),
+                                       plotlyOutput("plotly_UPR_regional")
+                                       ),
                                      card_footer(
                                        downloadButton(
-                                         outputId = "download_upr_themes_all_global",
+                                         outputId = "download_plotly_UPR_regional",
                                          label = "Download as PNG"
                                        )
                                      )
+                                   # card(
+                                   #   fill = FALSE,
+                                   #   card_body(
+                                   #     plotOutput("upr_themes_all_global"
+                                   #                ,width = paste0(upr_width,"px")
+                                   #                ,height =  paste0(upr_height,"px")
+                                   #     )),
+                                   #   card_footer(
+                                   #     downloadButton(
+                                   #       outputId = "download_upr_themes_all_global",
+                                   #       label = "Download as PNG"
+                                   #     )
+                                   #   )
                                    )),
                          nav_panel("Per UPR Cycle", 
                                    card(
@@ -467,28 +479,33 @@ Under the Right to Health, States have the following obligations:
                          )
                        ),
                        layout_column_wrap(
-                         width=1,
-                         # This sets a 3:2 height ratio
-                         style = css(grid_template_rows = "3fr 1fr"),
-                         card(
-                           # fill = FALSE,
-                           full_screen = TRUE,
-                           card_header("Recommending States (top 20)"),
-                           card_body(
-                             # markdown("(Themes of maternal health, family planning, and abortion)"),
-                             plotOutput("recommending_states_REGION"))
-                         ),
-                         # card(
-                         #   full_screen = TRUE,
-                         #   card_header("Health-Related Recommendations"),
-                         #   card_body(plotOutput("global_plot"))
-                         # ),
-                         card(
-                           full_screen = TRUE,
-                           # card_header("Regional map"),
-                           card_body(plotOutput("regional_map"))
-                         )
+                         card(fill=TRUE,
+                              card_body(DTOutput("plotly_table_regional"))
+                              )
                        )
+                       # layout_column_wrap(
+                       #   width=1,
+                       #   # This sets a 3:2 height ratio
+                       #   style = css(grid_template_rows = "3fr 1fr"),
+                       #   card(
+                       #     # fill = FALSE,
+                       #     full_screen = TRUE,
+                       #     card_header("Recommending States (top 20)"),
+                       #     card_body(
+                       #       # markdown("(Themes of maternal health, family planning, and abortion)"),
+                       #       plotOutput("recommending_states_REGION"))
+                       #   ),
+                       #   # card(
+                       #   #   full_screen = TRUE,
+                       #   #   card_header("Health-Related Recommendations"),
+                       #   #   card_body(plotOutput("global_plot"))
+                       #   # ),
+                       #   card(
+                       #     full_screen = TRUE,
+                       #     # card_header("Regional map"),
+                       #     card_body(plotOutput("regional_map"))
+                       #   )
+                       # )
                      )
            ),
            
@@ -1141,6 +1158,247 @@ server <- function(input, output, session) {
       )
   })
   
+  ### Plotly ---------------------
+  
+  #### All cycles ---------------
+  
+  ##### Plot object -------------------
+  plotly_UPR_regional_object <- reactive({
+    
+    a_1 <- 
+      filtered_upr_region() |>    
+      # filter(state_under_review == chosen_country) |> 
+      select(text_2, cycle, state_under_review, health_related:other_health_related, response_upr) |>
+      group_by(response_upr) |>
+      summarise(across(c(health_related:other_health_related), ~ sum(.x != "Other"))) |>
+      ungroup() |>
+      filter(response_upr %in% c("Supported", "Noted")) |>
+      pivot_longer(
+        cols = health_related:other_health_related,
+        names_to = "theme",
+        values_to = "n"
+      )
+    
+    a_2 <- 
+      filtered_upr_region() |>    
+      # filter(state_under_review == chosen_country) |> 
+      select(cycle, state_under_review, health_related:other_health_related, response_upr) |>
+      group_by(response_upr) |>
+      summarise(across(c(health_related:other_health_related), ~ sum(.x == "Other"))) |>
+      ungroup() |>
+      filter(response_upr %in% c("Supported", "Noted")) |>
+      pivot_longer(
+        cols = health_related:other_health_related,
+        names_to = "theme",
+        values_to = "n_other"
+      )
+    
+    a <- left_join(a_1, a_2) |>
+      mutate(response_upr = fct_relevel(response_upr, "Noted")) |> 
+      group_by(theme) |>
+      mutate(
+        n_tot = sum(n) + sum(n_other),
+        n_tot_theme = sum(n)
+      ) |>
+      mutate(
+        perc = n / n_tot * 100,
+        perc_theme = n_tot_theme / n_tot * 100
+      ) |>
+      group_by(theme) |>
+      mutate(
+        n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
+        n_sup = case_when(n_tot_theme == 0 ~ "", .default = n_sup)
+      ) |>
+      ungroup() |>
+      filter(!theme %in% c("health_related", "TB_malaria", "NTD")) |>
+      left_join(theme_labels, by = c("theme" = "variable")) |>
+      arrange(-n_tot_theme) |>
+      mutate(
+        theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
+        theme_label = fct_inorder(theme_label)
+      ) |> 
+      filter(!theme %in% c(
+        "SRHR", "health_related", "SOCED",
+        "essential_medicines","TB_malaria", "NTD","vaccinations"
+      ))
+    
+    max_a <- max(a$perc_theme, na.rm = TRUE)
+    
+    a |>
+      ggplot(aes(
+        x = perc, y = fct_rev(theme_label), 
+        customdata = paste(theme, response_upr, sep = "|"),
+        text = paste0(response_upr, ": N = ", n, " ", n_sup)
+      )) +
+      geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
+      scale_fill_manual(values = c("#ec5557", "#1c164d"))+
+      labs(
+        x = paste0(
+          "Proportion of all recommendations (%)", 
+          "\n",
+          "(Total N = ", format(nrow(filtered_upr_region()), big.mark = ","), ")"
+        ),
+        y = NULL,
+        fill = "State's response",
+        title = paste0("Health-related recommendations of the UPR"
+                       , "\n"
+                       , input$selected_region
+        )
+      ) +
+      theme_classic() +
+      scale_x_continuous(
+        labels = function(x) paste0(x, "%"),
+        # limits = c(0, max_a + 2),
+        expand = expansion(mult = c(0, 0.01))
+      ) +
+      coord_cartesian(clip = "off")+
+      theme(
+        plot.margin = margin(l=1,t=2,b=2, r = 2, unit = "pt"),
+        legend.position = c(0.95, 0.01),
+        legend.justification = c("right", "bottom"),
+        legend.margin = margin(0,0,0,0),
+        legend.frame = element_blank(),
+        legend.text = element_text(size = 9, color = "#1c164d"),
+        legend.title = element_text(size = 11, color = "#1c164d"),
+        legend.background = element_blank(),
+        legend.key.size = unit(10,"pt"),
+        axis.text.y = element_text(size = 9, color = "#1c164d"),
+        axis.text.x = element_text(size = 10, color = "#1c164d", angle=30),
+        plot.title = element_text(hjust = 0.5, face = "bold", color = "#1c164d"),
+        axis.title.y = element_blank(),
+        axis.title.x = element_text(color = "#1c164d"),
+        plot.title.position = "plot",
+        panel.grid = element_blank(),
+        plot.caption = element_text(color = "#1c164d"),
+        plot.background = element_rect(color = "#1c164d", fill = NA),
+        panel.background = element_blank()
+      )
+    })
+  
+  ##### Plot output --------------------
+  output$plotly_UPR_regional <- renderPlotly({
+    # ggplotly(plotly_UPR_regional_object(),
+    #          tooltip = c("text"),
+    #          source = "click")
+    
+    # 1. Get the ggplot object from your reactive
+    p <- plotly_UPR_regional_object()
+    
+    # 2. Extract the title and replace newline "\n" with HTML <br>
+    #    This is how Plotly handles multi-line titles.
+    title_text <- stringr::str_replace(p$labels$title, "\n", "<br>")
+    
+    # 3. Convert to plotly, then pipe to plotly::layout() to fix formatting
+    ggplotly(
+      p,
+      tooltip = c("text"),
+      source = "click"
+    ) |>
+      plotly::layout(
+        # 4. Fix the legend position
+        #    We translate ggplot's c(0.99, 0.01) and justification
+        #    into Plotly's x, y, xanchor, and yanchor.
+        legend = list(
+          x = 0.99,
+          y = 0.01,
+          xanchor = 'right',
+          yanchor = 'bottom',
+          bgcolor = 'rgba(0,0,0,0)', # Transparent background (like element_blank)
+          bordercolor = 'rgba(0,0,0,0)'
+        ),
+        
+        # 5. Fix the title alignment and text
+        title = list(
+          text = title_text,
+          x = 0.5,                # Center the title (0 = left, 0.5 = center, 1 = right)
+          xanchor = 'center'
+        )
+        
+        # 6. (Optional but recommended) Manually set margins
+        #    ggplotly's default margins are often too large.
+        # ,margin = list(
+        #   t = 70,  # Add space for the top title
+        #   b = 100, # Add space for the x-axis label (which is long)
+        #   r = 30   # Match the ggplot right margin
+        # )
+      )
+    })
+  
+  ##### Plot downloader -------------------
+  output$download_plotly_UPR_regional <- downloadHandler(
+    filename = function() {
+      # Create a dynamic filename
+      paste0("health-recommendations-", input$selected_region, ".png")
+    },
+    content = function(file) {
+      # Use ggsave to save the reactive plot object to the temp file
+      ggsave(
+        file,
+        plot = plotly_UPR_regional_object()+
+          theme(
+            plot.background = element_rect(color = "#1c164d", fill = "#F9F9F6"),
+            panel.background = element_rect(color = NA, fill="#F9F9F6")
+          )+
+          scale_x_continuous(
+            # labels = function(x) paste0(x, "%"),
+            # limits = c(0, max_a + 2),
+            expand = expansion(mult = c(0, 0.2))
+          ) +
+          labs(caption = "*Numbers after the bars indicate N (% supported)")+
+          geom_text(
+            data = a |> filter(response_upr == "Supported"),
+            aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
+            hjust = -0.05,
+            size = 3, color = "#1c164d"
+            # vjust = 0.25
+          ),
+        width = 7,
+        height = 5,
+        dpi = 300,
+        units = "in"
+      )
+    }
+  )
+  
+  ##### Table -------------------
+  
+  output$plotly_table_regional <- renderDataTable({
+    
+    plot_data <- filtered_upr_region() |> 
+      select(text_2, state_under_review, response_upr, cycle, health_related:other_health_related, document_code) |> 
+      pivot_longer(cols = health_related:other_health_related) |> 
+      mutate(
+        value = case_when(is.na(value) ~ FALSE,
+                          value == "Other" ~ FALSE,
+                          value != "Other" ~ TRUE)
+      ) |> 
+      filter(value, name != "health_related") |>
+      left_join(theme_labels, by = c("name" = "variable"))
+    
+    event.data <- event_data("plotly_click", source = "click")
+    
+    # if(is.null(event.data) == T) return(NULL)
+    req(event.data)
+    
+    # Filter result via Data
+    clicked_data_string <- event.data$customdata
+    
+    # 2. Split the customdata back into two parts
+    clicked_info <- strsplit(clicked_data_string, "|", fixed = TRUE)[[1]]
+    clicked_theme <- clicked_info[1]
+    clicked_response <- clicked_info[2]
+    
+    res <- plot_data |> 
+      filter(
+        name == clicked_theme, 
+        response_upr == clicked_response
+      ) |> 
+      select(text_2, state_under_review, cycle, response_upr) |> 
+      rename(`Recommendation text` = text_2, SUR = state_under_review, Cycle = cycle, Response = response_upr)
+    
+    DT::datatable(res)
+    # return(event.data)
+  })
   ### Cycle themes ---------------------
   output$upr_themes_cycle_global <- renderPlot({
     req(nrow(filtered_upr_region()) > 0)
