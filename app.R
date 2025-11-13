@@ -1165,6 +1165,7 @@ server <- function(input, output, session) {
   
   ##### Plot object -------------------
   plotly_UPR_regional_object <- reactive({
+    req(nrow(filtered_upr_region()) > 0)
     
     a_1 <- 
       filtered_upr_region() |>    
