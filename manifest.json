@@ -6286,7 +6286,7 @@
       "checksum": "d733f76fc64828988bbfc86704f34d29"
     },
     "app.R": {
-      "checksum": "9b92504daffe47391bf8c96a7e180d58"
+      "checksum": "5e34e7a7d486faea4db76fd45ff3c8d0"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -6315,6 +6315,9 @@
     "code/MLM_alt.R": {
       "checksum": "bb5a19b144c623e8e5b718448c46018e"
     },
+    "code/MMR_70.R": {
+      "checksum": "4de8fb6715dc7419c65773715fb071cb"
+    },
     "code/my_api.R": {
       "checksum": "5329bfcc330d61882fc5010ba4517958"
     },
@@ -6340,19 +6343,19 @@
       "checksum": "38f6c6eee213b8773cee2852e99b3a50"
     },
     "code/output/figures/unnamed-chunk-35-1.svg": {
-      "checksum": "53fe32a20ab4ec677117af69c101b707"
+      "checksum": "17205d5c108574a4509b9b85fbb99069"
     },
     "code/output/figures/unnamed-chunk-36-1.svg": {
-      "checksum": "93828030817a0ef1e21dbf45a599a622"
+      "checksum": "f9ceb3ca3f939f518396da348e1a3cc1"
     },
     "code/output/figures/unnamed-chunk-37-1.svg": {
-      "checksum": "993aa82378b64df030403dda8598a749"
+      "checksum": "fcbd8d4d673931ab5fe8d8236ebdd985"
     },
     "code/output/figures/unnamed-chunk-38-1.svg": {
-      "checksum": "5cd28b906c0f0857e034a5ce1c2e35bc"
+      "checksum": "8b9e57363ae702647b16be9077819a14"
     },
     "code/output/figures/unnamed-chunk-39-1.svg": {
-      "checksum": "2d3f4ad675d35b3318b3c3da451d62e0"
+      "checksum": "9bd672c57430d05498c0da0a263cd22f"
     },
     "code/output/figures/unnamed-chunk-40-1.svg": {
       "checksum": "1194635d36f96b4f0da608832798fcec"
@@ -6367,7 +6370,7 @@
       "checksum": "2026bb14d182cb7703e4409904bbe59c"
     },
     "code/theme_labels.R": {
-      "checksum": "481f3b0a749b4031125a7cbb61af80d3"
+      "checksum": "3311f10c99a23e4cb2ceba452595a671"
     },
     "code/uhri_api.R": {
       "checksum": "1d1674ce90a79e868844337a38ff0f94"
@@ -6376,10 +6379,10 @@
       "checksum": "819bdff2e8b8a41b94ad1f057c3bb03c"
     },
     "code/UHRI_recommendation_definitions.html": {
-      "checksum": "31b044b58c55a22f7f5c6e8984c93157"
+      "checksum": "742f0469c2a976cb42af521c2f519f2e"
     },
     "code/UHRI_recommendation_definitions.qmd": {
-      "checksum": "d177aa91aa48708398baac1463f5d028"
+      "checksum": "97f1811563461c8efa090f61f6f1168d"
     },
     "code/UPR_extract.R": {
       "checksum": "d23f3d21a0afc6fda8bb8d93489803f3"
@@ -6631,7 +6634,7 @@
       "checksum": "e386fc68f31948dcb7f27754087e2527"
     },
     "data/UHRI_full.rds": {
-      "checksum": "8acb273a73f8e615e0f1f87d3670a373"
+      "checksum": "ba3b251a834f9f25faa660db32247aa7"
     },
     "data/UHRI_full_2025-09-29.rds": {
       "checksum": "b6e218bdb25c43f424f8d9386e79b0ca"
@@ -6663,11 +6666,17 @@
     "data/UHRI_full_2025-11-07.rds": {
       "checksum": "8acb273a73f8e615e0f1f87d3670a373"
     },
+    "data/UHRI_full_2025-11-12.rds": {
+      "checksum": "9a263008a975d3f11c8ae841a1fee732"
+    },
+    "data/UHRI_full_2025-11-13.rds": {
+      "checksum": "ba3b251a834f9f25faa660db32247aa7"
+    },
     "data/UHRI_full_export_20250929.xlsx": {
       "checksum": "402572ee1298d3d825943591c0a73928"
     },
     "data/UHRI_UPR.rds": {
-      "checksum": "c677f5677e1f05aad8ed5bbc060f2af0"
+      "checksum": "a32663cb06adc0bde01b4322d1bf47a3"
     },
     "data/UHRI_UPR_2025-10-16.rds": {
       "checksum": "4efb3edf84e0e609e676554e73a3f443"
@@ -6689,6 +6698,12 @@
     },
     "data/UHRI_UPR_2025-11-07.rds": {
       "checksum": "c677f5677e1f05aad8ed5bbc060f2af0"
+    },
+    "data/UHRI_UPR_2025-11-12.rds": {
+      "checksum": "4ae3ed7e9dd8bd380ef0b11fb053caf6"
+    },
+    "data/UHRI_UPR_2025-11-13.rds": {
+      "checksum": "a32663cb06adc0bde01b4322d1bf47a3"
     },
     "data/UNSD_Methodology.csv": {
       "checksum": "9854b926dca8d16e91a153d1cf40f3ab"
@@ -7497,8 +7512,14 @@
     "mismatches_mattia_251105155745.rds": {
       "checksum": "eb4d2d1d25b1955ab38135f59e59794d"
     },
+    "MMR_70-2025-11-12.xlsx": {
+      "checksum": "492b964c5f04b1ce5ac42a1550ce71df"
+    },
     "MMR_70.xlsx": {
-      "checksum": "cb873974a9874b1d7586994ed7c8a869"
+      "checksum": "867abee215a3bb4cd30230a6b7f29b98"
+    },
+    "MMR_70_2025-11-12.xlsx": {
+      "checksum": "a71e0bee6ae88ea4be119cc548a0ed7e"
     },
     "output/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -7513,7 +7534,7 @@
       "checksum": "1107c4ab403da639c65d311cc4153bc6"
     },
     "output/UHRI_UPR_enhanced.rds": {
-      "checksum": "014edfb2a4a29ca3a01ab71246eb6928"
+      "checksum": "b46a7997dea5fb9aca6fa18b7c51b965"
     },
     "output/validation/UPR_validation_2510302222.rds": {
       "checksum": "b5238d4333c3dc01e9f640386836f828"
