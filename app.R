@@ -260,6 +260,13 @@ ui <- page_navbar(
         border-color: #ec5557;
         cursor: pointer;          /* Show a 'hand' cursor on hover */
       }
+    ")),
+    
+    tags$style(HTML("
+      .selectize-dropdown {
+        width: auto !important; /* Let the content define the width */
+        min-width: 200px;       /* Set a minimum for good measure */
+      }
     "))
   ),
   
@@ -1403,6 +1410,7 @@ server <- function(input, output, session) {
         response_upr == clicked_response
       ) |> 
       select(text_2, state_under_review, cycle, response_upr) |> 
+      mutate(state_under_review = factor(state_under_review)) |> 
       rename(
         # !! paste0("Recommendation: ", clicked_theme) := text_2,
         `Recommendation text` = text_2,
@@ -1412,15 +1420,17 @@ server <- function(input, output, session) {
         )
     
     DT::datatable(res,
+                  filter = "top",
+                  extensions = 'FixedHeader',
                   # caption = paste0("Theme: ", clicked_theme),
                   caption = tags$caption(
                     style = "caption-side: top; text-align: left;",
                     paste0("Theme: ", clicked_theme)
                     ),
-                  extensions = 'FixedHeader',
                   options = list(
                     pageLength = 10
                     , fixedHeader = TRUE
+                    , selectize = list(on = 'change')
                   ),
                   rownames = FALSE,
                   class = 'cell-border stripe hover compact'
