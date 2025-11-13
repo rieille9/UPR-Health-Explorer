@@ -47,8 +47,8 @@ theme_labels <- theme_labels |>
   ))
 
 sdg_data <- sdg_data |> select(-any_of(c("SRHR", "SOCED",
-                                       "essential_medicines","TB_malaria", 
-                                       "NTD","vaccinations")))
+                                         "essential_medicines","TB_malaria", 
+                                         "NTD","vaccinations")))
 
 # Loop through API-generated files
 for (file_name in list.files(path = here("data", "API_data"), pattern = "\\.rds$")) {
@@ -352,57 +352,57 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
   # Each nav_panel is now a separate page accessible from the top navbar
   ### Landing page ------------------
   nav_panel(title = "Health & Rights Observatory", icon = icon("info-circle"),
-           # nav_panel(title = "About", icon = icon("info-circle"),
-                     # card(
-                     #   fill = FALSE,
-                     #   card_body(
-                     markdown(
-                       "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity. The platform is intended to empower diplomats and policymakers across the health, foreign affairs, and related sectors, as well as civil society actors, to advance the Right to Health within global and national human rights discussions."),
-                     card(
-                       fill = FALSE,
-                       card_header("The Right to Health"),
-                       card_body(markdown(
-                         "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in <a href='https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights#article-12' target='_blank'>Article 12 of the International Convenant on Economic, Social and Cultural Rights</a>, is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+            # nav_panel(title = "About", icon = icon("info-circle"),
+            # card(
+            #   fill = FALSE,
+            #   card_body(
+            markdown(
+              "Welcome to the **Health & Rights Observatory**. This platform has been designed and created by the **Global Center for Health Diplomacy and Inclusion (CeHDI)**, to advance and amplify the mainstreaming of the right to health in the Human Rights Council processes, treaty bodies and special procedures as a gateway for universal health coverage and global health equity. The platform is intended to empower diplomats and policymakers across the health, foreign affairs, and related sectors, as well as civil society actors, to advance the Right to Health within global and national human rights discussions."),
+            card(
+              fill = FALSE,
+              card_header("The Right to Health"),
+              card_body(markdown(
+                "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in <a href='https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights#article-12' target='_blank'>Article 12 of the International Convenant on Economic, Social and Cultural Rights</a>, is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
                            
 Under the Right to Health, States have the following obligations:  
 -  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
 -  **Protect**: take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
 -  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health."
-                         # ))
-                       ))),
-                     card(
-                       fill = FALSE,
-                       card_header("The Right to Health and the Universal Periodic Review"),
-                       card_body(
-                         layout_columns(
-                           col_widths = c(4,8),
-                           # Wrap the image in an actionLink to make it clickable
-                           actionLink(
-                             inputId = "upr_image_expand", # Give a unique ID to the link
-                             label = img(
-                               src = "WHO_UPR.png",
-                               style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;" # Add cursor style for better UX
-                               , markdown("<a href='https://iris.who.int/handle/10665/277114' target='_blank'>Image: WHO</a>  
+                # ))
+              ))),
+            card(
+              fill = FALSE,
+              card_header("The Right to Health and the Universal Periodic Review"),
+              card_body(
+                layout_columns(
+                  col_widths = c(4,8),
+                  # Wrap the image in an actionLink to make it clickable
+                  actionLink(
+                    inputId = "upr_image_expand", # Give a unique ID to the link
+                    label = img(
+                      src = "WHO_UPR.png",
+                      style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;" # Add cursor style for better UX
+                      , markdown("<a href='https://iris.who.int/handle/10665/277114' target='_blank'>Image: WHO</a>  
                                           More than 90,000 recommendations have been issued during the first three cycles of the UPR.")
-                             )
-                           ),
-                           
-                           markdown(
-                             "This platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
+                    )
+                  ),
+                  
+                  markdown(
+                    "This platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
                              
                              Contact us at info[at]cehdi.org for more information or to give feedback."
-                             )
-                         )
-                       )
-                     # )
-           ),
-           #            nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
-           #                      card(fill = FALSE,
-           #                           card_header("Methodology"),
-           #                           card_body(markdown("We conducted a comprehensive longitudinal analysis of all recommendations made during the first three cycles of the United Nations' Universal Periodic Review (UPR), spanning from 2008 to 2022. The full dataset of recommendations, including the State Under Review's response (“supported” or “noted”), was sourced from the Danish Institute for Human Rights’ “SDG-Human Rights Data Explorer”. Their database in turn relies partly on UPR Info’s “Database of Recommendations”. This dataset formed the basis for our classification and subsequent statistical modelling to assess the relationship between UPR engagement and health outcomes.  
-           # 
-           # To systematically analyze the recommendations, we developed a keyword-based classification system using R. Drawing inspiration from <a href='https://iris.who.int/handle/10665/277114' target='_blank'>a recent WHO report on health-related recommendation under the first two cycles of the UPR</a>, recommendations were categorized into non-exclusive thematic health areas (i.e. a single recommendation could fall into mutliple categories), such as health systems, communicable diseases, and environmental health. For this study's focus, we developed specific, detailed sub-classification definitions for themes related to Maternal, Newborn, and Child Health (MNCH) and Sexual and Reproductive Health and Rights (SRHR), with a particular focus on identifying recommendations pertaining to maternal health and family planning."))
-           #                      ))
+                  )
+                )
+              )
+              # )
+            ),
+            #            nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
+            #                      card(fill = FALSE,
+            #                           card_header("Methodology"),
+            #                           card_body(markdown("We conducted a comprehensive longitudinal analysis of all recommendations made during the first three cycles of the United Nations' Universal Periodic Review (UPR), spanning from 2008 to 2022. The full dataset of recommendations, including the State Under Review's response (“supported” or “noted”), was sourced from the Danish Institute for Human Rights’ “SDG-Human Rights Data Explorer”. Their database in turn relies partly on UPR Info’s “Database of Recommendations”. This dataset formed the basis for our classification and subsequent statistical modelling to assess the relationship between UPR engagement and health outcomes.  
+            # 
+            # To systematically analyze the recommendations, we developed a keyword-based classification system using R. Drawing inspiration from <a href='https://iris.who.int/handle/10665/277114' target='_blank'>a recent WHO report on health-related recommendation under the first two cycles of the UPR</a>, recommendations were categorized into non-exclusive thematic health areas (i.e. a single recommendation could fall into mutliple categories), such as health systems, communicable diseases, and environmental health. For this study's focus, we developed specific, detailed sub-classification definitions for themes related to Maternal, Newborn, and Child Health (MNCH) and Sexual and Reproductive Health and Rights (SRHR), with a particular focus on identifying recommendations pertaining to maternal health and family planning."))
+            #                      ))
   ),
   
   ### UPR impact ----------------------------
@@ -446,27 +446,28 @@ Under the Right to Health, States have the following obligations:
                                    card(
                                      # fill = FALSE,
                                      card_body(
+                                       min_height = 600,
                                        plotlyOutput("plotly_UPR_regional")
-                                       ),
+                                     ),
                                      card_footer(
                                        downloadButton(
                                          outputId = "download_plotly_UPR_regional",
                                          label = "Download as PNG"
                                        )
                                      )
-                                   # card(
-                                   #   fill = FALSE,
-                                   #   card_body(
-                                   #     plotOutput("upr_themes_all_global"
-                                   #                ,width = paste0(upr_width,"px")
-                                   #                ,height =  paste0(upr_height,"px")
-                                   #     )),
-                                   #   card_footer(
-                                   #     downloadButton(
-                                   #       outputId = "download_upr_themes_all_global",
-                                   #       label = "Download as PNG"
-                                   #     )
-                                   #   )
+                                     # card(
+                                     #   fill = FALSE,
+                                     #   card_body(
+                                     #     plotOutput("upr_themes_all_global"
+                                     #                ,width = paste0(upr_width,"px")
+                                     #                ,height =  paste0(upr_height,"px")
+                                     #     )),
+                                     #   card_footer(
+                                     #     downloadButton(
+                                     #       outputId = "download_upr_themes_all_global",
+                                     #       label = "Download as PNG"
+                                     #     )
+                                     #   )
                                    )),
                          nav_panel("Per UPR Cycle", 
                                    card(
@@ -481,7 +482,7 @@ Under the Right to Health, States have the following obligations:
                        layout_column_wrap(
                          card(fill=TRUE,
                               card_body(DTOutput("plotly_table_regional"))
-                              )
+                         )
                        )
                        # layout_column_wrap(
                        #   width=1,
@@ -539,21 +540,21 @@ Under the Right to Health, States have the following obligations:
                          ),
                          nav_panel("Data Table", 
                                    card(fill=TRUE,
-                                  card_body(DTOutput("DT_table")),
-                                   card_footer(
-                                     downloadButton(
-                                     outputId = "download_data_csv",
-                                     label = "State data (csv)"
-                                   ),
-                                   downloadButton(
-                                     outputId = "download_data_xlsx",
-                                     label = "State data (xlsx)"
-                                   ),
-                                   downloadButton(
-                                     outputId = "download_data_csv_all",
-                                     label = "All data (csv)"
-                                   )
-                                   )
+                                        card_body(DTOutput("DT_table")),
+                                        card_footer(
+                                          downloadButton(
+                                            outputId = "download_data_csv",
+                                            label = "State data (csv)"
+                                          ),
+                                          downloadButton(
+                                            outputId = "download_data_xlsx",
+                                            label = "State data (xlsx)"
+                                          ),
+                                          downloadButton(
+                                            outputId = "download_data_csv_all",
+                                            label = "All data (csv)"
+                                          )
+                                        )
                                    ))
                        ),
                        layout_column_wrap(
@@ -1227,23 +1228,19 @@ server <- function(input, output, session) {
     a |>
       ggplot(aes(
         x = perc, y = fct_rev(theme_label), 
-        customdata = paste(theme, response_upr, sep = "|"),
+        customdata = paste(theme_label, response_upr, sep = "|"),
         text = paste0(response_upr, ": N = ", n, " ", n_sup)
       )) +
       geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
       scale_fill_manual(values = c("#ec5557", "#1c164d"))+
       labs(
         x = paste0(
-          "Proportion of all recommendations (%)", 
+          "% of all recommendations", 
           "\n",
           "(Total N = ", format(nrow(filtered_upr_region()), big.mark = ","), ")"
         ),
         y = NULL,
-        fill = "State's response",
-        title = paste0("Health-related recommendations of the UPR"
-                       , "\n"
-                       , input$selected_region
-        )
+        fill = NULL
       ) +
       theme_classic() +
       scale_x_continuous(
@@ -1252,9 +1249,10 @@ server <- function(input, output, session) {
         expand = expansion(mult = c(0, 0.01))
       ) +
       coord_cartesian(clip = "off")+
+      guides(fill=guide_legend(reverse=T))+
       theme(
-        plot.margin = margin(l=1,t=2,b=2, r = 2, unit = "pt"),
-        legend.position = c(0.95, 0.01),
+        # plot.margin = margin(l=0,t=2,b=1, r = 2, unit = "pt"),
+        legend.position = c(0.9, 0.1),
         legend.justification = c("right", "bottom"),
         legend.margin = margin(0,0,0,0),
         legend.frame = element_blank(),
@@ -1266,14 +1264,14 @@ server <- function(input, output, session) {
         axis.text.x = element_text(size = 10, color = "#1c164d", angle=30),
         plot.title = element_text(hjust = 0.5, face = "bold", color = "#1c164d"),
         axis.title.y = element_blank(),
-        axis.title.x = element_text(color = "#1c164d"),
+        axis.title.x = element_text(color = "#1c164d", hjust = 0.5),
         plot.title.position = "plot",
         panel.grid = element_blank(),
         plot.caption = element_text(color = "#1c164d"),
         plot.background = element_rect(color = "#1c164d", fill = NA),
         panel.background = element_blank()
       )
-    })
+  })
   
   ##### Plot output --------------------
   output$plotly_UPR_regional <- renderPlotly({
@@ -1286,7 +1284,7 @@ server <- function(input, output, session) {
     
     # 2. Extract the title and replace newline "\n" with HTML <br>
     #    This is how Plotly handles multi-line titles.
-    title_text <- stringr::str_replace(p$labels$title, "\n", "<br>")
+    title_text <- input$selected_region
     
     # 3. Convert to plotly, then pipe to plotly::layout() to fix formatting
     ggplotly(
@@ -1295,34 +1293,39 @@ server <- function(input, output, session) {
       source = "click"
     ) |>
       plotly::layout(
+        plot_bgcolor = 'rgba(0,0,0,0)',
         # 4. Fix the legend position
-        #    We translate ggplot's c(0.99, 0.01) and justification
-        #    into Plotly's x, y, xanchor, and yanchor.
         legend = list(
+          traceorder = "reversed",
           x = 0.99,
           y = 0.01,
           xanchor = 'right',
           yanchor = 'bottom',
-          bgcolor = 'rgba(0,0,0,0)', # Transparent background (like element_blank)
+          bgcolor = 'rgba(0,0,0,0)', # Transparent background
           bordercolor = 'rgba(0,0,0,0)'
         ),
         
         # 5. Fix the title alignment and text
         title = list(
           text = title_text,
-          x = 0.5,                # Center the title (0 = left, 0.5 = center, 1 = right)
-          xanchor = 'center'
-        )
+          automargin = TRUE,
+          x = 0               # Center the title (0 = left, 0.5 = center, 1 = right)
+        ),
         
-        # 6. (Optional but recommended) Manually set margins
-        #    ggplotly's default margins are often too large.
-        # ,margin = list(
-        #   t = 70,  # Add space for the top title
-        #   b = 100, # Add space for the x-axis label (which is long)
-        #   r = 30   # Match the ggplot right margin
-        # )
+        # 6. X axis
+        xaxis = list(
+          automargin = TRUE # Automatically creates space for the title
+        ),
+        
+        # 7. Manually set margins
+        margin = list(
+          l = 0, # Left margin
+          r = 40, # Right margin
+          b = 0, # Bottom margin (for the long x-axis title)
+          t = 30  # Top margin (for the plot title)
+        )
       )
-    })
+  })
   
   ##### Plot downloader -------------------
   output$download_plotly_UPR_regional <- downloadHandler(
@@ -1344,17 +1347,22 @@ server <- function(input, output, session) {
             # limits = c(0, max_a + 2),
             expand = expansion(mult = c(0, 0.2))
           ) +
-          labs(caption = "*Numbers after the bars indicate N (% supported)")+
+          labs(
+            title = paste0("Health-related recommendations of the UPR"
+                           , "\n"
+                           , input$selected_region),
+            caption = "*Numbers after the bars indicate N (% supported)"
+            )+
           geom_text(
-            data = a |> filter(response_upr == "Supported"),
+            data = plotly_UPR_regional_object()@data |> filter(response_upr == "Supported"),
             aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
             hjust = -0.05,
             size = 3, color = "#1c164d"
             # vjust = 0.25
-          ),
-        width = 7,
+          )
+        ,width = 7,
         height = 5,
-        dpi = 300,
+        dpi = 400,
         units = "in"
       )
     }
@@ -1390,13 +1398,32 @@ server <- function(input, output, session) {
     
     res <- plot_data |> 
       filter(
-        name == clicked_theme, 
+        theme_label == clicked_theme, 
         response_upr == clicked_response
       ) |> 
       select(text_2, state_under_review, cycle, response_upr) |> 
-      rename(`Recommendation text` = text_2, SUR = state_under_review, Cycle = cycle, Response = response_upr)
+      rename(
+        # !! paste0("Recommendation: ", clicked_theme) := text_2,
+        `Recommendation text` = text_2,
+        SUR = state_under_review, 
+        Cycle = cycle, 
+        Response = response_upr
+        )
     
-    DT::datatable(res)
+    DT::datatable(res,
+                  # caption = paste0("Theme: ", clicked_theme),
+                  caption = tags$caption(
+                    style = "caption-side: top; text-align: left;",
+                    paste0("Theme: ", clicked_theme)
+                    ),
+                  extensions = 'FixedHeader',
+                  options = list(
+                    pageLength = 10
+                    , fixedHeader = TRUE
+                  ),
+                  rownames = FALSE,
+                  class = 'cell-border stripe hover compact'
+                  )
     # return(event.data)
   })
   ### Cycle themes ---------------------
@@ -1757,7 +1784,7 @@ server <- function(input, output, session) {
         #   margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
         # ),
         plot.title= element_blank()
-        )
+      )
     p
   })
   
@@ -2068,7 +2095,7 @@ server <- function(input, output, session) {
         Recommendation = text_2, 
         Cycle = cycle, 
         `State's response` = response_upr
-        )
+      )
     
     rename_map <- setNames(theme_labels_test$variable, theme_labels_test$theme_label)
     table_upr |>
@@ -2158,59 +2185,59 @@ server <- function(input, output, session) {
       withProgress(message = 'Generating xlsx file...', value = 0, {
         
         incProgress(0.1, detail = "Formatting....")
-      
+        
         wb <- createWorkbook()
-      addWorksheet(wb, "recommendations")
-      writeDataTable(wb, "recommendations", 
-                     DT_table_object() |> filter(`State under Review` == input$selected_SUR), 
-                     tableStyle = "TableStyleMedium15")
-      
-      setColWidths(
-        wb,
-        sheet = "recommendations",
-        cols = 1,      # Target the first column
-        widths = 70    # Set its width
-      )
-      setColWidths(
-        wb,
-        sheet = "recommendations",
-        cols = 2:(ncol(DT_table_object())-4),      #rest of the columns
-        widths = 12    # Set its width
-      )
-      setColWidths(
-        wb,
-        sheet = "recommendations",
-        cols = c(5,6,9,11,18,22),      #rest of the columns
-        widths = 20    # Set its width
-      )
-      setColWidths(
-        wb,
-        sheet = "recommendations",
-        cols = ncol(DT_table_object())-2,      #rest of the columns
-        widths = 20    # Set its width
-      )
-      
-      wrap_style <- createStyle(wrapText = TRUE)
-      addStyle(
-        wb,
-        sheet = "recommendations",
-        style = wrap_style,
-        rows = 1:(nrow(DT_table_object()) + 1), # all rows
-        cols = 1:ncol(DT_table_object()),          # all columns
-        gridExpand = TRUE                 # Ensure style is applied to all specified cells
-      )
-      
-      freezePane(
-        wb,
-        sheet = "recommendations",
-        firstActiveRow = 2, # The second row is the first one that moves
-        firstActiveCol = 2  # The second column is the first one that moves
-      )
-      
-      incProgress(0.7, detail = "Saving output (this may take a moment)")
-      saveWorkbook(wb, file)
-      
-      incProgress(1, detail = "Done!")
+        addWorksheet(wb, "recommendations")
+        writeDataTable(wb, "recommendations", 
+                       DT_table_object() |> filter(`State under Review` == input$selected_SUR), 
+                       tableStyle = "TableStyleMedium15")
+        
+        setColWidths(
+          wb,
+          sheet = "recommendations",
+          cols = 1,      # Target the first column
+          widths = 70    # Set its width
+        )
+        setColWidths(
+          wb,
+          sheet = "recommendations",
+          cols = 2:(ncol(DT_table_object())-4),      #rest of the columns
+          widths = 12    # Set its width
+        )
+        setColWidths(
+          wb,
+          sheet = "recommendations",
+          cols = c(5,6,9,11,18,22),      #rest of the columns
+          widths = 20    # Set its width
+        )
+        setColWidths(
+          wb,
+          sheet = "recommendations",
+          cols = ncol(DT_table_object())-2,      #rest of the columns
+          widths = 20    # Set its width
+        )
+        
+        wrap_style <- createStyle(wrapText = TRUE)
+        addStyle(
+          wb,
+          sheet = "recommendations",
+          style = wrap_style,
+          rows = 1:(nrow(DT_table_object()) + 1), # all rows
+          cols = 1:ncol(DT_table_object()),          # all columns
+          gridExpand = TRUE                 # Ensure style is applied to all specified cells
+        )
+        
+        freezePane(
+          wb,
+          sheet = "recommendations",
+          firstActiveRow = 2, # The second row is the first one that moves
+          firstActiveCol = 2  # The second column is the first one that moves
+        )
+        
+        incProgress(0.7, detail = "Saving output (this may take a moment)")
+        saveWorkbook(wb, file)
+        
+        incProgress(1, detail = "Done!")
       })
     }
   )
