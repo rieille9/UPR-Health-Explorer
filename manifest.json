@@ -6286,7 +6286,7 @@
       "checksum": "d733f76fc64828988bbfc86704f34d29"
     },
     "app.R": {
-      "checksum": "5e34e7a7d486faea4db76fd45ff3c8d0"
+      "checksum": "89a5305a6f29c588c13c8e958adea01c"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -6303,6 +6303,9 @@
     "code/external_data_OData.R": {
       "checksum": "6a766a6eb0b6b423ff7a3f633df26bac"
     },
+    "code/extra_bits_dashboard_app.R": {
+      "checksum": "f79414d98f51154fb5c36159e2799051"
+    },
     "code/geo_code.R": {
       "checksum": "ff8fbd79f695ac6567035c92da1cd295"
     },
@@ -6313,7 +6316,7 @@
       "checksum": "09f9189f7a29b6c71650fb829803b073"
     },
     "code/MLM_alt.R": {
-      "checksum": "bb5a19b144c623e8e5b718448c46018e"
+      "checksum": "f769e52a01d1c37bcf8d0919507932bf"
     },
     "code/MMR_70.R": {
       "checksum": "4de8fb6715dc7419c65773715fb071cb"
@@ -6346,22 +6349,22 @@
       "checksum": "17205d5c108574a4509b9b85fbb99069"
     },
     "code/output/figures/unnamed-chunk-36-1.svg": {
-      "checksum": "f9ceb3ca3f939f518396da348e1a3cc1"
+      "checksum": "8c30b6880313f763a9214fe326c88ad6"
     },
     "code/output/figures/unnamed-chunk-37-1.svg": {
-      "checksum": "fcbd8d4d673931ab5fe8d8236ebdd985"
+      "checksum": "da99eff87fa8c46c92c10ac4f5817b8b"
     },
     "code/output/figures/unnamed-chunk-38-1.svg": {
-      "checksum": "8b9e57363ae702647b16be9077819a14"
+      "checksum": "596f9d1732213fc801a11c9b7916fa71"
     },
     "code/output/figures/unnamed-chunk-39-1.svg": {
-      "checksum": "9bd672c57430d05498c0da0a263cd22f"
+      "checksum": "b75b724d8ea040b9b1abe78dbef6f257"
     },
     "code/output/figures/unnamed-chunk-40-1.svg": {
-      "checksum": "1194635d36f96b4f0da608832798fcec"
+      "checksum": "ee5b0d696c3b09638afed1a5afa796ba"
     },
     "code/output/figures/unnamed-chunk-41-1.svg": {
-      "checksum": "54caf3d9830d029d11762a7ffeff4dc5"
+      "checksum": "c4b167edb24100b22309ce0a6df75d1f"
     },
     "code/profile_pdf_plots_to delete.R": {
       "checksum": "7e30b3ea413703a2e8de9eb6435f533e"
@@ -6379,10 +6382,10 @@
       "checksum": "819bdff2e8b8a41b94ad1f057c3bb03c"
     },
     "code/UHRI_recommendation_definitions.html": {
-      "checksum": "742f0469c2a976cb42af521c2f519f2e"
+      "checksum": "0b35c4ae0abd74e4ae4a993eb2f0279d"
     },
     "code/UHRI_recommendation_definitions.qmd": {
-      "checksum": "97f1811563461c8efa090f61f6f1168d"
+      "checksum": "0abbce246f34280f02150bb1c403acca"
     },
     "code/UPR_extract.R": {
       "checksum": "d23f3d21a0afc6fda8bb8d93489803f3"
@@ -7534,7 +7537,7 @@
       "checksum": "1107c4ab403da639c65d311cc4153bc6"
     },
     "output/UHRI_UPR_enhanced.rds": {
-      "checksum": "b46a7997dea5fb9aca6fa18b7c51b965"
+      "checksum": "88ecea51205a0e6e4813fbabd56793b6"
     },
     "output/validation/UPR_validation_2510302222.rds": {
       "checksum": "b5238d4333c3dc01e9f640386836f828"
@@ -7684,7 +7687,7 @@
       "checksum": "1160c7dacb22688b3c0a93588d39da95"
     },
     "www/full_plot.png": {
-      "checksum": "5f0dc4eb93e9312405adf299270c9626"
+      "checksum": "c8b11b91866218c7b0d0d8b30521f040"
     },
     "www/full_plot_institutionalbirths.png": {
       "checksum": "6923a1f94c2729ff348f2254e53db06c"
