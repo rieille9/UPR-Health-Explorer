@@ -377,79 +377,115 @@ Under the Right to Health, States have the following obligations:
 -  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health."
                 # ))
               ))),
+            
             card(
               fill = FALSE,
               card_header("The Right to Health and the Universal Periodic Review"),
+              
               card_body(
-                layout_columns(
-                  col_widths = c(4,8),
-                  # Wrap the image in an actionLink to make it clickable
-                  actionLink(
-                    inputId = "upr_image_expand", # Give a unique ID to the link
-                    label = img(
-                      src = "WHO_UPR.png",
-                      style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;" # Add cursor style for better UX
-                      , markdown("<a href='https://iris.who.int/handle/10665/277114' target='_blank'>Image: WHO</a>  
-                                          More than 90,000 recommendations have been issued during the first three cycles of the UPR.")
+                
+                # 1. The Wrapper: This is a standard div that contains the floating image and text.
+                div(
+                  style = "overflow: hidden;",
+                  
+                  # 2. The Floated Clickable Image (using R actionLink)
+                  # We put the actionLink here, and use R's tag$div to wrap the image 
+                  # and apply the float styles.
+                  tags$div(
+                    class = "image-float-wrapper",
+                    style = "float: left; max-width: 30%; height: auto; margin: 0px 15px 0px 0px;", # Apply float styles here
+                    actionLink(
+                      inputId = "upr_image_expand", # This ID triggers the modal in the server
+                      label = img(
+                        src = "WHO_UPR.png",
+                        style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;"
+                      )
+                    ),
+                    tags$figcaption(
+                      HTML("<small><a href='https://iris.who.int/handle/10665/277114' target='_blank'>Image: WHO</a>  
+                                          More than 90,000 recommendations have been issued during the first three cycles of the UPR.</small>"),
+                      style = "text-align: center; color: #666; font-size: 0.8em; margin-top: 5px;"
                     )
                   ),
                   
-                  markdown(
-                    "This platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>**Universal Periodic Review (UPR)**</a>. This **State-led mechanism** evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.  
-                             
-                             Contact us at info[at]cehdi.org for more information or to give feedback."
+                  # 3. All Text Content (using HTML to ensure it wraps the floated div)
+                  HTML(
+                    "
+        <p>This platform presents data on the Right to Health within the context of the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'><b>Universal Periodic Review (UPR)</b></a>. This <b>State-led mechanism</b> evaluates each state’s human rights obligations and commitments. The review process is participatory and includes interactive discussions during which any UN Member State may issue recommendations to the State under review, which may then choose to ‘support’ or ‘note’ those recommendations.</p>
+        <p>Contact us at info[at]cehdi.org for more information or to give feedback.</p>
+        "
                   )
                 )
-              )
-              # )
-            ),
-            #            nav_panel(title = "Classification of UPR recommendations", icon=icon("book"),
-            #                      card(fill = FALSE,
-            #                           card_header("Methodology"),
-            #                           card_body(markdown("We conducted a comprehensive longitudinal analysis of all recommendations made during the first three cycles of the United Nations' Universal Periodic Review (UPR), spanning from 2008 to 2022. The full dataset of recommendations, including the State Under Review's response (“supported” or “noted”), was sourced from the Danish Institute for Human Rights’ “SDG-Human Rights Data Explorer”. Their database in turn relies partly on UPR Info’s “Database of Recommendations”. This dataset formed the basis for our classification and subsequent statistical modelling to assess the relationship between UPR engagement and health outcomes.  
-            # 
-            # To systematically analyze the recommendations, we developed a keyword-based classification system using R. Drawing inspiration from <a href='https://iris.who.int/handle/10665/277114' target='_blank'>a recent WHO report on health-related recommendation under the first two cycles of the UPR</a>, recommendations were categorized into non-exclusive thematic health areas (i.e. a single recommendation could fall into mutliple categories), such as health systems, communicable diseases, and environmental health. For this study's focus, we developed specific, detailed sub-classification definitions for themes related to Maternal, Newborn, and Child Health (MNCH) and Sexual and Reproductive Health and Rights (SRHR), with a particular focus on identifying recommendations pertaining to maternal health and family planning."))
-            #                      ))
-  ),
-  
-  ### UPR impact ----------------------------
-  nav_panel(title = "UPR impact", icon = icon("square-poll-vertical"),
-            card(
-              fill=FALSE,
-              card_header("Does engagement with the UPR translate to real-world progress?"),
-              layout_column_wrap(
-                style = css(grid_template_columns = "9fr 3fr"),
-                # card(fill = FALSE, 
-                #      card_body(
-                # layout_column_wrap(
-                # width=1,
-                # style = css(grid_template_columns = "2fr 1fr"),
-                markdown("A **preliminary analysis** of recommendations related to maternal health suggests that higher engagement with the UPR process, in terms of the number of recommendations issued by reviewing states as well as support of recommendations by States Under Review, is associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time."
-                         #          )
-                         # )
-                ),
-                actionLink(
-                  inputId = "upr_analysis", # Give a unique ID to the link
-                  label = img(
-                    src = "full_plot.png",
-                    style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;" # Add cursor style for better UX
-                  )
-                )
-                # ,padding = 0
               )
             )
+            ),
+  
+  ### UPR Impact ------------------
+  nav_panel(title = "UPR impact", icon = icon("square-poll-vertical"),
+            card(
+    fill = FALSE,
+    card_header("Does engagement with the UPR translate to real-world progress?"),
+    
+    card_body(
+      
+      # 1. The Wrapper: This is a standard div that contains the floating image and text.
+      div(
+        style = "overflow: hidden;",
+        
+        # 2. The Floated Clickable Image (using R actionLink)
+        # We put the actionLink here, and use R's tag$div to wrap the image 
+        # and apply the float styles.
+        tags$div(
+          class = "image-float-wrapper",
+          style = "float: left; max-width: 30%; height: auto; margin: 5px 5px 5px 5px;", # Apply float styles here
+          actionLink(
+            inputId = "upr_analysis", # This ID triggers the modal in the server
+            label = img(
+              src = "full_plot.png",
+              style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;"
+            )
+          )
+        ),
+        
+        # 3. All Text Content (using HTML to ensure it wraps the floated div)
+        HTML(
+          "
+        <p>To investigate a potential relationship between the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>Universal Periodic Review (UPR)</a> and maternal mortality, we evaluated State-level <b>maternal mortality ratio (MMR) trajectories as a function of 'engagement' with UPR recommendations related to maternal health.</b> We found that <i>higher engagement (in terms of both the volume of received recommendations as well the level of States's support) was associated with accelerated progress in reducing the maternal mortality ratio (MMR) over time.</i></p>
+
+        <h3>Overview of methodology</h3>
+                <b>Identification of health-related recommendations and thematic classification</b>
+        <p>We first developed a rule-based text classification algorithm to identify health-related themes from all available UPR recommendations (obtained from the <a href='https://uhri.ohchr.org/en/our-data-api' target='_blank'>Universal Human Rights Index</a>) and further classified them thematically using groupings similar to those developed in a <a href='https://iris.who.int/handle/10665/277114' target='_blank'>2019 report from the WHO</a>. For each theme, we constructed a dictionary of keywords and term combinations, which were then matched against the recommendation text to determine theme correspondence. A single recommendation could match several themes (e.g. the following text was categorized under the themes of “Maternal health”, “Child and adolescent health”, and “HIV/AIDS and STIs”: “Continue with action to further reduce maternal and child mortality, and the prevalence rate of HIV and AIDS”). To ensure reproducibility, these classifications were coded using R.</p>
+        
+        <p>For the theme of “Maternal health” our dictionary of keywords included terms such as \"obstetric,\" \"prenatal,\" \"postnatal,\" \"miscarriage,\" and \"maternal mortality.\" The algorithm also identified recommendations containing specific combinations of terms linking pregnancy to healthcare access (e.g., \"pregnant\" appearing in conjunction with \"healthcare,\" \"medical care,\" or \"free access\"). To capture the full spectrum of maternal morbidity, recommendations primarily addressing abortion were conditionally classified as maternal health only if they explicitly contextualized abortion access within the framework of saving the woman’s life or preserving her physical health. Linguistic false positives (e.g., \"miscarriage of justice\") were explicitly excluded from the matches.</p>
+
+        <b>Evaluating “engagement” in the context of the UPR</b>
+        <p>For this analysis, a State’s “engagement” with the UPR was evaluated using two measures: 1) the number of recommendations related to maternal health that the State received, and 2) the percentage of those recommendations supported (accepted) by the state. The first measure indicates the extent to which the international community has engaged with the State on the topic of maternal health, and the second offers a general indication of the extent of political support that the State is willing to commit to this theme.</p>
+
+        <b>Statistical analysis</b>
+        <p>We used a linear mixed-effects model to estimate trends in MMR over time as a function of engagement. This modeling approach allowed us to account for individual State trends and control for State-specific baseline differences in MMR, and we used the number of live births in each State for each year to apply population weights to the observations. The model specifically tested for a three-way interaction between time, the number of recommendations received, and the proportion of recommendations supported, which allowed us to observe whether high engagement with the UPR process was associated with faster rates of MMR reduction.</p>
+        <p>We visualized these results by comparing the predicted rates of decline for States with varying levels of recommendation volume (e.g. 5 vs. 15 recommendations) and with varying levels of recommendation acceptance (e.g., 50% vs. 90% support). Pairwise slope comparisons were calculated to statistically assess the differences in these trajectories. All analyses were performed using R.</p>
+
+        <b>Results</b>
+        <p>We found that a country's willingness to support UPR recommendations on maternal health was associated with a faster decline in MMR, but this effect was much stronger when a country received a higher volume of these recommendations. When a country received only 5 recommendations (left panel of the figure above), the difference in the rate of MMR reduction between high support (90%) and medium support (50%) was minimal and not statistically significant (p = 0.066). However, when a country received 15 recommendations (right panel), showing high support (90%) for them was associated with a significantly faster reduction in MMR over time compared to showing only 50% support (<b>p = 0.015</b>).</p>
+        <p>This suggests that the UPR process may be most effective in helping reduce maternal deaths when a country is both highly scrutinized by the international community (more recommendations received) and highly committed to acting on that scrutiny (more recommendations supported).</p>
+        <p>It is important to note that these results should be interpreted with caution, as this analysis cannot establish causality (i.e. it is possible that States that were already mobilizing resources to combat maternal mortality and strengthen health systems were more likely to receive engagement from the international community on this topic and were also more likely to offer political support to such recommendations).</p>
+        "
+        )
+      )
+    )
+  )
   ),
   ### UPR recommendations ----------------
   nav_menu(title = "UPR recommendations", icon = icon("people-arrows"),
            #### UPR: Regional -----------------------
            nav_panel(title = "By Region", icon = icon("globe-africa"),
-                     markdown("UPR Recommendations **by Region**"),
+                     markdown("Click on a bar chart to view the text of the relevent UPR recommendations"),
                      layout_column_wrap(
                        style = css(grid_template_columns = "1fr 1fr"),
                        navset_card_tab(
                          full_screen = TRUE,
                          # title = "Regional Recommendation Themes",
-                         nav_panel("All Recommendations", 
+                         nav_panel("All Recommendations by Region", 
                                    card(
                                      # fill = FALSE,
                                      card_body(
@@ -487,8 +523,10 @@ Under the Right to Health, States have the following obligations:
                          )
                        ),
                        layout_column_wrap(
-                         card(fill=TRUE,
-                              card_body(DTOutput("plotly_table_regional"))
+                         card(
+                           full_screen = TRUE,
+                           fill=TRUE,
+                           card_body(DTOutput("plotly_table_regional"))
                          )
                        )
                        # layout_column_wrap(
@@ -766,7 +804,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$upr_image_expand, {
     showModal(modalDialog(
-      title = "Graphical overview of the UPR process",
+      # title = "Graphical overview of the UPR process",
       img(src = "WHO_UPR.png", style = "width: 100%"),
       size = "xl",           # Make the modal large
       easyClose = TRUE,     # Allow closing by clicking outside
@@ -776,7 +814,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$upr_analysis, {
     showModal(modalDialog(
-      title = "Preliminary analysis of States' MMR trajectories according to engagement with UPR recommendations related to maternal health",
+      # title = "Trend analysis of States’ maternal mortality ratios (MMR) over time compared with engagement with UPR recommendations related to maternal health",
       img(src = "full_plot.png", style = "width: 100%"),
       size = "l",           # Make the modal large
       easyClose = TRUE,     # Allow closing by clicking outside
@@ -1237,7 +1275,7 @@ server <- function(input, output, session) {
       ggplot(aes(
         x = perc, y = fct_rev(theme_label), 
         customdata = paste(theme_label, response_upr, sep = "|"),
-        text = paste0(response_upr, ": N = ", n, " ", n_sup)
+        text = paste0(response_upr, ": N = ", n, " ", n_sup,"\n(click to view text of recommendations)")
       )) +
       geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
       scale_fill_manual(values = c("#ec5557", "#1c164d"))+
@@ -1360,7 +1398,7 @@ server <- function(input, output, session) {
                            , "\n"
                            , input$selected_region),
             caption = "*Numbers after the bars indicate N (% supported)"
-            )+
+          )+
           geom_text(
             data = plotly_UPR_regional_object()@data |> filter(response_upr == "Supported"),
             aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
@@ -1417,7 +1455,7 @@ server <- function(input, output, session) {
         SUR = state_under_review, 
         Cycle = cycle, 
         Response = response_upr
-        )
+      )
     
     DT::datatable(res,
                   filter = "top",
@@ -1426,7 +1464,7 @@ server <- function(input, output, session) {
                   caption = tags$caption(
                     style = "caption-side: top; text-align: left;",
                     paste0("Theme: ", clicked_theme)
-                    ),
+                  ),
                   options = list(
                     pageLength = 10
                     , fixedHeader = TRUE
@@ -1434,7 +1472,7 @@ server <- function(input, output, session) {
                   ),
                   rownames = FALSE,
                   class = 'cell-border stripe hover compact'
-                  )
+    )
     # return(event.data)
   })
   ### Cycle themes ---------------------
