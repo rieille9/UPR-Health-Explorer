@@ -373,7 +373,7 @@ Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made accor
                            
 Under the Right to Health, States have the following obligations:  
 -  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
--  **Protect**: take effective measures to prevent third parties from undermining of violating the guarantees of the right to health.  
+-  **Protect**: take effective measures to prevent third parties from undermining or violating the guarantees of the right to health.  
 -  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health."
                 # ))
               ))),
@@ -424,7 +424,7 @@ Under the Right to Health, States have the following obligations:
   nav_panel(title = "UPR impact", icon = icon("square-poll-vertical"),
             card(
     fill = FALSE,
-    card_header("Does engagement with the UPR translate to real-world progress?"),
+    card_header("Do UPR recommendations impact health outcomes? (a preliminary analysis)"),
     
     card_body(
       
@@ -437,7 +437,7 @@ Under the Right to Health, States have the following obligations:
         # and apply the float styles.
         tags$div(
           class = "image-float-wrapper",
-          style = "float: left; max-width: 30%; height: auto; margin: 5px 5px 5px 5px;", # Apply float styles here
+          style = "float: left; max-width: 40%; height: auto; margin: 5px 5px 5px 5px;", # Apply float styles here
           actionLink(
             inputId = "upr_analysis", # This ID triggers the modal in the server
             label = img(
@@ -450,25 +450,24 @@ Under the Right to Health, States have the following obligations:
         # 3. All Text Content (using HTML to ensure it wraps the floated div)
         HTML(
           "
-        <p>To investigate a potential relationship between the <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>Universal Periodic Review (UPR)</a> and maternal mortality, we evaluated State-level maternal mortality ratio (MMR) trajectories as a function of 'engagement' with UPR recommendations related to maternal health. <b>We found that higher engagement (in terms of both the number of received recommendations as well the level of States's acceptance) was associated with faster progress in reducing maternal mortality.</b></p>
+        <p>We investigated the potential relationship between <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>Universal Periodic Review (UPR)</a> recommendations and health outcomes, using maternal mortality as a key indicator. Specifically, we examined whether supporting UPR recommendations on maternal health from the first three cycles was associated with changes in the maternal mortality ratio (MMR) across countries.</p>
+        <p>Our preliminary analysis indicates that countries with a higher proportion of accepted recommendations, as well as higher  number of UPR recommendations related to maternal health, show a significant correlation with reductions in MMR over time.</p>
         <br>
-        <h3>Overview of methodology</h3>
+        <h3>Summary of methodology</h3>
                 <b>Identification of health-related recommendations and thematic classification</b>
-        <p>We first developed a rule-based text classification algorithm to identify health-related themes from all available UPR recommendations (obtained from the <a href='https://uhri.ohchr.org/en/our-data-api' target='_blank'>Universal Human Rights Index</a>) and further classified them thematically using groupings similar to those developed in a <a href='https://iris.who.int/handle/10665/277114' target='_blank'>2019 report from the WHO</a>. For each theme, we constructed a dictionary of keywords and term combinations, which were then matched against the recommendation text to determine theme correspondence. A single recommendation could match several themes (e.g. the following text was categorized under the themes of <b>Maternal health</b>, <b>Child and adolescent health</b>, and <b>HIV/AIDS and STIs</b>: <i>“Continue with action to further reduce maternal and child mortality, and the prevalence rate of HIV and AIDS”</i>). To ensure reproducibility, these classifications were coded using R.</p>
+        <p>We first developed a rule-based text classification algorithm to identify health-related themes from all available UPR recommendations (obtained from the <a href='https://uhri.ohchr.org/en/our-data-api' target='_blank'>Universal Human Rights Index</a>). We used a <a href='https://iris.who.int/handle/10665/277114' target='_blank'>2019 report from the WHO</a> to further classify the recommendations into thematic groups. For each thematic group, a dictionary of keywords and term combinations was developed and matched against the recommendation text. A single recommendation could match several thematic groups.
         
-        <p>For the theme of “Maternal health” our dictionary of keywords included terms such as \"obstetric,\" \"prenatal,\" \"postnatal,\" \"miscarriage,\" and \"maternal mortality.\" The algorithm also identified recommendations containing specific combinations of terms linking pregnancy to healthcare access (e.g., \"pregnant\" appearing in conjunction with \"healthcare,\" \"medical care,\" or \"free access\"). To capture the full spectrum of maternal morbidity, recommendations primarily addressing abortion were conditionally classified as maternal health only if they explicitly contextualized abortion access within the framework of saving the woman’s life or preserving her physical health. Linguistic false positives (e.g., \"miscarriage of justice\") were explicitly excluded from the matches.</p>
-
-        <b>Evaluating “engagement” in the context of the UPR</b>
-        <p>For this analysis, we evaluated a State’s “engagement” with the UPR using two measures: 1) the number of recommendations related to maternal health that the State received, and 2) the percentage of those recommendations supported (accepted) by the state. The first measure indicates the extent to which the international community has engaged with the State on the topic of maternal health, and the second offers a general indication of the extent of political support that the State is willing to commit to this theme.</p>
+        <p>The “Maternal health” thematic category including the following  dictionary of keywords: \"obstetric,\" \"prenatal,\" \"postnatal,\" \"miscarriage,\" and \"maternal mortality.\" The algorithm also identified recommendations containing specific combinations of terms linking pregnancy to healthcare access (e.g., \"pregnant\" appearing in conjunction with \"healthcare,\" \"medical care,\" or \"free access\"). Recommendations primarily addressing abortion were conditionally classified as maternal health if they explicitly contextualized abortion access within the framework of saving the woman’s life or preserving her physical health. Linguistic false positives were explicitly excluded from the matches.</p>
 
         <b>Statistical analysis</b>
-        <p>We used a linear mixed-effects model to estimate trends in MMR over time as a function of engagement. This modeling approach allowed us to account for individual State trends and control for State-specific baseline differences in MMR, and we used the number of live births in each State for each year to apply population weights to the observations. The model specifically tested for a three-way interaction between time, the number of recommendations received, and the proportion of recommendations supported, which allowed us to observe whether high engagement with the UPR process was associated with faster rates of MMR reduction.</p>
-        <p>We visualized these results by comparing the predicted rates of decline for States with varying levels of recommendation volume (e.g. 5 vs. 15 recommendations) and with varying levels of recommendation acceptance (e.g., 50% vs. 90% support). Pairwise slope comparisons were calculated to statistically assess the differences in these trajectories. All analyses were performed using R.</p>
+        <p>Using a linear mixed-effects model to account for individual country trends, we estimated trends in MMR over time as a function of engagement with UPR recommendations related to maternal health. We specifically tested for a three-way interaction between time, the number of recommendations received, and the proportion of recommendations supported, which allowed us to observe whether engagement with the UPR process was associated with faster rates of MMR reduction.</p>
+        <p>We visualized these results by comparing the predicted rates of decline for countries with varying levels of recommendation volume (e.g. 5 vs. 15 recommendations) and with varying levels of recommendation acceptance (e.g., 50% vs. 90% support). Pairwise slope comparisons were calculated to assess the statistical differences. All analyses were performed using R.</p>
 
-        <b>Results</b>
-        <p>We found that a country's willingness to support UPR recommendations on maternal health was associated with a faster decline in MMR, but this effect was much stronger when a country received a higher volume of these recommendations. When a country received only 5 recommendations (left panel of the figure above), the difference in the rate of MMR reduction between high support (90%) and medium support (50%) was minimal and not statistically significant (p = 0.066). However, when a country received 15 recommendations (right panel), showing high support (90%) for them was associated with a significantly faster reduction in MMR over time compared to showing only 50% support (<b>p = 0.015</b>).</p>
-        <p>This suggests that the UPR process may be most effective in helping reduce maternal deaths when a country is both highly scrutinized by the international community (more recommendations received) and highly committed to acting on that scrutiny (more recommendations supported).</p>
-        <p>It is important to note that these results should be interpreted with caution, as this analysis cannot establish causality (i.e. it is possible that States that were already mobilizing resources to combat maternal mortality and strengthen health systems were more likely to receive engagement from the international community on this topic and were also more likely to offer political support to such recommendations).</p>
+        <b>Summary of Results</b>
+        <p>We found that a country's support of UPR recommendations on maternal health was associated with a faster decline in MMR. This effect was much stronger when a country received a higher number of the recommendations. When a country received only 5 recommendations (left panel of the figure above), the difference in the rate of MMR reduction between supporting 90% and supporting 50% was minimal but still statistically significant (p = 0.042). However, when a country received 15 recommendations (right panel), supporting 90% of the recommendations was associated with a significantly faster reduction in MMR over time compared to supporting only 50% (<b>p = 0.013</b>).</p>
+        <b>Conclusion</b>
+        <p>This preliminary analysis suggests that the UPR process may have impact in contributing towards positive health outcomes as demonstrated by the relationship between the UPR recommendations pertaining to maternal health and reduction of MMR over time.</p>
+        <p>It is important to note that these results should be interpreted with caution, as this analysis cannot establish causality. Nevertheless, it signifies a potentially important role of engagement with the UPR process and its associated peer review process in enhancing political support and attention for critical health challenges.</p>
         "
         )
       )
