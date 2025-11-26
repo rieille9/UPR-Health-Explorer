@@ -246,10 +246,10 @@ ui <- page_navbar(
     tags$style(HTML("
       /* The ID selector '#' must match the downloadButton's outputId */
       #download_report {
-        background-color: #ec5557; /* A dark slate blue */
+        background-color: #4a86e8; /* color */
         color: white;             /* White text */
         border-radius: 5px;       /* Rounded corners */
-        border: 2px solid #ec5557;
+        border: 2px solid #4a86e8;
         font-weight: bold;        /* Make the text bold */
         transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
       }
@@ -304,12 +304,12 @@ ui <- page_navbar(
                   pull(country),
                 multiple = FALSE),
     
-    # ### PDF downloader ------------------------
-    # downloadButton(
-    #   outputId = "download_report",
-    #   label = "Download Report (under development)"
-    #   # ,style = "width: 100%;" # Make the button full-width
-    # ),
+    ### PDF downloader ------------------------
+    downloadButton(
+      outputId = "download_report",
+      label = "Download Country Profile"
+      # ,style = "width: 100%;" # Make the button full-width
+    ),
     
     #### qmd --------------------------
     # downloadButton(
@@ -418,38 +418,38 @@ Under the Right to Health, States have the following obligations:
                 )
               )
             )
-            ),
+  ),
   
   ### UPR Impact ------------------
   nav_panel(title = "UPR impact", icon = icon("square-poll-vertical"),
             card(
-    fill = FALSE,
-    card_header("Do UPR recommendations impact health outcomes? (a preliminary analysis)"),
-    
-    card_body(
-      
-      # 1. The Wrapper: This is a standard div that contains the floating image and text.
-      div(
-        style = "overflow: hidden;",
-        
-        # 2. The Floated Clickable Image (using R actionLink)
-        # We put the actionLink here, and use R's tag$div to wrap the image 
-        # and apply the float styles.
-        tags$div(
-          class = "image-float-wrapper",
-          style = "float: left; max-width: 40%; height: auto; margin: 5px 5px 5px 5px;", # Apply float styles here
-          actionLink(
-            inputId = "upr_analysis", # This ID triggers the modal in the server
-            label = img(
-              src = "full_plot.png",
-              style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;"
-            )
-          )
-        ),
-        
-        # 3. All Text Content (using HTML to ensure it wraps the floated div)
-        HTML(
-          "
+              fill = FALSE,
+              card_header("Do UPR recommendations impact health outcomes? (a preliminary analysis)"),
+              
+              card_body(
+                
+                # 1. The Wrapper: This is a standard div that contains the floating image and text.
+                div(
+                  style = "overflow: hidden;",
+                  
+                  # 2. The Floated Clickable Image (using R actionLink)
+                  # We put the actionLink here, and use R's tag$div to wrap the image 
+                  # and apply the float styles.
+                  tags$div(
+                    class = "image-float-wrapper",
+                    style = "float: left; max-width: 40%; height: auto; margin: 5px 5px 5px 5px;", # Apply float styles here
+                    actionLink(
+                      inputId = "upr_analysis", # This ID triggers the modal in the server
+                      label = img(
+                        src = "full_plot.png",
+                        style = "height: auto; width: 100%; object-fit: contain; cursor: pointer;"
+                      )
+                    )
+                  ),
+                  
+                  # 3. All Text Content (using HTML to ensure it wraps the floated div)
+                  HTML(
+                    "
         <p>We investigated the potential relationship between <a href='https://www.ohchr.org/en/hr-bodies/upr/basic-facts' target='_blank'>Universal Periodic Review (UPR)</a> recommendations and health outcomes, using maternal mortality as a key indicator. Specifically, we examined whether supporting UPR recommendations on maternal health from the first three cycles was associated with changes in the maternal mortality ratio (MMR) across countries.</p>
         <p>Our preliminary analysis indicates that countries with a higher proportion of accepted recommendations, as well as higher  number of UPR recommendations related to maternal health, show a significant correlation with reductions in MMR over time.</p>
         <br>
@@ -469,10 +469,10 @@ Under the Right to Health, States have the following obligations:
         <p>This preliminary analysis suggests that the UPR process may have impact in contributing towards positive health outcomes as demonstrated by the relationship between the UPR recommendations pertaining to maternal health and reduction of MMR over time.</p>
         <p>It is important to note that these results should be interpreted with caution, as this analysis cannot establish causality. Nevertheless, it signifies a potentially important role of engagement with the UPR process and its associated peer review process in enhancing political support and attention for critical health challenges.</p>
         "
-        )
-      )
-    )
-  )
+                  )
+                )
+              )
+            )
   ),
   ### UPR recommendations ----------------
   nav_menu(title = "UPR recommendations", icon = icon("people-arrows"),
@@ -518,6 +518,23 @@ Under the Right to Health, States have the following obligations:
                                                           width = paste0(upr_width*1.05,"px"),
                                                           height =  paste0(upr_height*1.6,"px")
                                      ))
+                                   )
+                         ),
+                         nav_panel("Health-Related Recommendations",
+                           card(
+                                full_screen = TRUE,
+                                fill = FALSE,
+                                card_body(plotOutput("global_plot"))
+                           )
+                         ),
+                         nav_panel("Recommending states",
+                                   card(
+                                     # fill = FALSE,
+                                     full_screen = TRUE,
+                                     # card_header("Recommending States (top 20)"),
+                                     card_body(
+                                       markdown("(Top 20 recommending states for the themes of maternal health, family planning, and abortion)"),
+                                       plotOutput("recommending_states_REGION"))
                                    )
                          )
                        ),

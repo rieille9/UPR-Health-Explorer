@@ -17,7 +17,7 @@ output:
     keep_tex: true
     latex_engine: xelatex
 geometry: 
-  - top=2cm
+  - top=1.8cm
   - bottom=0.5cm
   - left=0.2cm
   - right=0.2cm
@@ -50,6 +50,14 @@ sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |>
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 nearest_neighbors_list <- readRDS(here("output", "nearest_neighbors_list.rds"))
 source(here("code", "theme_labels.R"))
+theme_labels <- theme_labels |> 
+  filter(!variable %in% c(
+    "SRHR", "health_related", "SOCED",
+    "essential_medicines","TB_malaria", "NTD","vaccinations"
+  ))
+sdg_data <- sdg_data |> select(-any_of(c("SRHR", "SOCED",
+                                         "essential_medicines","TB_malaria", 
+                                         "NTD","vaccinations")))
 iso3_SUR <- state_geo |> filter(country==params$country_name) |> pull(iso3)
 
 # Loop through API-generated files
@@ -433,7 +441,7 @@ a <- left_join(a_1, a_2) |>
     n_sup = case_when(n_tot_theme == 0 ~ "", .default = n_sup)
   ) |>
   ungroup() |>
-  filter(!theme %in% c("health_related", "TB_malaria", "NTD")) |>
+  filter(!theme %in% c("health_related")) |>
   left_join(theme_labels, by = c("theme" = "variable")) |>
   arrange(-n_tot_theme) |>
   mutate(
@@ -484,7 +492,7 @@ a |>
   geom_text(
     data = a |> filter(response_upr == "Supported"),
     aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
-    hjust = -0.15, size = 3, vjust = 0.25, color = "#1c164d"
+    hjust = -0.1, size = 3, vjust = 0.5, color = "#1c164d"
   )
 
 
