@@ -468,6 +468,7 @@ a |>
     expand = expansion(mult = c(0, 0.15))
   ) +
   coord_cartesian(clip = "off")+
+  guides(fill=guide_legend(reverse=T))+
   theme(
     plot.margin = margin(l=2,t=2,b=2, r = 30, unit = "pt"),
     legend.position = c(0.99, 0.01),
