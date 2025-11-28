@@ -488,7 +488,7 @@ Under the Right to Health, States have the following obligations:
                                    card(
                                      # fill = FALSE,
                                      card_body(
-                                       min_height = 500,
+                                       min_height = 450,
                                        plotlyOutput("plotly_UPR_regional")
                                      ),
                                      card_footer(
@@ -519,7 +519,7 @@ Under the Right to Health, States have the following obligations:
                                      #                      height =  paste0(upr_height*1.6,"px")
                                      # ))
                                      card_body(
-                                       min_height = 500,
+                                       min_height = 550,
                                        plotlyOutput("plotly_UPR_regional_cycle")
                                      )
                                    )
@@ -537,8 +537,10 @@ Under the Right to Health, States have the following obligations:
                                      full_screen = TRUE,
                                      # card_header("Recommending States (top 20)"),
                                      card_body(
-                                       markdown("(Top 20 recommending states for the themes of maternal health, family planning, and abortion)"),
-                                       plotOutput("recommending_states_REGION"))
+                                       # markdown("(Themes of maternal health, family planning, and abortion)"),
+                                       plotlyOutput("plotly_UPR_regional_recommending")
+                                       # plotOutput("recommending_states_REGION")
+                                       )
                                    )
                          )
                        ),
@@ -1531,7 +1533,7 @@ server <- function(input, output, session) {
       scale_fill_manual(values = c("#ec5557", "#1c164d"))+
       scale_x_continuous(labels = function(x) paste0(x, "%"), 
                          # limits = c(-0.35,max_a+1), 
-                         limits = c(0,max_a), 
+                         limits = c(0,max_a+1), 
                          # sec.axis = dup_axis(name = NULL),
                          expand = expansion(mult = c(0, 0.05)) # 0 exactly on axis
       )+
@@ -1681,7 +1683,10 @@ server <- function(input, output, session) {
     
     c_plot |> 
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
-      ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label))+
+      ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label
+                 ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr, sep = "|"),
+                 text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
+                 ))+
       geom_col(alpha = 0.8, width = 0.8)+
       scale_fill_manual(values = c(
         "Maternal health" = "#7570b3",
@@ -1702,7 +1707,10 @@ server <- function(input, output, session) {
         legend.margin = margin(0,0,0,0), 
         legend.box.margin = margin(0,0,0,0), 
         legend.box.spacing = unit(0,"pt"),
-        legend.background = element_blank())+
+        legend.background = element_blank(),
+        plot.background = element_rect(color = "#1c164d", fill = NA),
+        panel.background = element_blank()
+        )+
       labs(y="Supported recommendations (N)", x=NULL,
            fill=NULL)
 
@@ -1710,11 +1718,39 @@ server <- function(input, output, session) {
 
   ##### Plot output --------------------
   output$plotly_UPR_regional_recommending <- renderPlotly({
+    
+    title_text <- input$selected_region
+    
+    
     p <- ggplotly(
-      plotly_UPR_regional_recommending_object()
-      # source = "click",
-      # tooltip = c("text") # Ensure this matches your aesthetic mapping
-    ) 
+      plotly_UPR_regional_recommending_object(),
+      source = "click",
+      tooltip = c("text") # Ensure this matches your aesthetic mapping
+    ) |> 
+      layout(
+        plot_bgcolor = 'rgba(0,0,0,0)',
+        # margin = list(l = 265), # Increase 'l' until your longest label fits
+        legend = list(
+          traceorder = "reversed",
+          x = 0.99,
+          y = 0.01,
+          xanchor = 'right',
+          yanchor = 'bottom',
+          bgcolor = 'rgba(0,0,0,0)', # Transparent background
+          bordercolor = 'rgba(0,0,0,0)'
+        ),
+        title = list(
+          text = title_text,
+          automargin = TRUE,
+          x = 0               # Center the title (0 = left, 0.5 = center, 1 = right)
+        ),
+        margin = list(
+          l = 0, # Left margin
+          r = 0, # Right margin
+          b = 0, # Bottom margin (for the long x-axis title)
+          t = 30  # Top margin (for the plot title)
+        )
+      )
     p
   })
   
@@ -1746,8 +1782,9 @@ server <- function(input, output, session) {
     clicked_theme <- clicked_info[1]
     clicked_response <- clicked_info[2]
     clicked_cycle <- clicked_info[3]
+    clicked_recommending <- clicked_info[4]
     
-    if(is.na(clicked_cycle)){
+    if(is.na(clicked_cycle) | clicked_cycle == "NA"){
     res <- plot_data |> 
       filter(
         theme_label == clicked_theme, 
@@ -1779,8 +1816,12 @@ server <- function(input, output, session) {
           Response = response_upr
         )
     }
+    if(is.na(clicked_recommending)|clicked_recommending == "NA"){
+      res2 <- res}else{
+        res2 <- res |> filter(str_detect(`Recommendation text`, clicked_recommending))
+      }
     
-    DT::datatable(res,
+    DT::datatable(res2,
                   filter = "top",
                   extensions = 'FixedHeader',
                   # caption = paste0("Theme: ", clicked_theme),
