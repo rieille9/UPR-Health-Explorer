@@ -625,6 +625,19 @@ Under the Right to Health, States have the following obligations:
                                      )
                                    )
                          ),
+                         nav_panel("Health-Related Recommendations",
+                                   card(
+                                     full_screen = TRUE,
+                                     fill = FALSE,
+                                     card_body(plotOutput("plot")),
+                                     card_footer(
+                                           downloadButton(
+                                             outputId = "download_rec_plot_object",
+                                             label = "Download as PNG"
+                                           )
+                                         )
+                                   )
+                         ),
                          nav_panel("Data Table", 
                                    card(fill=TRUE,
                                         card_body(DTOutput("DT_table")),
@@ -643,22 +656,9 @@ Under the Right to Health, States have the following obligations:
                                           )
                                         )
                                    )),
-                         nav_panel("Health-Related Recommendations",
-                                   card(
-                                     full_screen = TRUE,
-                                     fill = FALSE,
-                                     card_body(plotOutput("plot")),
-                                     card_footer(
-                                           downloadButton(
-                                             outputId = "download_rec_plot_object",
-                                             label = "Download as PNG"
-                                           )
-                                         )
-                                   )
-                         ),
                          nav_panel("Recommending states",
                                    card(
-                                     # fill = FALSE,
+                                     fill = FALSE,
                                      full_screen = TRUE,
                                      # card_header("Recommending States (top 20)"),
                                      card_body(
@@ -1691,7 +1691,7 @@ server <- function(input, output, session) {
     fig |> 
       layout(
         plot_bgcolor = 'rgba(0,0,0,0)',
-        margin = list(l = 265), # Increase 'l' until your longest label fits
+        margin = list(l = 270), # Increase 'l' until your longest label fits
         legend = list(
           traceorder = "reversed",
           x = 0.99,
@@ -1739,7 +1739,10 @@ server <- function(input, output, session) {
     c_plot <- upr_rec_countries |> 
       filter(variable %in% c("abortion", 
                              "maternal_health", 
-                             "contraception")) |> 
+                             "contraception",
+                             "sexual_health",
+                             "sexual_education"
+                             )) |> 
       select(-cycle) |> 
       group_by(recommending_state_upr, theme) |> 
       mutate(n=sum(n)) |> 
@@ -1763,11 +1766,13 @@ server <- function(input, output, session) {
                  ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr, sep = "|"),
                  text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
                  ))+
-      geom_col(alpha = 0.8, width = 0.8)+
+      geom_col(alpha = 1, width = 0.8)+
       scale_fill_manual(values = c(
-        "Maternal health" = "#7570b3",
-        "Family planning" = "#1b9e77",
-        "Abortion" = "#d95f02"
+        "Maternal health" = "#8dd3c7",
+        "Family planning" = "#fed9a6",
+        "Abortion" = "#bebada",
+        "Sexual health and wellbeing" = "#fb8072",
+        "Sexual education" = "#80b1d3"
       ))+
       scale_y_continuous(expand = c(0, 0.1)) +
       tidytext::scale_x_reordered() +
@@ -2621,7 +2626,7 @@ server <- function(input, output, session) {
     fig |> 
       layout(
         plot_bgcolor = 'rgba(0,0,0,0)',
-        margin = list(l = 265), # Increase 'l' until your longest label fits
+        margin = list(l = 270), # Increase 'l' until your longest label fits
         legend = list(
           traceorder = "reversed",
           x = 0.99,
@@ -2669,7 +2674,10 @@ server <- function(input, output, session) {
     c_plot <- upr_rec_countries |> 
       filter(variable %in% c("abortion", 
                              "maternal_health", 
-                             "contraception")) |> 
+                             "contraception",
+                             "sexual_health",
+                             "sexual_education"
+                             )) |> 
       select(-cycle) |> 
       group_by(recommending_state_upr, theme) |> 
       mutate(n=sum(n)) |> 
@@ -2693,11 +2701,13 @@ server <- function(input, output, session) {
                  ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr, sep = "|"),
                  text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
       ))+
-      geom_col(alpha = 0.8, width = 0.8)+
+      geom_col(alpha = 1, width = 0.8)+
       scale_fill_manual(values = c(
-        "Maternal health" = "#7570b3",
-        "Family planning" = "#1b9e77",
-        "Abortion" = "#d95f02"
+        "Maternal health" = "#8dd3c7",
+        "Family planning" = "#fed9a6",
+        "Abortion" = "#bebada",
+        "Sexual health and wellbeing" = "#fb8072",
+        "Sexual education" = "#80b1d3"
       ))+
       scale_y_continuous(expand = c(0, 0.1)) +
       tidytext::scale_x_reordered() +
@@ -2708,6 +2718,7 @@ server <- function(input, output, session) {
         strip.text.y = element_text(angle = 270, face = "bold"),
         strip.placement = "outside",
         panel.grid.major.y = element_blank(),
+        aspect.ratio = 0.09*n_distinct(ccp$recommending_state_upr),
         legend.position = "top",
         legend.justification = c("left", "bottom"),
         legend.margin = margin(0,0,0,0), 
