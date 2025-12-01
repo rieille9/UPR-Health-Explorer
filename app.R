@@ -1574,9 +1574,17 @@ server <- function(input, output, session) {
         "essential_medicines","TB_malaria", "NTD","vaccinations"
       )) |> 
       left_join(theme_labels, join_by(theme == variable)) |> 
-      arrange(cycle2, -n_tot_theme) |> 
-      mutate(theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
-             theme_label = fct_inorder(theme_label))
+      group_by(theme) |> 
+      mutate(perc_tot = sum(n_tot_theme)) |> 
+      ungroup() |> 
+      arrange(
+        # cycle2, 
+        -perc_tot
+        # -n_tot_theme
+      ) |> 
+      mutate(
+        theme_label = fct_inorder(theme_label)
+      )
     
     max_a <- max(a$perc_theme)
     a |> 
@@ -2494,9 +2502,19 @@ server <- function(input, output, session) {
         "essential_medicines","TB_malaria", "NTD","vaccinations"
       )) |> 
       left_join(theme_labels, join_by(theme == variable)) |> 
-      arrange(cycle2, -n_tot_theme) |> 
-      mutate(theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
-             theme_label = fct_inorder(theme_label))
+      mutate(theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label)) |> 
+      group_by(theme) |> 
+      mutate(perc_tot = sum(n_tot_theme)) |> 
+      ungroup() |> 
+      arrange(
+        # cycle2, 
+        -perc_tot
+        # -n_tot_theme
+      ) |> 
+      mutate(
+        theme_label = fct_inorder(theme_label)
+      )
+    
     
     max_a <- max(a$perc_theme)
     a |> 
@@ -4266,6 +4284,7 @@ server <- function(input, output, session) {
   })
   
   ## Constitutions ---------
+  ## Right to health ----------
   output$constitution_const_health <- renderPlot({
     constitution_dat <- constitutions |>
       select(-country) |> 
@@ -4284,6 +4303,70 @@ server <- function(input, output, session) {
     
     p1 <- constitution_dat |> 
       ggplot(aes(geometry = polygon, fill = const_health, color = const_health)) +
+      geom_sf(
+        color = "transparent"
+      ) +
+      # scale_linewidth_manual(values = c(1, 0)) +
+      # scale_color_manual(values = c("blue3", "grey90")) +
+      # scale_fill_fermenter(
+      #   n.breaks = 10,
+      #   palette = "RdYlBu", direction = 1,
+      #   na.value = "grey80",
+      #   labels = relabel_na
+      # ) +
+      # theme_void()+
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size=12),
+        legend.key.size = unit(25,"pt"),
+        legend.background = element_blank(),
+        axis.title = element_blank(),
+        plot.caption = element_text(size=16),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
+      ) +
+      labs(
+        # title = p_title,
+        fill = NULL,
+        # caption = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+        color = NULL, lwd = NULL
+      ) +
+      guides(color = "none", lwd = "none", label = "none")
+    
+    map_insetting(
+      p1, plot_dat=constitution_dat,
+      p_caption_text = if(is.na(country_estimate)){paste0(input$selected_SUR, ": No available data")} 
+      else{paste0(input$selected_SUR, ": ",country_estimate)},
+      p_title_text = NULL,
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
+  })
+  
+  ## Right to medical care ----------
+  output$constitution_const_medcare <- renderPlot({
+    constitution_dat <- constitutions |>
+      select(-country) |> 
+      right_join(state_geo_reactive(), by = c("iso3" = "iso3")) |>
+      mutate(selected_sur = factor(case_when(
+        country == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      ))
+    
+    country_estimate <- constitution_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(const_medcare)
+    country_year <- "20202020"
+    
+    p1 <- constitution_dat |> 
+      ggplot(aes(geometry = polygon, fill = const_medcare, color = const_medcare)) +
       geom_sf(
         color = "transparent"
       ) +
