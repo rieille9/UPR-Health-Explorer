@@ -1814,7 +1814,8 @@ server <- function(input, output, session) {
       ungroup() |> 
       distinct() |> 
       arrange(theme, -n) |> 
-      mutate(recommending_state_upr = str_wrap(recommending_state_upr, 20)) |> 
+      mutate(recommending_state_upr_raw = recommending_state_upr,
+             recommending_state_upr = str_wrap(recommending_state_upr, 20)) |> 
       group_by(recommending_state_upr) |> 
       mutate(n_tot = sum(n)) |> 
       ungroup() |> 
@@ -1828,7 +1829,7 @@ server <- function(input, output, session) {
     c_plot |> 
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
       ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label
-                 ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr, sep = "|"),
+                 ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr_raw, sep = "|"),
                  text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
                  ))+
       geom_col(alpha = 1, width = 0.8)+
@@ -1905,7 +1906,8 @@ server <- function(input, output, session) {
   output$plotly_table_regional <- renderDataTable({
     
     plot_data <- filtered_upr_region() |> 
-      select(text_2, state_under_review, response_upr, cycle, health_related:other_health_related, document_code) |> 
+      select(text_2, state_under_review, response_upr, cycle, health_related:other_health_related, document_code,
+             recommending_state_upr, recommending_state_upr_comma) |> 
       pivot_longer(cols = health_related:other_health_related) |> 
       mutate(
         value = case_when(is.na(value) ~ FALSE,
@@ -1936,7 +1938,7 @@ server <- function(input, output, session) {
         theme_label == clicked_theme, 
         response_upr == clicked_response
       ) |> 
-      select(text_2, state_under_review, cycle, response_upr) |> 
+      select(text_2, state_under_review, cycle, response_upr, recommending_state_upr, recommending_state_upr_comma) |> 
       mutate(state_under_review = factor(state_under_review)) |> 
       rename(
         # !! paste0("Recommendation: ", clicked_theme) := text_2,
@@ -1952,7 +1954,7 @@ server <- function(input, output, session) {
           response_upr == clicked_response,
           cycle == clicked_cycle
         ) |> 
-        select(text_2, state_under_review, cycle, response_upr) |> 
+        select(text_2, state_under_review, cycle, response_upr, recommending_state_upr, recommending_state_upr_comma) |> 
         mutate(state_under_review = factor(state_under_review)) |> 
         rename(
           # !! paste0("Recommendation: ", clicked_theme) := text_2,
@@ -1963,8 +1965,12 @@ server <- function(input, output, session) {
         )
     }
     if(is.na(clicked_recommending)|clicked_recommending == "NA"){
-      res2 <- res}else{
-        res2 <- res |> filter(str_detect(`Recommendation text`, clicked_recommending))
+      res2 <- res |> select(-recommending_state_upr, -recommending_state_upr_comma)}else{
+        res2 <- res |> 
+          filter(str_detect(`Recommendation text`, clicked_recommending)
+                 | str_detect(recommending_state_upr, clicked_recommending)
+                 | str_detect(recommending_state_upr_comma, clicked_recommending)
+          ) |> select(-recommending_state_upr, -recommending_state_upr_comma)
       }
     
     DT::datatable(res2,
@@ -2753,8 +2759,9 @@ server <- function(input, output, session) {
         recommending_state_upr = case_when(
           recommending_state_upr == "Iran (Islamic Republic of)" ~  "Islamic Republic of Iran",
           .default = recommending_state_upr
-          )
-        # recommending_state_upr = str_wrap(recommending_state_upr, 20)
+          ),
+        recommending_state_upr_raw = recommending_state_upr,
+        recommending_state_upr = str_wrap(recommending_state_upr, 20)
         ) |> 
       group_by(recommending_state_upr) |> 
       mutate(n_tot = sum(n)) |> 
@@ -2769,7 +2776,7 @@ server <- function(input, output, session) {
     c_plot |> 
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
       ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label
-                 ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr, sep = "|"),
+                 ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr_raw, sep = "|"),
                  text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
       ))+
       geom_col(alpha = 1, width = 0.8)+
@@ -2847,7 +2854,8 @@ server <- function(input, output, session) {
   output$plotly_table_SUR <- renderDataTable({
     
     plot_data <- filtered_upr() |> 
-      select(text_2, state_under_review, response_upr, cycle, health_related:other_health_related, document_code) |> 
+      select(text_2, state_under_review, response_upr, cycle, health_related:other_health_related, document_code, 
+             recommending_state_upr, recommending_state_upr_comma) |> 
       pivot_longer(cols = health_related:other_health_related) |> 
       mutate(
         value = case_when(is.na(value) ~ FALSE,
@@ -2878,7 +2886,7 @@ server <- function(input, output, session) {
           theme_label == clicked_theme, 
           response_upr == clicked_response
         ) |> 
-        select(text_2, state_under_review, cycle, response_upr) |> 
+        select(text_2, state_under_review, cycle, response_upr, recommending_state_upr, recommending_state_upr_comma) |> 
         mutate(state_under_review = factor(state_under_review)) |> 
         rename(
           # !! paste0("Recommendation: ", clicked_theme) := text_2,
@@ -2894,7 +2902,7 @@ server <- function(input, output, session) {
           response_upr == clicked_response,
           cycle == clicked_cycle
         ) |> 
-        select(text_2, state_under_review, cycle, response_upr) |> 
+        select(text_2, state_under_review, cycle, response_upr, recommending_state_upr, recommending_state_upr_comma) |> 
         mutate(state_under_review = factor(state_under_review)) |> 
         rename(
           # !! paste0("Recommendation: ", clicked_theme) := text_2,
@@ -2905,8 +2913,15 @@ server <- function(input, output, session) {
         )
     }
     if(is.na(clicked_recommending)|clicked_recommending == "NA"){
-      res2 <- res}else{
-        res2 <- res |> filter(str_detect(`Recommendation text`, clicked_recommending))
+      res2 <- res |> 
+        select(-recommending_state_upr, -recommending_state_upr_comma)
+      }else{
+        res2 <- res |> filter(
+          str_detect(`Recommendation text`, clicked_recommending)
+          | str_detect(recommending_state_upr, clicked_recommending)
+          | str_detect(recommending_state_upr_comma, clicked_recommending)
+          ) |> 
+          select(-recommending_state_upr, -recommending_state_upr_comma)
       }
     
     DT::datatable(res2,
