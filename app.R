@@ -20,7 +20,8 @@ pacman::p_load(
   patchwork,
   pdftools,
   tinytex,
-  plotly
+  plotly,
+  leaflet
   # quarto
 )
 
@@ -178,6 +179,49 @@ map_insetting <- function(
   } else {
     p2 + inset_element(p3, inset_dimensions[1], inset_dimensions[2],inset_dimensions[3],inset_dimensions[4]) + p_title
   }
+}
+
+leaflet_function <- function(data, pal_object, fill_outcome, hover_labels, legend_title = "Legend text", coord_selected_SUR, zoom_level){
+  leaflet(data = data) |>
+    setView(lng = coord_selected_SUR[[1]][1], lat = coord_selected_SUR[[1]][2], zoom = zoom_level) %>%
+    addPolygons(
+      fillColor = ~pal_object(data[[fill_outcome]]),
+      weight = 1,
+      opacity = 1,
+      color = "grey",
+      dashArray = "3",
+      fillOpacity = 0.7,
+      # Interaction: Highlight on hover
+      highlightOptions = highlightOptions(
+        weight = 2,
+        color = "#666",
+        dashArray = "",
+        fillOpacity = 0.7,
+        bringToFront = FALSE
+      ),
+      # Interaction: Tooltip content
+      label = hover_labels,
+      labelOptions = labelOptions(
+        style = list("font-weight" = "normal", padding = "3px 8px"),
+        textsize = "15px",
+        direction = "auto"
+      )
+    ) |> 
+    addPolygons(
+      data = data |> filter(selected_sur == TRUE),
+      fill = FALSE,          # No fill (transparent), so the layer below shows through
+      color = "red",         # The red border you requested
+      weight = 3,            # Thicker than the base layer
+      opacity = 1,
+      options = pathOptions(clickable = FALSE) # Make it "click-through" so hover works on layer below
+    ) |> 
+    addLegend(
+      pal = pal_object,
+      values = ~data[[fill_outcome]],
+      opacity = 0.7,
+      title = legend_title,
+      position = "bottomright"
+    )
 }
 
 ## Plot resolutions ------------------------------------------
@@ -726,7 +770,8 @@ Under the Right to Health, States have the following obligations:
                        layout_column_wrap(
                          width=1,
                          style = css(grid_template_rows = "6fr 5fr"),
-                         card(full_screen = TRUE,card_header("MMR Estimate Map (2023)"), plotOutput("mmr_map")),
+                         # card(full_screen = TRUE,card_header("MMR Estimate Map (2023)"), plotOutput("mmr_map")),
+                         card(full_screen = TRUE,card_header("MMR Estimate Map (2023)"), leafletOutput("mmr_map_interactive")),
                          card(full_screen = TRUE,card_header("MMR Trends vs. Neighbors"), plotOutput("mmr_time_plot_neighbors"))
                        ),
                        navset_card_tab(
@@ -839,12 +884,13 @@ Under the Right to Health, States have the following obligations:
             # "Family planning",
             layout_column_wrap(
               full_screen = TRUE,
-              style = css(grid_template_columns = "1fr"),
+              style = css(grid_template_columns = "2fr 1fr"),
               card(
                 # fill = FALSE,
                 full_screen = TRUE,
-                card_header("Does the constitution explicitly guarantee citizens’ right to health? (as of June 2024)"),
-                plotOutput("constitution_const_health")
+                card_header("Does the constitution explicitly guarantee an approach to the right to health? (as of June 2024)"),
+                plotOutput("constitution_const_anyhealth"),
+                markdown("Data: <a href='https://www.worldpolicycenter.org/policies/does-the-constitution-explicitly-guarantee-an-approach-to-the-right-to-health' target='_blank'>World Policy Center</a>")
               )
             )
   ),
@@ -1030,6 +1076,24 @@ server <- function(input, output, session) {
       filter(country %in% c(input$selected_SUR)) |>
       st_area() |> as.numeric()
   })
+  
+  coord_selected_SUR <- reactive({
+    req(input$selected_SUR)
+    state_geo_reactive() |> 
+      filter(country %in% c(input$selected_SUR)) |>
+      pull(point_centroid)
+  })
+  
+  m_zoom <- reactive({
+    req(input$selected_SUR)
+    if(sur_area()<10^8){8} else if(
+      sur_area()<10^9){7} else if(
+        sur_area() < 10^10){6} else if(
+          sur_area() < 10^11){5} else if(
+            sur_area() < 10^12){4} else if(
+              sur_area() < 10^13){4} else if(
+                sur_area() < 10^15){3} else{2}
+  }) 
   
   bbox_selected_SUR <- reactive({
     req(input$selected_SUR)
@@ -3622,6 +3686,34 @@ server <- function(input, output, session) {
   ## Maternal health outputs --------------------------------
   
   ### MMR Outputs -------------------------------------------------------------
+  #### Map - interactive ---------------------
+  output$mmr_map_interactive <- renderLeaflet({
+    
+    mmr_data <- MMR |> 
+      filter(YEAR==2023) |> 
+      right_join(state_geo_reactive(), by=join_by(COUNTRY==iso3)) |> 
+      mutate(selected_sur = case_when(country == input$selected_SUR ~ TRUE, .default = FALSE)) |> 
+      st_as_sf() |> 
+      st_set_geometry("polygon")
+    
+    pal <- colorFactor(
+      palette = "YlOrRd"
+      , domain = NULL
+      )
+    
+    hover_labels_mmr <- sprintf(
+      "<strong>%s</strong><br/>MMR in 2023: %s",
+      mmr_data$country,
+      format(mmr_data$Value, big.mark = ",", scientific = FALSE)
+    ) %>% lapply(htmltools::HTML)
+    
+    leaflet_function(data =  mmr_data, pal_object = pal, hover_labels = hover_labels_mmr, 
+                     coord_selected_SUR = coord_selected_SUR(),
+                     zoom_level = m_zoom(),
+                     fill_outcome =  "mmr_cat")
+    
+  })
+  
   #### Map ----------------------------------
   output$mmr_map <- renderPlot({
     
@@ -4314,6 +4406,70 @@ server <- function(input, output, session) {
     
     p1 <- constitution_dat |> 
       ggplot(aes(geometry = polygon, fill = const_health, color = const_health)) +
+      geom_sf(
+        color = "transparent"
+      ) +
+      # scale_linewidth_manual(values = c(1, 0)) +
+      # scale_color_manual(values = c("blue3", "grey90")) +
+      # scale_fill_fermenter(
+      #   n.breaks = 10,
+      #   palette = "RdYlBu", direction = 1,
+      #   na.value = "grey80",
+      #   labels = relabel_na
+      # ) +
+      # theme_void()+
+      theme_bw() +
+      theme(
+        panel.grid = element_blank(),
+        axis.text = element_blank(), axis.ticks = element_blank(),
+        legend.position = "right",
+        legend.text = element_text(size=12),
+        legend.key.size = unit(25,"pt"),
+        legend.background = element_blank(),
+        axis.title = element_blank(),
+        plot.caption = element_text(size=16),
+        plot.title = ggtext::element_textbox_simple(
+          margin = margin(t = 5, b = 10, r=0, l=0, unit = "pt")
+        )
+      ) +
+      labs(
+        # title = p_title,
+        fill = NULL,
+        # caption = paste0(input$selected_SUR, ": ",country_estimate, "% in ", country_year),
+        color = NULL, lwd = NULL
+      ) +
+      guides(color = "none", lwd = "none", label = "none")
+    
+    map_insetting(
+      p1, plot_dat=constitution_dat,
+      p_caption_text = if(is.na(country_estimate)){paste0(input$selected_SUR, ": No available data")} 
+      else{paste0(input$selected_SUR, ": ",country_estimate)},
+      p_title_text = NULL,
+      bbox_SUR_region_dynamic = bbox_SUR_region_dynamic(), 
+      bbox_sur = bbox_selected_SUR(), 
+      sur_area =sur_area()
+    )
+  })
+  
+  ## Right to health ----------
+  output$constitution_const_anyhealth <- renderPlot({
+    constitution_dat <- constitutions |>
+      select(-country) |> 
+      right_join(state_geo_reactive(), by = c("iso3" = "iso3")) |>
+      mutate(selected_sur = factor(case_when(
+        country == input$selected_SUR ~ input$selected_SUR,
+        .default = "Other"
+      ),
+      levels = c(input$selected_SUR, "Other")
+      ))
+    
+    country_estimate <- constitution_dat |> 
+      filter(country == input$selected_SUR) |> 
+      pull(const_anyhealth)
+    country_year <- "20202020"
+    
+    p1 <- constitution_dat |> 
+      ggplot(aes(geometry = polygon, fill = const_anyhealth, color = const_anyhealth)) +
       geom_sf(
         color = "transparent"
       ) +
