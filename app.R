@@ -886,9 +886,10 @@ Under the Right to Health, States have the following obligations:
               full_screen = TRUE,
               style = css(grid_template_columns = "2fr 1fr"),
               card(
-                # fill = FALSE,
+                fill = FALSE,
                 full_screen = TRUE,
                 card_header("Does the constitution explicitly guarantee an approach to the right to health? (as of June 2024)"),
+                "(Approaches to health include the right to health, public health, or medical care)",
                 plotOutput("constitution_const_anyhealth"),
                 markdown("Data: <a href='https://www.worldpolicycenter.org/policies/does-the-constitution-explicitly-guarantee-an-approach-to-the-right-to-health' target='_blank'>World Policy Center</a>")
               )
@@ -4451,7 +4452,7 @@ server <- function(input, output, session) {
     )
   })
   
-  ## Right to health ----------
+  ## Approach to Right to health ----------
   output$constitution_const_anyhealth <- renderPlot({
     constitution_dat <- constitutions |>
       select(-country) |> 
