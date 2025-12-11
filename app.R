@@ -3801,6 +3801,7 @@ server <- function(input, output, session) {
       )+
       theme_bw()+
       scale_x_continuous(breaks = c(2005,2010, 2015, 2020))+
+      scale_y_continuous(limits = c(0,100), expand = c(0,0))+
       theme(
         legend.text = element_text(size = 12),
         legend.title = element_text(size = 11),
