@@ -191,13 +191,13 @@ leaflet_function <- function(data, pal_object, fill_outcome, hover_labels, legen
       opacity = 1,
       color = "grey",
       dashArray = "3",
-      fillOpacity = 0.7,
+      fillOpacity = 0.9,
       # Interaction: Highlight on hover
       highlightOptions = highlightOptions(
         weight = 2,
         color = "#666",
         dashArray = "",
-        fillOpacity = 0.7,
+        fillOpacity = 1,
         bringToFront = FALSE
       ),
       # Interaction: Tooltip content
@@ -915,7 +915,7 @@ Under the Right to Health, States have the following obligations:
               #   plotOutput("family_planning")
               # )
               card(full_screen = TRUE, 
-                   fill=FALSE,
+                   # fill=FALSE,
                    card_header("Met Need for Family planning (%, latest year available)"),
                    markdown("Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%). Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/proportion-of-women-of-reproductive-age-who-have-their-need-for-family-planning-satisfied-with-modern-methods' target='_blank'>WHO</a>"),
                    leafletOutput("family_planning_map_interactive"))
@@ -927,13 +927,14 @@ Under the Right to Health, States have the following obligations:
             # "Family planning",
             layout_column_wrap(
               full_screen = TRUE,
-              style = css(grid_template_columns = "2fr 1fr"),
+              style = css(grid_template_columns = "1fr 1fr"),
               card(
-                fill = FALSE,
+                # fill = FALSE,
                 full_screen = TRUE,
                 card_header("Does the constitution explicitly guarantee an approach to the right to health? (as of June 2024)"),
                 markdown("Approaches to health include the right to health, public health, or medical care. Data: <a href='https://www.worldpolicycenter.org/policies/does-the-constitution-explicitly-guarantee-an-approach-to-the-right-to-health' target='_blank'>World Policy Center</a>"),
-                plotOutput("constitution_const_anyhealth")
+                leafletOutput("const_anyhealth_map_interactive")
+                # plotOutput("constitution_const_anyhealth")
               )
             )
   ),
@@ -4681,6 +4682,36 @@ server <- function(input, output, session) {
       bbox_sur = bbox_selected_SUR(), 
       sur_area =sur_area()
     )
+  })
+  
+  ### Map - interactive ---------------------
+  output$const_anyhealth_map_interactive <- renderLeaflet({
+    
+    constitution_data <- constitutions |> 
+      select(-country) |> 
+      right_join(state_geo_reactive(), by = c("iso3" = "iso3")) |>
+      mutate(selected_sur = case_when(country == input$selected_SUR ~ TRUE, .default = FALSE)) |> 
+      st_as_sf() |> 
+      st_set_geometry("polygon")
+    
+    pal <- colorFactor(
+      # palette = "YlOrRd"
+      palette = c("#de5e33", "#de9133", "#e3d191", "#548555")
+      , domain = NULL
+    )
+    
+    hover_labels <- sprintf(
+      "<strong>%s</strong><br/>%s",
+      constitution_data$country,
+      constitution_data$const_anyhealth
+    ) %>% lapply(htmltools::HTML)
+    
+    leaflet_function(data =  constitution_data, pal_object = pal, hover_labels = hover_labels, 
+                     legend_title = NULL,
+                     coord_selected_SUR = coord_selected_SUR(),
+                     zoom_level = m_zoom(),
+                     fill_outcome =  "const_anyhealth")
+    
   })
   
   ## Right to medical care ----------
