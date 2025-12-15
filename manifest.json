@@ -6664,7 +6664,7 @@
       "checksum": "d733f76fc64828988bbfc86704f34d29"
     },
     "app.R": {
-      "checksum": "e8db85f1c7ed43f6390b2b6b2baa44ae"
+      "checksum": "cea237bd5c0b809a16ecf743a34ae170"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -6688,7 +6688,7 @@
       "checksum": "6a766a6eb0b6b423ff7a3f633df26bac"
     },
     "code/extra_bits_dashboard_app.R": {
-      "checksum": "f79414d98f51154fb5c36159e2799051"
+      "checksum": "341d8ed81158ebb96c6f763aba303dbd"
     },
     "code/geo_code.R": {
       "checksum": "94dc5eda497054afaa93782fb7dbbffb"
