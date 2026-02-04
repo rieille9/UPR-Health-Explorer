@@ -550,7 +550,7 @@ Under the Right to Health, States have the following obligations:
                        navset_card_tab(
                          full_screen = TRUE,
                          # title = "Regional Recommendation Themes",
-                         nav_panel("All Recommendations by Region", 
+                         nav_panel("Health-related Recommendations", 
                                    card(
                                      # fill = FALSE,
                                      card_body(
@@ -590,7 +590,7 @@ Under the Right to Health, States have the following obligations:
                                      )
                                    )
                          ),
-                         nav_panel("Health-Related Recommendations",
+                         nav_panel("Proportion Health-Related",
                                    card(
                                      full_screen = TRUE,
                                      fill = FALSE,
@@ -650,8 +650,7 @@ Under the Right to Health, States have the following obligations:
                        style = css(grid_template_columns = "1fr 1fr"),
                        navset_card_tab(
                          full_screen = TRUE,
-                         # title = "Regional Recommendation Themes",
-                         nav_panel("All Recommendations by Region", 
+                         nav_panel("Health-related recommendations", 
                                    card(
                                      # fill = FALSE,
                                      card_body(
@@ -691,7 +690,7 @@ Under the Right to Health, States have the following obligations:
                                      )
                                    )
                          ),
-                         nav_panel("Health-Related Recommendations",
+                         nav_panel("Proportion Health-Related",
                                    card(
                                      full_screen = TRUE,
                                      fill = FALSE,
@@ -1251,7 +1250,7 @@ server <- function(input, output, session) {
             country_name = input$selected_SUR,
             upr_all = upr_themes_all_object(),
             rec_plot = rec_plot_object(),
-            mmr_map_plot = mmr_map_object(),
+            # mmr_map_plot = mmr_map_object(),
             bbox_selected_SUR = bbox_selected_SUR(),
             sur_area = sur_area(),
             bbox_SUR_region_dynamic = bbox_SUR_region_dynamic()
