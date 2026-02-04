@@ -795,6 +795,37 @@
         "Built": "R 4.5.2; ; 2025-11-01 03:25:04 UTC; windows"
       }
     },
+    "broom.helpers": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "broom.helpers",
+        "Title": "Helpers for Model Coefficients Tibbles",
+        "Version": "1.22.0",
+        "Authors@R": "c(\n    person(\"Joseph\", \"Larmarange\", , \"joseph@larmarange.net\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0001-7097-700X\")),\n    person(\"Daniel D.\", \"Sjoberg\", , \"danield.sjoberg@gmail.com\", role = \"aut\",\n           comment = c(ORCID = \"0000-0003-0862-2018\"))\n  )",
+        "Description": "Provides suite of functions to work with regression model\n    'broom::tidy()' tibbles.  The suite includes functions to group\n    regression model terms by variable, insert reference and header rows\n    for categorical variables, add variable labels, and more.",
+        "License": "GPL (>= 3)",
+        "URL": "https://larmarange.github.io/broom.helpers/,\nhttps://github.com/larmarange/broom.helpers",
+        "BugReports": "https://github.com/larmarange/broom.helpers/issues",
+        "Depends": "R (>= 4.1)",
+        "Imports": "broom (>= 0.8), cards, cli, dplyr (>= 1.1.0), labelled,\nlifecycle, purrr, rlang (>= 1.0.1), stats, stringr, tibble,\ntidyr, tidyselect",
+        "Suggests": "betareg, biglm, brms (>= 2.13.0), broom.mixed, cmprsk, covr,\ndatasets, effects, emmeans, fixest (>= 0.10.0), forcats, gam,\ngee, geepack, ggplot2, ggeffects (>= 1.3.2), ggstats (>=\n0.2.1), glmmTMB, glmtoolbox, glue, gt, gtsummary (>= 2.0.0),\nknitr, lavaan, lfe, lme4 (>= 1.1.28), logitr (>= 0.8.0),\nmarginaleffects (>= 0.21.0), margins, MASS, mgcv, mice, mmrm\n(>= 0.3.6), multgee, nnet, ordinal, parameters, parsnip,\npatchwork, plm, pscl, quantreg, rmarkdown, rstanarm, scales,\nspelling, survey, survival, testthat (>= 3.0.0), tidycmprsk,\nVGAM, svyVGAM",
+        "VignetteBuilder": "knitr",
+        "RdMacros": "lifecycle",
+        "Encoding": "UTF-8",
+        "Language": "en-US",
+        "LazyData": "true",
+        "RoxygenNote": "7.3.3",
+        "Config/testthat/edition": "3",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-09-17 09:06:13 UTC; josep",
+        "Author": "Joseph Larmarange [aut, cre] (ORCID:\n    <https://orcid.org/0000-0001-7097-700X>),\n  Daniel D. Sjoberg [aut] (ORCID:\n    <https://orcid.org/0000-0003-0862-2018>)",
+        "Maintainer": "Joseph Larmarange <joseph@larmarange.net>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-09-17 10:00:02 UTC",
+        "Built": "R 4.5.2; ; 2026-01-23 04:35:43 UTC; windows"
+      }
+    },
     "broom.mixed": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -939,6 +970,68 @@
         "NeedsCompilation": "no",
         "Packaged": "2022-01-05 19:48:10 UTC; rforge",
         "Built": "R 4.5.0; ; 2025-05-31 00:22:11 UTC; windows"
+      }
+    },
+    "cards": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "cards",
+        "Title": "Analysis Results Data",
+        "Version": "0.7.0",
+        "Authors@R": "c(\n    person(\"Daniel D.\", \"Sjoberg\", , \"danield.sjoberg@gmail.com\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0003-0862-2018\")),\n    person(\"Becca\", \"Krouse\", , \"becca.z.krouse@gsk.com\", role = \"aut\"),\n    person(\"Emily\", \"de la Rua\", , \"emily.de_la_rua@contractors.roche.com\", role = \"aut\",\n           comment = c(ORCID = \"0009-0000-8738-5561\")),\n    person(\"Malan\", \"Bosman\", , \"malanbos@gmail.com\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-3020-195X\")),\n    person(\"F. Hoffmann-La Roche AG\", role = c(\"cph\", \"fnd\")),\n    person(\"GlaxoSmithKline Research & Development Limited\", role = \"cph\")\n  )",
+        "Description": "Construct CDISC (Clinical Data Interchange Standards\n    Consortium) compliant Analysis Results Data objects. These objects are\n    used and re-used to construct summary tables, visualizations, and\n    written reports. The package also exports utilities for working with\n    these objects and creating new Analysis Results Data objects.",
+        "License": "Apache License 2.0",
+        "URL": "https://github.com/insightsengineering/cards,\nhttps://insightsengineering.github.io/cards/",
+        "BugReports": "https://github.com/insightsengineering/cards/issues",
+        "Depends": "R (>= 4.1)",
+        "Imports": "cli (>= 3.6.1), dplyr (>= 1.1.2), glue (>= 1.6.2), lifecycle\n(>= 1.0.3), rlang (>= 1.1.1), tidyr (>= 1.3.0), tidyselect (>=\n1.2.0)",
+        "Suggests": "testthat (>= 3.2.0), withr (>= 3.0.0)",
+        "Config/Needs/coverage": "hms",
+        "Config/Needs/website": "rmarkdown, jsonlite, yaml, gtsummary, tfrmt,\ncardx, gt, fontawesome, insightsengineering/crane,\ninsightsengineering/nesttemplate",
+        "Config/testthat/edition": "3",
+        "Config/testthat/parallel": "true",
+        "Encoding": "UTF-8",
+        "Language": "en-US",
+        "LazyData": "true",
+        "RoxygenNote": "7.3.2",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-08-27 04:37:58 UTC; sjobergd",
+        "Author": "Daniel D. Sjoberg [aut, cre] (ORCID:\n    <https://orcid.org/0000-0003-0862-2018>),\n  Becca Krouse [aut],\n  Emily de la Rua [aut] (ORCID: <https://orcid.org/0009-0000-8738-5561>),\n  Malan Bosman [aut] (ORCID: <https://orcid.org/0000-0002-3020-195X>),\n  F. Hoffmann-La Roche AG [cph, fnd],\n  GlaxoSmithKline Research & Development Limited [cph]",
+        "Maintainer": "Daniel D. Sjoberg <danield.sjoberg@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-08-27 07:30:02 UTC",
+        "Built": "R 4.5.1; ; 2025-08-27 23:52:54 UTC; windows"
+      }
+    },
+    "cardx": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "cardx",
+        "Title": "Extra Analysis Results Data Utilities",
+        "Version": "0.3.0",
+        "Authors@R": "c(\n    person(\"Daniel D.\", \"Sjoberg\", , \"danield.sjoberg@gmail.com\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0003-0862-2018\")),\n    person(\"Abinaya\", \"Yogasekaram\", , \"abinaya.yogasekaram@contractors.roche.com\", role = \"aut\"),\n    person(\"Emily\", \"de la Rua\", , \"emily.de_la_rua@contractors.roche.com\", role = \"aut\"),\n    person(\"Malcolm\", \"Barrett\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0003-0299-5825\")),\n    person(\"F. Hoffmann-La Roche AG\", role = c(\"cph\", \"fnd\"))\n  )",
+        "Description": "Create extra Analysis Results Data (ARD) summary objects.\n    The package supplements the simple ARD functions from the 'cards'\n    package, exporting functions to put statistical results in the ARD\n    format. These objects are used and re-used to construct summary\n    tables, visualizations, and written reports.",
+        "License": "Apache License 2.0",
+        "URL": "https://github.com/insightsengineering/cardx,\nhttps://insightsengineering.github.io/cardx/",
+        "BugReports": "https://github.com/insightsengineering/cardx/issues",
+        "Depends": "R (>= 4.2)",
+        "Imports": "cards (>= 0.7.0), cli (>= 3.6.1), dplyr (>= 1.1.2), glue (>=\n1.6.2), lifecycle (>= 1.0.3), rlang (>= 1.1.1), tidyr (>=\n1.3.0)",
+        "Suggests": "aod (>= 1.3.3), broom (>= 1.0.8), broom.helpers (>= 1.17.0),\nbroom.mixed (>= 0.2.9), car (>= 3.1-2), effectsize (>= 0.8.8),\nemmeans (>= 1.7.3), geepack (>= 1.3.2), ggsurvfit (>= 1.1.0),\nlme4 (>= 1.1-37), parameters (>= 0.20.2), smd (>= 0.6.6),\nsurvey (>= 4.2), survival (>= 3.6-4), testthat (>= 3.2.0),\nwithr (>= 2.5.0)",
+        "Config/Needs/website": "insightsengineering/nesttemplate",
+        "Config/testthat/edition": "3",
+        "Config/testthat/parallel": "true",
+        "Encoding": "UTF-8",
+        "Language": "en-US",
+        "RoxygenNote": "7.3.2",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-08-27 14:13:53 UTC; sjobergd",
+        "Author": "Daniel D. Sjoberg [aut, cre] (ORCID:\n    <https://orcid.org/0000-0003-0862-2018>),\n  Abinaya Yogasekaram [aut],\n  Emily de la Rua [aut],\n  Malcolm Barrett [ctb] (ORCID: <https://orcid.org/0000-0003-0299-5825>),\n  F. Hoffmann-La Roche AG [cph, fnd]",
+        "Maintainer": "Daniel D. Sjoberg <danield.sjoberg@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-08-27 14:40:02 UTC",
+        "Built": "R 4.5.1; ; 2025-08-27 23:55:23 UTC; windows"
       }
     },
     "cellranger": {
@@ -1846,6 +1939,82 @@
         "Archs": "x64"
       }
     },
+    "flextable": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Type": "Package",
+        "Package": "flextable",
+        "Title": "Functions for Tabular Reporting",
+        "Version": "0.9.10",
+        "Authors@R": "c(\n    person(\"David\", \"Gohel\", , \"david.gohel@ardata.fr\", role = c(\"aut\", \"cre\")),\n    person(\"ArData\", role = \"cph\"),\n    person(\"Clementine\", \"Jager\", role = \"ctb\"),\n    person(\"Eli\", \"Daniels\", role = \"ctb\"),\n    person(\"Panagiotis\", \"Skintzos\", , \"panagiotis.skintzos@ardata.fr\", role = \"aut\"),\n    person(\"Quentin\", \"Fazilleau\", role = \"ctb\"),\n    person(\"Maxim\", \"Nazarov\", role = \"ctb\"),\n    person(\"Titouan\", \"Robert\", role = \"ctb\"),\n    person(\"Michael\", \"Barrowman\", role = \"ctb\"),\n    person(\"Atsushi\", \"Yasumoto\", role = \"ctb\"),\n    person(\"Paul\", \"Julian\", role = \"ctb\"),\n    person(\"Sean\", \"Browning\", role = \"ctb\"),\n    person(\"Rémi\", \"Thériault\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0003-4315-6788\")),\n    person(\"Samuel\", \"Jobert\", role = \"ctb\"),\n    person(\"Keith\", \"Newman\", role = \"ctb\")\n  )",
+        "Description": "Use a grammar for creating and customizing pretty tables.\n    The following formats are supported: 'HTML', 'PDF', 'RTF', 'Microsoft\n    Word', 'Microsoft PowerPoint' and R 'Grid Graphics'.  'R Markdown',\n    'Quarto' and the package 'officer' can be used to produce the result\n    files. The syntax is the same for the user regardless of the type of\n    output to be produced. A set of functions allows the creation,\n    definition of cell arrangement, addition of headers or footers,\n    formatting and definition of cell content with text and or images. The\n    package also offers a set of high-level functions that allow tabular\n    reporting of statistical models and the creation of complex cross\n    tabulations.",
+        "License": "GPL-3",
+        "URL": "https://ardata-fr.github.io/flextable-book/,\nhttps://davidgohel.github.io/flextable/",
+        "BugReports": "https://github.com/davidgohel/flextable/issues",
+        "Imports": "data.table (>= 1.13.0), gdtools (>= 0.4.0), graphics,\ngrDevices, grid, htmltools, knitr, officer (>= 0.6.10), ragg,\nrlang, rmarkdown (>= 2.0), stats, utils, uuid (>= 0.1-4), xml2",
+        "Suggests": "bookdown (>= 0.40), broom, broom.mixed, chromote, cluster,\ncommonmark, doconv (>= 0.3.0), equatags, ggplot2, lme4, magick,\nmgcv, nlme, officedown, pdftools, pkgdown (>= 2.0.0), scales,\nsvglite, tables (>= 0.9.17), testthat (>= 3.0.0), webshot2,\nwithr, xtable",
+        "VignetteBuilder": "knitr",
+        "Config/testthat/edition": "3",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.3.2",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-08-24 09:29:14 UTC; davidgohel",
+        "Author": "David Gohel [aut, cre],\n  ArData [cph],\n  Clementine Jager [ctb],\n  Eli Daniels [ctb],\n  Panagiotis Skintzos [aut],\n  Quentin Fazilleau [ctb],\n  Maxim Nazarov [ctb],\n  Titouan Robert [ctb],\n  Michael Barrowman [ctb],\n  Atsushi Yasumoto [ctb],\n  Paul Julian [ctb],\n  Sean Browning [ctb],\n  Rémi Thériault [ctb] (ORCID: <https://orcid.org/0000-0003-4315-6788>),\n  Samuel Jobert [ctb],\n  Keith Newman [ctb]",
+        "Maintainer": "David Gohel <david.gohel@ardata.fr>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-08-24 10:30:02 UTC",
+        "Built": "R 4.5.2; ; 2025-11-01 02:57:57 UTC; windows"
+      }
+    },
+    "fontBitstreamVera": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "fontBitstreamVera",
+        "Title": "Fonts with 'Bitstream Vera Fonts' License",
+        "Version": "0.1.1",
+        "Authors@R": "c(\n    person(\"Lionel\", \"Henry\", , \"lionel.hry@gmail.com\", c(\"cre\", \"aut\")),\n    person(\"Bitstream\", role = \"cph\"))",
+        "Description": "Provides fonts licensed under the 'Bitstream Vera Fonts'\n    license for the 'fontquiver' package.",
+        "Depends": "R (>= 3.0.0)",
+        "License": "file LICENCE",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "RoxygenNote": "5.0.1",
+        "NeedsCompilation": "no",
+        "Packaged": "2017-01-31 20:03:43 UTC; lionel",
+        "Author": "Lionel Henry [cre, aut],\n  Bitstream [cph]",
+        "Maintainer": "Lionel Henry <lionel.hry@gmail.com>",
+        "License_is_FOSS": "yes",
+        "Repository": "CRAN",
+        "Date/Publication": "2017-02-01 00:53:34",
+        "Built": "R 4.5.0; ; 2025-04-08 00:45:08 UTC; windows"
+      }
+    },
+    "fontLiberation": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "fontLiberation",
+        "Title": "Liberation Fonts",
+        "Version": "0.1.0",
+        "Authors@R": "c(\n    person(\"Lionel\", \"Henry\", , \"lionel@rstudio.com\", \"cre\"),\n    person(\"Pravin Satpute\", role = \"aut\"),\n    person(\"Steve Matteson\", role = \"aut\"),\n    person(\"Red Hat, Inc\", role = \"cph\"),\n    person(\"Google Corporation\", role = \"cph\"))",
+        "Description": "A placeholder for the Liberation fontset intended for the\n    `fontquiver` package. This fontset covers the 12 combinations of\n    families (sans, serif, mono) and faces (plain, bold, italic, bold\n    italic) supported in R graphics devices.",
+        "Depends": "R (>= 3.0)",
+        "License": "file LICENSE",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "RoxygenNote": "5.0.1",
+        "NeedsCompilation": "no",
+        "Packaged": "2016-10-14 14:21:59 UTC; lionel",
+        "Author": "Lionel Henry [cre],\n  Pravin Satpute [aut],\n  Steve Matteson [aut],\n  Red Hat, Inc [cph],\n  Google Corporation [cph]",
+        "Maintainer": "Lionel Henry <lionel@rstudio.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2016-10-15 11:24:18",
+        "License_is_FOSS": "yes",
+        "Built": "R 4.5.0; ; 2025-04-08 00:45:08 UTC; windows"
+      }
+    },
     "fontawesome": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -1873,6 +2042,32 @@
         "Repository": "CRAN",
         "Date/Publication": "2024-11-16 17:30:02 UTC",
         "Built": "R 4.5.0; ; 2025-05-31 01:15:03 UTC; windows"
+      }
+    },
+    "fontquiver": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "fontquiver",
+        "Title": "Set of Installed Fonts",
+        "Version": "0.2.1",
+        "Authors@R": "c(\n    person(\"Lionel\", \"Henry\", , \"lionel@rstudio.com\", c(\"cre\", \"aut\")),\n    person(\"RStudio\", role = \"cph\"),\n    person(\"George Douros\", role = \"cph\", comment = \"Symbola font\"))",
+        "Description": "Provides a set of fonts with permissive licences. This is\n    useful when you want to avoid system fonts to make sure your\n    outputs are reproducible.",
+        "Depends": "R (>= 3.0.0)",
+        "Imports": "fontBitstreamVera (>= 0.1.0), fontLiberation (>= 0.1.0)",
+        "Suggests": "testthat, htmltools",
+        "License": "GPL-3 | file LICENSE",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "RoxygenNote": "5.0.1",
+        "Collate": "'font-getters.R' 'fontset.R' 'fontset-bitstream-vera.R'\n'fontset-dejavu.R' 'fontset-liberation.R' 'fontset-symbola.R'\n'html-dependency.R' 'utils.R'",
+        "NeedsCompilation": "no",
+        "Packaged": "2017-01-31 20:11:24 UTC; lionel",
+        "Author": "Lionel Henry [cre, aut],\n  RStudio [cph],\n  George Douros [cph] (Symbola font)",
+        "Maintainer": "Lionel Henry <lionel@rstudio.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2017-02-01 00:52:56",
+        "Built": "R 4.5.0; ; 2025-06-27 00:37:59 UTC; windows"
       }
     },
     "forcats": {
@@ -2057,6 +2252,35 @@
         "Repository": "CRAN",
         "Date/Publication": "2025-09-03 05:10:02 UTC",
         "Built": "R 4.5.2; ; 2025-11-01 02:02:15 UTC; windows"
+      }
+    },
+    "gdtools": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "gdtools",
+        "Title": "Utilities for Graphical Rendering and Fonts Management",
+        "Version": "0.4.4",
+        "Authors@R": "c(\n    person(\"David\", \"Gohel\", , \"david.gohel@ardata.fr\", role = c(\"aut\", \"cre\")),\n    person(\"Hadley\", \"Wickham\", , \"hadley@rstudio.com\", role = \"aut\"),\n    person(\"Lionel\", \"Henry\", , \"lionel@rstudio.com\", role = \"aut\"),\n    person(\"Jeroen\", \"Ooms\", , \"jeroen@berkeley.edu\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-4035-0289\")),\n    person(\"Yixuan\", \"Qiu\", role = \"ctb\"),\n    person(\"R Core Team\", role = \"cph\",\n           comment = \"Cairo code from X11 device\"),\n    person(\"ArData\", role = \"cph\"),\n    person(\"RStudio\", role = \"cph\")\n  )",
+        "Description": "Tools are provided to compute metrics of formatted strings\n    and to check the availability of a font.  Another set of functions is\n    provided to support the collection of fonts from 'Google Fonts' in a\n    cache. Their use is simple within 'R Markdown' documents and 'shiny'\n    applications but also with graphic productions generated with the\n    'ggiraph', 'ragg' and 'svglite' packages or with tabular productions\n    from the 'flextable' package.",
+        "License": "GPL-3 | file LICENSE",
+        "URL": "https://davidgohel.github.io/gdtools/",
+        "BugReports": "https://github.com/davidgohel/gdtools/issues",
+        "Depends": "R (>= 4.0.0)",
+        "Imports": "fontquiver (>= 0.2.0), htmltools, Rcpp (>= 0.12.12),\nsystemfonts (>= 1.3.1), tools",
+        "Suggests": "curl, gfonts, methods, testthat",
+        "LinkingTo": "Rcpp",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.3.3",
+        "SystemRequirements": "cairo, freetype2, fontconfig",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-10-06 06:43:42 UTC; davidgohel",
+        "Author": "David Gohel [aut, cre],\n  Hadley Wickham [aut],\n  Lionel Henry [aut],\n  Jeroen Ooms [aut] (ORCID: <https://orcid.org/0000-0002-4035-0289>),\n  Yixuan Qiu [ctb],\n  R Core Team [cph] (Cairo code from X11 device),\n  ArData [cph],\n  RStudio [cph]",
+        "Maintainer": "David Gohel <david.gohel@ardata.fr>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-10-06 07:20:09 UTC",
+        "Built": "R 4.5.2; x86_64-w64-mingw32; 2025-11-01 02:02:44 UTC; windows",
+        "Archs": "x64"
       }
     },
     "generics": {
@@ -2636,6 +2860,39 @@
         "Built": "R 4.5.0; ; 2025-05-31 01:15:00 UTC; windows"
       }
     },
+    "gtsummary": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "gtsummary",
+        "Title": "Presentation-Ready Data Summary and Analytic Result Tables",
+        "Version": "2.4.0",
+        "Authors@R": "c(\n    person(\"Daniel D.\", \"Sjoberg\", , \"danield.sjoberg@gmail.com\", role = c(\"aut\", \"cre\"),\n           comment = c(ORCID = \"0000-0003-0862-2018\")),\n    person(\"Joseph\", \"Larmarange\", role = \"aut\",\n           comment = c(ORCID = \"0000-0001-7097-700X\")),\n    person(\"Michael\", \"Curry\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-0261-4044\")),\n    person(\"Emily\", \"de la Rua\", , role = \"aut\",\n           comment = c(ORCID = \"0009-0000-8738-5561\")),\n    person(\"Jessica\", \"Lavery\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-2746-5647\")),\n    person(\"Karissa\", \"Whiting\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-4683-1868\")),\n    person(\"Emily C.\", \"Zabor\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-1402-4498\")),\n    person(\"Xing\", \"Bai\", role = \"ctb\"),\n    person(\"Malcolm\", \"Barrett\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0003-0299-5825\")),\n    person(\"Esther\", \"Drill\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-3315-4538\")),\n    person(\"Jessica\", \"Flynn\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0001-8310-6684\")),\n    person(\"Margie\", \"Hannum\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-2953-0449\")),\n    person(\"Stephanie\", \"Lobaugh\", role = \"ctb\"),\n    person(\"Shannon\", \"Pileggi\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-7732-4164\")),\n    person(\"Amy\", \"Tin\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-8005-0694\")),\n    person(\"Gustavo\", \"Zapata Wainberg\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-2524-3637\"))\n  )",
+        "Description": "Creates presentation-ready tables summarizing data sets,\n    regression models, and more. The code to create the tables is concise\n    and highly customizable. Data frames can be summarized with any\n    function, e.g. mean(), median(), even user-written functions.\n    Regression models are summarized and include the reference rows for\n    categorical variables. Common regression models, such as logistic\n    regression and Cox proportional hazards regression, are automatically\n    identified and the tables are pre-filled with appropriate column\n    headers.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://github.com/ddsjoberg/gtsummary,\nhttps://www.danieldsjoberg.com/gtsummary/",
+        "BugReports": "https://github.com/ddsjoberg/gtsummary/issues",
+        "Depends": "R (>= 4.2)",
+        "Imports": "cards (>= 0.7.0), cardx (>= 0.3.0), cli (>= 3.6.3), dplyr (>=\n1.1.3), glue (>= 1.8.0), gt (>= 0.11.1), lifecycle (>= 1.0.3),\nrlang (>= 1.1.1), tidyr (>= 1.3.0), vctrs (>= 0.6.4)",
+        "Suggests": "aod (>= 1.3.3), broom (>= 1.0.5), broom.helpers (>= 1.20.0),\nbroom.mixed (>= 0.2.9), car (>= 3.0-11), cmprsk, effectsize (>=\n0.6.0), emmeans (>= 1.7.3), flextable (>= 0.8.1), geepack (>=\n1.3.10), ggstats (>= 0.2.1), huxtable (>= 5.4.0), insight (>=\n0.15.0), kableExtra (>= 1.3.4), knitr (>= 1.37), lme4 (>=\n1.1-31), mice (>= 3.10.0), nnet, officer, openxlsx, parameters\n(>= 0.20.2), parsnip (>= 0.1.7), rmarkdown, smd (>= 0.6.6),\nspelling, survey (>= 4.2), survival (>= 3.6-4), testthat (>=\n3.2.0), withr (>= 2.5.0), workflows (>= 0.2.4)",
+        "VignetteBuilder": "knitr",
+        "Config/Needs/check": "hms",
+        "Config/Needs/website": "forcats, sandwich, scales",
+        "Config/testthat/edition": "3",
+        "Config/testthat/parallel": "true",
+        "Encoding": "UTF-8",
+        "Language": "en-US",
+        "LazyData": "true",
+        "RoxygenNote": "7.3.2",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-08-28 03:45:15 UTC; sjobergd",
+        "Author": "Daniel D. Sjoberg [aut, cre] (ORCID:\n    <https://orcid.org/0000-0003-0862-2018>),\n  Joseph Larmarange [aut] (ORCID:\n    <https://orcid.org/0000-0001-7097-700X>),\n  Michael Curry [aut] (ORCID: <https://orcid.org/0000-0002-0261-4044>),\n  Emily de la Rua [aut] (ORCID: <https://orcid.org/0009-0000-8738-5561>),\n  Jessica Lavery [aut] (ORCID: <https://orcid.org/0000-0002-2746-5647>),\n  Karissa Whiting [aut] (ORCID: <https://orcid.org/0000-0002-4683-1868>),\n  Emily C. Zabor [aut] (ORCID: <https://orcid.org/0000-0002-1402-4498>),\n  Xing Bai [ctb],\n  Malcolm Barrett [ctb] (ORCID: <https://orcid.org/0000-0003-0299-5825>),\n  Esther Drill [ctb] (ORCID: <https://orcid.org/0000-0002-3315-4538>),\n  Jessica Flynn [ctb] (ORCID: <https://orcid.org/0000-0001-8310-6684>),\n  Margie Hannum [ctb] (ORCID: <https://orcid.org/0000-0002-2953-0449>),\n  Stephanie Lobaugh [ctb],\n  Shannon Pileggi [ctb] (ORCID: <https://orcid.org/0000-0002-7732-4164>),\n  Amy Tin [ctb] (ORCID: <https://orcid.org/0000-0002-8005-0694>),\n  Gustavo Zapata Wainberg [ctb] (ORCID:\n    <https://orcid.org/0000-0002-2524-3637>)",
+        "Maintainer": "Daniel D. Sjoberg <danield.sjoberg@gmail.com>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-08-28 04:50:02 UTC",
+        "Built": "R 4.5.0; ; 2025-09-02 09:10:56 UTC; windows"
+      }
+    },
     "haven": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -2906,7 +3163,7 @@
       "description": {
         "Package": "httr2",
         "Title": "Perform HTTP Requests and Process the Responses",
-        "Version": "1.2.1",
+        "Version": "1.2.2",
         "Authors@R": "c(\n    person(\"Hadley\", \"Wickham\", , \"hadley@posit.co\", role = c(\"aut\", \"cre\")),\n    person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")),\n    person(\"Maximilian\", \"Girlich\", role = \"ctb\")\n  )",
         "Description": "Tools for creating and modifying HTTP requests, then\n    performing them and processing the results. 'httr2' is a modern\n    re-imagining of 'httr' that uses a pipe-based interface and solves\n    more of the problems that API wrapping packages face.",
         "License": "MIT + file LICENSE",
@@ -2914,21 +3171,21 @@
         "BugReports": "https://github.com/r-lib/httr2/issues",
         "Depends": "R (>= 4.1)",
         "Imports": "cli (>= 3.0.0), curl (>= 6.4.0), glue, lifecycle, magrittr,\nopenssl, R6, rappdirs, rlang (>= 1.1.0), vctrs (>= 0.6.3),\nwithr",
-        "Suggests": "askpass, bench, clipr, covr, docopt, httpuv, jose, jsonlite,\nknitr, later (>= 1.4.0), nanonext, paws.common, promises,\nrmarkdown, testthat (>= 3.1.8), tibble, webfakes (>= 1.4.0),\nxml2",
+        "Suggests": "askpass, bench, clipr, covr, docopt, httpuv, jose, jsonlite,\nknitr, later (>= 1.4.0), nanonext, otel (>= 0.2.0), otelsdk (>=\n0.2.0), paws.common (>= 0.8.0), promises, rmarkdown, testthat\n(>= 3.1.8), tibble, webfakes (>= 1.4.0), xml2",
         "VignetteBuilder": "knitr",
         "Config/Needs/website": "tidyverse/tidytemplate",
         "Config/testthat/edition": "3",
         "Config/testthat/parallel": "true",
         "Config/testthat/start-first": "resp-stream, req-perform",
         "Encoding": "UTF-8",
-        "RoxygenNote": "7.3.2",
+        "RoxygenNote": "7.3.3",
         "NeedsCompilation": "no",
-        "Packaged": "2025-07-21 17:36:04 UTC; hadleywickham",
+        "Packaged": "2025-12-05 17:46:06 UTC; hadleywickham",
         "Author": "Hadley Wickham [aut, cre],\n  Posit Software, PBC [cph, fnd],\n  Maximilian Girlich [ctb]",
         "Maintainer": "Hadley Wickham <hadley@posit.co>",
         "Repository": "CRAN",
-        "Date/Publication": "2025-07-22 04:40:55 UTC",
-        "Built": "R 4.5.2; ; 2025-11-01 02:01:54 UTC; windows"
+        "Date/Publication": "2025-12-08 09:50:02 UTC",
+        "Built": "R 4.5.2; ; 2025-12-30 02:47:12 UTC; windows"
       }
     },
     "ids": {
@@ -2987,6 +3244,34 @@
         "Repository": "CRAN",
         "Date/Publication": "2025-09-02 11:20:02 UTC",
         "Built": "R 4.5.1; ; 2025-10-29 01:43:49 UTC; windows"
+      }
+    },
+    "interactions": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "interactions",
+        "Type": "Package",
+        "Title": "Comprehensive, User-Friendly Toolkit for Probing Interactions",
+        "Version": "1.2.0",
+        "Authors@R": "person(c(\"Jacob\",\"A.\"), \"Long\", email = \"jacob.long@sc.edu\",\n  role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-1582-6214\"))",
+        "Description": "A suite of functions for conducting and interpreting analysis \n  of statistical interaction in regression models that was formerly part of the \n  'jtools' package. Functionality includes visualization of two- and three-way\n  interactions among continuous and/or categorical variables as well as \n  calculation of \"simple slopes\" and Johnson-Neyman intervals (see e.g., \n  Bauer & Curran, 2005 <doi:10.1207/s15327906mbr4003_5>). These\n  capabilities are implemented for generalized linear models in addition to the \n  standard linear regression context.",
+        "URL": "https://interactions.jacob-long.com",
+        "BugReports": "https://github.com/jacob-long/interactions/issues",
+        "License": "MIT + file LICENSE",
+        "Encoding": "UTF-8",
+        "Imports": "ggplot2 (>= 3.4.0), cli, generics, broom, jtools (>= 2.0.3),\nrlang (>= 0.3.0), tibble",
+        "Suggests": "cowplot, broom.mixed, glue, huxtable (>= 3.0.0), lme4,\nmargins, sandwich, survey, knitr, rmarkdown, testthat, vdiffr",
+        "Enhances": "brms, rstanarm",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.3.2.9000",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-07-29 14:54:50 UTC; jacoblong",
+        "Author": "Jacob A. Long [aut, cre] (<https://orcid.org/0000-0002-1582-6214>)",
+        "Maintainer": "Jacob A. Long <jacob.long@sc.edu>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-07-29 21:40:06 UTC",
+        "Built": "R 4.5.2; ; 2026-01-23 04:39:41 UTC; windows"
       }
     },
     "isoband": {
@@ -3179,6 +3464,36 @@
         "Archs": "x64"
       }
     },
+    "jtools": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "jtools",
+        "Type": "Package",
+        "Title": "Analysis and Presentation of Social Scientific Data",
+        "Version": "2.3.1",
+        "Authors@R": "person(c(\"Jacob\",\"A.\"), \"Long\", email = \"jacob.long@sc.edu\",\n  role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0002-1582-6214\"))",
+        "Description": "This is a collection of tools for more efficiently understanding \n  and sharing the results of (primarily) regression analyses. There are also a\n  number of miscellaneous functions for statistical and programming purposes. \n  Support for models produced by the survey and lme4 packages are points of \n  emphasis.",
+        "URL": "https://jtools.jacob-long.com",
+        "BugReports": "https://github.com/jacob-long/jtools/issues",
+        "License": "GPL (>= 3)",
+        "Encoding": "UTF-8",
+        "LazyData": "true",
+        "Imports": "cli, generics, broom, broom.mixed, ggplot2 (>= 3.4.0),\nmagrittr, pander, pkgconfig, rlang, sandwich, tibble",
+        "Suggests": "boot, huxtable, kableExtra, lme4, lmerTest, MASS, methods,\npbkrtest, RColorBrewer, scales, survey, weights, knitr,\nrmarkdown, testthat, vdiffr",
+        "Enhances": "brms, quantreg, rstanarm",
+        "RoxygenNote": "7.3.2",
+        "VignetteBuilder": "knitr",
+        "Depends": "R (>= 3.6.0)",
+        "NeedsCompilation": "no",
+        "Packaged": "2026-01-15 21:38:31 UTC; jacoblong",
+        "Author": "Jacob A. Long [aut, cre] (ORCID:\n    <https://orcid.org/0000-0002-1582-6214>)",
+        "Maintainer": "Jacob A. Long <jacob.long@sc.edu>",
+        "Repository": "CRAN",
+        "Date/Publication": "2026-01-16 09:10:31 UTC",
+        "Built": "R 4.5.2; ; 2026-01-23 04:15:46 UTC; windows"
+      }
+    },
     "juicyjuice": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -3242,27 +3557,27 @@
         "Package": "knitr",
         "Type": "Package",
         "Title": "A General-Purpose Package for Dynamic Report Generation in R",
-        "Version": "1.50",
+        "Version": "1.51",
         "Authors@R": "c(\n    person(\"Yihui\", \"Xie\", role = c(\"aut\", \"cre\"), email = \"xie@yihui.name\", comment = c(ORCID = \"0000-0003-0645-5666\", URL = \"https://yihui.org\")),\n    person(\"Abhraneel\", \"Sarma\", role = \"ctb\"),\n    person(\"Adam\", \"Vogt\", role = \"ctb\"),\n    person(\"Alastair\", \"Andrew\", role = \"ctb\"),\n    person(\"Alex\", \"Zvoleff\", role = \"ctb\"),\n    person(\"Amar\", \"Al-Zubaidi\", role = \"ctb\"),\n    person(\"Andre\", \"Simon\", role = \"ctb\", comment = \"the CSS files under inst/themes/ were derived from the Highlight package http://www.andre-simon.de\"),\n    person(\"Aron\", \"Atkins\", role = \"ctb\"),\n    person(\"Aaron\", \"Wolen\", role = \"ctb\"),\n    person(\"Ashley\", \"Manton\", role = \"ctb\"),\n    person(\"Atsushi\", \"Yasumoto\", role = \"ctb\", comment = c(ORCID = \"0000-0002-8335-495X\")),\n    person(\"Ben\", \"Baumer\", role = \"ctb\"),\n    person(\"Brian\", \"Diggs\", role = \"ctb\"),\n    person(\"Brian\", \"Zhang\", role = \"ctb\"),\n    person(\"Bulat\", \"Yapparov\", role = \"ctb\"),\n    person(\"Cassio\", \"Pereira\", role = \"ctb\"),\n    person(\"Christophe\", \"Dervieux\", role = \"ctb\"),\n    person(\"David\", \"Hall\", role = \"ctb\"),\n    person(\"David\", \"Hugh-Jones\", role = \"ctb\"),\n    person(\"David\", \"Robinson\", role = \"ctb\"),\n    person(\"Doug\", \"Hemken\", role = \"ctb\"),\n    person(\"Duncan\", \"Murdoch\", role = \"ctb\"),\n    person(\"Elio\", \"Campitelli\", role = \"ctb\"),\n    person(\"Ellis\", \"Hughes\", role = \"ctb\"),\n    person(\"Emily\", \"Riederer\", role = \"ctb\"),\n    person(\"Fabian\", \"Hirschmann\", role = \"ctb\"),\n    person(\"Fitch\", \"Simeon\", role = \"ctb\"),\n    person(\"Forest\", \"Fang\", role = \"ctb\"),\n    person(c(\"Frank\", \"E\", \"Harrell\", \"Jr\"), role = \"ctb\", comment = \"the Sweavel package at inst/misc/Sweavel.sty\"),\n    person(\"Garrick\", \"Aden-Buie\", role = \"ctb\"),\n    person(\"Gregoire\", \"Detrez\", role = \"ctb\"),\n    person(\"Hadley\", \"Wickham\", role = \"ctb\"),\n    person(\"Hao\", \"Zhu\", role = \"ctb\"),\n    person(\"Heewon\", \"Jeon\", role = \"ctb\"),\n    person(\"Henrik\", \"Bengtsson\", role = \"ctb\"),\n    person(\"Hiroaki\", \"Yutani\", role = \"ctb\"),\n    person(\"Ian\", \"Lyttle\", role = \"ctb\"),\n    person(\"Hodges\", \"Daniel\", role = \"ctb\"),\n    person(\"Jacob\", \"Bien\", role = \"ctb\"),\n    person(\"Jake\", \"Burkhead\", role = \"ctb\"),\n    person(\"James\", \"Manton\", role = \"ctb\"),\n    person(\"Jared\", \"Lander\", role = \"ctb\"),\n    person(\"Jason\", \"Punyon\", role = \"ctb\"),\n    person(\"Javier\", \"Luraschi\", role = \"ctb\"),\n    person(\"Jeff\", \"Arnold\", role = \"ctb\"),\n    person(\"Jenny\", \"Bryan\", role = \"ctb\"),\n    person(\"Jeremy\", \"Ashkenas\", role = c(\"ctb\", \"cph\"), comment = \"the CSS file at inst/misc/docco-classic.css\"),\n    person(\"Jeremy\", \"Stephens\", role = \"ctb\"),\n    person(\"Jim\", \"Hester\", role = \"ctb\"),\n    person(\"Joe\", \"Cheng\", role = \"ctb\"),\n    person(\"Johannes\", \"Ranke\", role = \"ctb\"),\n    person(\"John\", \"Honaker\", role = \"ctb\"),\n    person(\"John\", \"Muschelli\", role = \"ctb\"),\n    person(\"Jonathan\", \"Keane\", role = \"ctb\"),\n    person(\"JJ\", \"Allaire\", role = \"ctb\"),\n    person(\"Johan\", \"Toloe\", role = \"ctb\"),\n    person(\"Jonathan\", \"Sidi\", role = \"ctb\"),\n    person(\"Joseph\", \"Larmarange\", role = \"ctb\"),\n    person(\"Julien\", \"Barnier\", role = \"ctb\"),\n    person(\"Kaiyin\", \"Zhong\", role = \"ctb\"),\n    person(\"Kamil\", \"Slowikowski\", role = \"ctb\"),\n    person(\"Karl\", \"Forner\", role = \"ctb\"),\n    person(c(\"Kevin\", \"K.\"), \"Smith\", role = \"ctb\"),\n    person(\"Kirill\", \"Mueller\", role = \"ctb\"),\n    person(\"Kohske\", \"Takahashi\", role = \"ctb\"),\n    person(\"Lorenz\", \"Walthert\", role = \"ctb\"),\n    person(\"Lucas\", \"Gallindo\", role = \"ctb\"),\n    person(\"Marius\", \"Hofert\", role = \"ctb\"),\n    person(\"Martin\", \"Modrák\", role = \"ctb\"),\n    person(\"Michael\", \"Chirico\", role = \"ctb\"),\n    person(\"Michael\", \"Friendly\", role = \"ctb\"),\n    person(\"Michal\", \"Bojanowski\", role = \"ctb\"),\n    person(\"Michel\", \"Kuhlmann\", role = \"ctb\"),\n    person(\"Miller\", \"Patrick\", role = \"ctb\"),\n    person(\"Nacho\", \"Caballero\", role = \"ctb\"),\n    person(\"Nick\", \"Salkowski\", role = \"ctb\"),\n    person(\"Niels Richard\", \"Hansen\", role = \"ctb\"),\n    person(\"Noam\", \"Ross\", role = \"ctb\"),\n    person(\"Obada\", \"Mahdi\", role = \"ctb\"),\n    person(\"Pavel N.\", \"Krivitsky\", role = \"ctb\", comment=c(ORCID = \"0000-0002-9101-3362\")),\n    person(\"Pedro\", \"Faria\", role = \"ctb\"),\n    person(\"Qiang\", \"Li\", role = \"ctb\"),\n    person(\"Ramnath\", \"Vaidyanathan\", role = \"ctb\"),\n    person(\"Richard\", \"Cotton\", role = \"ctb\"),\n    person(\"Robert\", \"Krzyzanowski\", role = \"ctb\"),\n    person(\"Rodrigo\", \"Copetti\", role = \"ctb\"),\n    person(\"Romain\", \"Francois\", role = \"ctb\"),\n    person(\"Ruaridh\", \"Williamson\", role = \"ctb\"),\n    person(\"Sagiru\", \"Mati\", role = \"ctb\", comment = c(ORCID = \"0000-0003-1413-3974\")),\n    person(\"Scott\", \"Kostyshak\", role = \"ctb\"),\n    person(\"Sebastian\", \"Meyer\", role = \"ctb\"),\n    person(\"Sietse\", \"Brouwer\", role = \"ctb\"),\n    person(c(\"Simon\", \"de\"), \"Bernard\", role = \"ctb\"),\n    person(\"Sylvain\", \"Rousseau\", role = \"ctb\"),\n    person(\"Taiyun\", \"Wei\", role = \"ctb\"),\n    person(\"Thibaut\", \"Assus\", role = \"ctb\"),\n    person(\"Thibaut\", \"Lamadon\", role = \"ctb\"),\n    person(\"Thomas\", \"Leeper\", role = \"ctb\"),\n    person(\"Tim\", \"Mastny\", role = \"ctb\"),\n    person(\"Tom\", \"Torsney-Weir\", role = \"ctb\"),\n    person(\"Trevor\", \"Davis\", role = \"ctb\"),\n    person(\"Viktoras\", \"Veitas\", role = \"ctb\"),\n    person(\"Weicheng\", \"Zhu\", role = \"ctb\"),\n    person(\"Wush\", \"Wu\", role = \"ctb\"),\n    person(\"Zachary\", \"Foster\", role = \"ctb\"),\n    person(\"Zhian N.\", \"Kamvar\", role = \"ctb\", comment = c(ORCID = \"0000-0003-1458-7108\")),\n    person(given = \"Posit Software, PBC\", role = c(\"cph\", \"fnd\"))\n    )",
         "Description": "Provides a general-purpose tool for dynamic report generation in R\n    using Literate Programming techniques.",
         "Depends": "R (>= 3.6.0)",
-        "Imports": "evaluate (>= 0.15), highr (>= 0.11), methods, tools, xfun (>=\n0.51), yaml (>= 2.1.19)",
-        "Suggests": "bslib, codetools, DBI (>= 0.4-1), digest, formatR, gifski,\ngridSVG, htmlwidgets (>= 0.7), jpeg, JuliaCall (>= 0.11.1),\nmagick, litedown, markdown (>= 1.3), png, ragg, reticulate (>=\n1.4), rgl (>= 0.95.1201), rlang, rmarkdown, sass, showtext,\nstyler (>= 1.2.0), targets (>= 0.6.0), testit, tibble,\ntikzDevice (>= 0.10), tinytex (>= 0.56), webshot, rstudioapi,\nsvglite",
+        "Imports": "evaluate (>= 0.15), highr (>= 0.11), methods, tools, xfun (>=\n0.52), yaml (>= 2.1.19)",
+        "Suggests": "bslib, DBI (>= 0.4-1), digest, formatR, gifski, gridSVG,\nhtmlwidgets (>= 0.7), jpeg, JuliaCall (>= 0.11.1), magick,\nlitedown, markdown (>= 1.3), otel, otelsdk, png, ragg,\nreticulate (>= 1.4), rgl (>= 0.95.1201), rlang, rmarkdown,\nsass, showtext, styler (>= 1.2.0), targets (>= 0.6.0), testit,\ntibble, tikzDevice (>= 0.10), tinytex (>= 0.56), webshot,\nrstudioapi, svglite",
         "License": "GPL",
         "URL": "https://yihui.org/knitr/",
         "BugReports": "https://github.com/yihui/knitr/issues",
         "Encoding": "UTF-8",
         "VignetteBuilder": "litedown, knitr",
         "SystemRequirements": "Package vignettes based on R Markdown v2 or\nreStructuredText require Pandoc (http://pandoc.org). The\nfunction rst2pdf() requires rst2pdf\n(https://github.com/rst2pdf/rst2pdf).",
-        "Collate": "'block.R' 'cache.R' 'citation.R' 'hooks-html.R' 'plot.R'\n'utils.R' 'defaults.R' 'concordance.R' 'engine.R' 'highlight.R'\n'themes.R' 'header.R' 'hooks-asciidoc.R' 'hooks-chunk.R'\n'hooks-extra.R' 'hooks-latex.R' 'hooks-md.R' 'hooks-rst.R'\n'hooks-textile.R' 'hooks.R' 'output.R' 'package.R' 'pandoc.R'\n'params.R' 'parser.R' 'pattern.R' 'rocco.R' 'spin.R' 'table.R'\n'template.R' 'utils-conversion.R' 'utils-rd2html.R'\n'utils-string.R' 'utils-sweave.R' 'utils-upload.R'\n'utils-vignettes.R' 'zzz.R'",
-        "RoxygenNote": "7.3.2",
+        "Collate": "'block.R' 'cache.R' 'citation.R' 'hooks-html.R' 'plot.R'\n'utils.R' 'defaults.R' 'concordance.R' 'engine.R' 'highlight.R'\n'themes.R' 'header.R' 'hooks-asciidoc.R' 'hooks-chunk.R'\n'hooks-extra.R' 'hooks-latex.R' 'hooks-md.R' 'hooks-rst.R'\n'hooks-textile.R' 'hooks.R' 'otel.R' 'output.R' 'package.R'\n'pandoc.R' 'params.R' 'parser.R' 'pattern.R' 'rocco.R' 'spin.R'\n'table.R' 'template.R' 'utils-conversion.R' 'utils-rd2html.R'\n'utils-string.R' 'utils-sweave.R' 'utils-upload.R'\n'utils-vignettes.R' 'zzz.R'",
+        "RoxygenNote": "7.3.3",
         "NeedsCompilation": "no",
-        "Packaged": "2025-03-15 00:17:19 UTC; runner",
-        "Author": "Yihui Xie [aut, cre] (<https://orcid.org/0000-0003-0645-5666>,\n    https://yihui.org),\n  Abhraneel Sarma [ctb],\n  Adam Vogt [ctb],\n  Alastair Andrew [ctb],\n  Alex Zvoleff [ctb],\n  Amar Al-Zubaidi [ctb],\n  Andre Simon [ctb] (the CSS files under inst/themes/ were derived from\n    the Highlight package http://www.andre-simon.de),\n  Aron Atkins [ctb],\n  Aaron Wolen [ctb],\n  Ashley Manton [ctb],\n  Atsushi Yasumoto [ctb] (<https://orcid.org/0000-0002-8335-495X>),\n  Ben Baumer [ctb],\n  Brian Diggs [ctb],\n  Brian Zhang [ctb],\n  Bulat Yapparov [ctb],\n  Cassio Pereira [ctb],\n  Christophe Dervieux [ctb],\n  David Hall [ctb],\n  David Hugh-Jones [ctb],\n  David Robinson [ctb],\n  Doug Hemken [ctb],\n  Duncan Murdoch [ctb],\n  Elio Campitelli [ctb],\n  Ellis Hughes [ctb],\n  Emily Riederer [ctb],\n  Fabian Hirschmann [ctb],\n  Fitch Simeon [ctb],\n  Forest Fang [ctb],\n  Frank E Harrell Jr [ctb] (the Sweavel package at inst/misc/Sweavel.sty),\n  Garrick Aden-Buie [ctb],\n  Gregoire Detrez [ctb],\n  Hadley Wickham [ctb],\n  Hao Zhu [ctb],\n  Heewon Jeon [ctb],\n  Henrik Bengtsson [ctb],\n  Hiroaki Yutani [ctb],\n  Ian Lyttle [ctb],\n  Hodges Daniel [ctb],\n  Jacob Bien [ctb],\n  Jake Burkhead [ctb],\n  James Manton [ctb],\n  Jared Lander [ctb],\n  Jason Punyon [ctb],\n  Javier Luraschi [ctb],\n  Jeff Arnold [ctb],\n  Jenny Bryan [ctb],\n  Jeremy Ashkenas [ctb, cph] (the CSS file at\n    inst/misc/docco-classic.css),\n  Jeremy Stephens [ctb],\n  Jim Hester [ctb],\n  Joe Cheng [ctb],\n  Johannes Ranke [ctb],\n  John Honaker [ctb],\n  John Muschelli [ctb],\n  Jonathan Keane [ctb],\n  JJ Allaire [ctb],\n  Johan Toloe [ctb],\n  Jonathan Sidi [ctb],\n  Joseph Larmarange [ctb],\n  Julien Barnier [ctb],\n  Kaiyin Zhong [ctb],\n  Kamil Slowikowski [ctb],\n  Karl Forner [ctb],\n  Kevin K. Smith [ctb],\n  Kirill Mueller [ctb],\n  Kohske Takahashi [ctb],\n  Lorenz Walthert [ctb],\n  Lucas Gallindo [ctb],\n  Marius Hofert [ctb],\n  Martin Modrák [ctb],\n  Michael Chirico [ctb],\n  Michael Friendly [ctb],\n  Michal Bojanowski [ctb],\n  Michel Kuhlmann [ctb],\n  Miller Patrick [ctb],\n  Nacho Caballero [ctb],\n  Nick Salkowski [ctb],\n  Niels Richard Hansen [ctb],\n  Noam Ross [ctb],\n  Obada Mahdi [ctb],\n  Pavel N. Krivitsky [ctb] (<https://orcid.org/0000-0002-9101-3362>),\n  Pedro Faria [ctb],\n  Qiang Li [ctb],\n  Ramnath Vaidyanathan [ctb],\n  Richard Cotton [ctb],\n  Robert Krzyzanowski [ctb],\n  Rodrigo Copetti [ctb],\n  Romain Francois [ctb],\n  Ruaridh Williamson [ctb],\n  Sagiru Mati [ctb] (<https://orcid.org/0000-0003-1413-3974>),\n  Scott Kostyshak [ctb],\n  Sebastian Meyer [ctb],\n  Sietse Brouwer [ctb],\n  Simon de Bernard [ctb],\n  Sylvain Rousseau [ctb],\n  Taiyun Wei [ctb],\n  Thibaut Assus [ctb],\n  Thibaut Lamadon [ctb],\n  Thomas Leeper [ctb],\n  Tim Mastny [ctb],\n  Tom Torsney-Weir [ctb],\n  Trevor Davis [ctb],\n  Viktoras Veitas [ctb],\n  Weicheng Zhu [ctb],\n  Wush Wu [ctb],\n  Zachary Foster [ctb],\n  Zhian N. Kamvar [ctb] (<https://orcid.org/0000-0003-1458-7108>),\n  Posit Software, PBC [cph, fnd]",
+        "Packaged": "2025-12-19 15:19:25 UTC; yihui",
+        "Author": "Yihui Xie [aut, cre] (ORCID: <https://orcid.org/0000-0003-0645-5666>,\n    URL: https://yihui.org),\n  Abhraneel Sarma [ctb],\n  Adam Vogt [ctb],\n  Alastair Andrew [ctb],\n  Alex Zvoleff [ctb],\n  Amar Al-Zubaidi [ctb],\n  Andre Simon [ctb] (the CSS files under inst/themes/ were derived from\n    the Highlight package http://www.andre-simon.de),\n  Aron Atkins [ctb],\n  Aaron Wolen [ctb],\n  Ashley Manton [ctb],\n  Atsushi Yasumoto [ctb] (ORCID: <https://orcid.org/0000-0002-8335-495X>),\n  Ben Baumer [ctb],\n  Brian Diggs [ctb],\n  Brian Zhang [ctb],\n  Bulat Yapparov [ctb],\n  Cassio Pereira [ctb],\n  Christophe Dervieux [ctb],\n  David Hall [ctb],\n  David Hugh-Jones [ctb],\n  David Robinson [ctb],\n  Doug Hemken [ctb],\n  Duncan Murdoch [ctb],\n  Elio Campitelli [ctb],\n  Ellis Hughes [ctb],\n  Emily Riederer [ctb],\n  Fabian Hirschmann [ctb],\n  Fitch Simeon [ctb],\n  Forest Fang [ctb],\n  Frank E Harrell Jr [ctb] (the Sweavel package at inst/misc/Sweavel.sty),\n  Garrick Aden-Buie [ctb],\n  Gregoire Detrez [ctb],\n  Hadley Wickham [ctb],\n  Hao Zhu [ctb],\n  Heewon Jeon [ctb],\n  Henrik Bengtsson [ctb],\n  Hiroaki Yutani [ctb],\n  Ian Lyttle [ctb],\n  Hodges Daniel [ctb],\n  Jacob Bien [ctb],\n  Jake Burkhead [ctb],\n  James Manton [ctb],\n  Jared Lander [ctb],\n  Jason Punyon [ctb],\n  Javier Luraschi [ctb],\n  Jeff Arnold [ctb],\n  Jenny Bryan [ctb],\n  Jeremy Ashkenas [ctb, cph] (the CSS file at\n    inst/misc/docco-classic.css),\n  Jeremy Stephens [ctb],\n  Jim Hester [ctb],\n  Joe Cheng [ctb],\n  Johannes Ranke [ctb],\n  John Honaker [ctb],\n  John Muschelli [ctb],\n  Jonathan Keane [ctb],\n  JJ Allaire [ctb],\n  Johan Toloe [ctb],\n  Jonathan Sidi [ctb],\n  Joseph Larmarange [ctb],\n  Julien Barnier [ctb],\n  Kaiyin Zhong [ctb],\n  Kamil Slowikowski [ctb],\n  Karl Forner [ctb],\n  Kevin K. Smith [ctb],\n  Kirill Mueller [ctb],\n  Kohske Takahashi [ctb],\n  Lorenz Walthert [ctb],\n  Lucas Gallindo [ctb],\n  Marius Hofert [ctb],\n  Martin Modrák [ctb],\n  Michael Chirico [ctb],\n  Michael Friendly [ctb],\n  Michal Bojanowski [ctb],\n  Michel Kuhlmann [ctb],\n  Miller Patrick [ctb],\n  Nacho Caballero [ctb],\n  Nick Salkowski [ctb],\n  Niels Richard Hansen [ctb],\n  Noam Ross [ctb],\n  Obada Mahdi [ctb],\n  Pavel N. Krivitsky [ctb] (ORCID:\n    <https://orcid.org/0000-0002-9101-3362>),\n  Pedro Faria [ctb],\n  Qiang Li [ctb],\n  Ramnath Vaidyanathan [ctb],\n  Richard Cotton [ctb],\n  Robert Krzyzanowski [ctb],\n  Rodrigo Copetti [ctb],\n  Romain Francois [ctb],\n  Ruaridh Williamson [ctb],\n  Sagiru Mati [ctb] (ORCID: <https://orcid.org/0000-0003-1413-3974>),\n  Scott Kostyshak [ctb],\n  Sebastian Meyer [ctb],\n  Sietse Brouwer [ctb],\n  Simon de Bernard [ctb],\n  Sylvain Rousseau [ctb],\n  Taiyun Wei [ctb],\n  Thibaut Assus [ctb],\n  Thibaut Lamadon [ctb],\n  Thomas Leeper [ctb],\n  Tim Mastny [ctb],\n  Tom Torsney-Weir [ctb],\n  Trevor Davis [ctb],\n  Viktoras Veitas [ctb],\n  Weicheng Zhu [ctb],\n  Wush Wu [ctb],\n  Zachary Foster [ctb],\n  Zhian N. Kamvar [ctb] (ORCID: <https://orcid.org/0000-0003-1458-7108>),\n  Posit Software, PBC [cph, fnd]",
         "Maintainer": "Yihui Xie <xie@yihui.name>",
         "Repository": "CRAN",
-        "Date/Publication": "2025-03-16 09:20:02 UTC",
-        "Built": "R 4.5.0; ; 2025-05-31 01:15:06 UTC; windows"
+        "Date/Publication": "2025-12-20 14:30:02 UTC",
+        "Built": "R 4.5.2; ; 2025-12-30 02:28:12 UTC; windows"
       }
     },
     "labeling": {
@@ -3285,6 +3600,39 @@
         "Repository": "CRAN",
         "Date/Publication": "2023-08-29 22:20:02 UTC",
         "Built": "R 4.5.0; ; 2025-04-08 00:42:21 UTC; windows"
+      }
+    },
+    "labelled": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "labelled",
+        "Type": "Package",
+        "Title": "Manipulating Labelled Data",
+        "Version": "2.16.0",
+        "Maintainer": "Joseph Larmarange <joseph@larmarange.net>",
+        "Authors@R": "c(\n  person(\"Joseph\", \"Larmarange\", email = \"joseph@larmarange.net\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-7097-700X\")),\n  person(\"Daniel\", \"Ludecke\", role = \"ctb\"),\n  person(\"Hadley\", \"Wickham\", role = \"ctb\"),\n  person(\"Michal\", \"Bojanowski\", role = \"ctb\"),\n  person(\"François\", \"Briatte\", role = \"ctb\")\n  )",
+        "Description": "Work with labelled data imported from 'SPSS'\n    or 'Stata' with 'haven' or 'foreign'. This package\n    provides useful functions to deal with \"haven_labelled\" and\n    \"haven_labelled_spss\" classes introduced by 'haven' package.",
+        "License": "GPL (>= 3)",
+        "Encoding": "UTF-8",
+        "Depends": "R (>= 3.2)",
+        "Imports": "haven (>= 2.4.1), cli, dplyr (>= 1.1.0), lifecycle, rlang (>=\n1.1.0), vctrs, stringr, tidyr (>= 1.3.0), tidyselect",
+        "Suggests": "gt, knitr, rmarkdown, purrr, questionr, snakecase, spelling,\nsurvey, testthat (>= 3.2.0)",
+        "Enhances": "memisc",
+        "URL": "https://larmarange.github.io/labelled/,\nhttps://github.com/larmarange/labelled",
+        "BugReports": "https://github.com/larmarange/labelled/issues",
+        "VignetteBuilder": "knitr",
+        "LazyData": "true",
+        "RoxygenNote": "7.3.3",
+        "Language": "en-US",
+        "Config/testthat/edition": "3",
+        "Config/Needs/check": "memisc",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-10-22 16:33:32 UTC; josep",
+        "Author": "Joseph Larmarange [aut, cre] (ORCID:\n    <https://orcid.org/0000-0001-7097-700X>),\n  Daniel Ludecke [ctb],\n  Hadley Wickham [ctb],\n  Michal Bojanowski [ctb],\n  François Briatte [ctb]",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-10-22 17:00:02 UTC",
+        "Built": "R 4.5.2; ; 2026-01-23 04:35:05 UTC; windows"
       }
     },
     "later": {
@@ -4013,6 +4361,33 @@
         "Built": "R 4.5.0; ; 2025-04-08 00:42:38 UTC; windows"
       }
     },
+    "officer": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Type": "Package",
+        "Package": "officer",
+        "Title": "Manipulation of Microsoft Word and PowerPoint Documents",
+        "Version": "0.7.0",
+        "Authors@R": "c(\n    person(\"David\", \"Gohel\", , \"david.gohel@ardata.fr\", role = c(\"aut\", \"cre\")),\n    person(\"Stefan\", \"Moog\", , \"moogs@gmx.de\", role = \"aut\"),\n    person(\"Mark\", \"Heckmann\", , \"heckmann.mark@gmail.com\", role = \"aut\",\n           comment = c(ORCID = \"0000-0002-0736-7417\")),\n    person(\"ArData\", role = \"cph\"),\n    person(\"Frank\", \"Hangler\", , \"frank@plotandscatter.com\", role = \"ctb\",\n           comment = \"function body_replace_all_text\"),\n    person(\"Liz\", \"Sander\", , \"lsander@civisanalytics.com\", role = \"ctb\",\n           comment = \"several documentation fixes\"),\n    person(\"Anton\", \"Victorson\", , \"anton@victorson.se\", role = \"ctb\",\n           comment = \"fixes xml structures\"),\n    person(\"Jon\", \"Calder\", , \"jonmcalder@gmail.com\", role = \"ctb\",\n           comment = \"update vignettes\"),\n    person(\"John\", \"Harrold\", , \"john.m.harrold@gmail.com\", role = \"ctb\",\n           comment = \"function annotate_base\"),\n    person(\"John\", \"Muschelli\", , \"muschellij2@gmail.com\", role = \"ctb\",\n           comment = \"google doc compatibility\"),\n    person(\"Bill\", \"Denney\", , \"wdenney@humanpredictions.com\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-5759-428X\", \"function as.matrix.rpptx\")),\n    person(\"Nikolai\", \"Beck\", , \"beck.nikolai@gmail.com\", role = \"ctb\",\n           comment = \"set speaker notes for .pptx documents\"),\n    person(\"Greg\", \"Leleu\", , \"gregoire.leleu@gmail.com\", role = \"ctb\",\n           comment = \"fields functionality in ppt\"),\n    person(\"Majid\", \"Eismann\", role = \"ctb\"),\n    person(\"Hongyuan\", \"Jia\", , \"hongyuanjia@cqust.edu.cn\", role = \"ctb\",\n           comment = c(ORCID = \"0000-0002-0075-8183\")),\n    person(\"Michael\", \"Stackhouse\", , \"mike.stackhouse@atorusresearch.com\", role = \"ctb\")\n  )",
+        "Description": "Access and manipulate 'Microsoft Word', 'RTF' and 'Microsoft\n    PowerPoint' documents from R.  The package focuses on tabular and\n    graphical reporting from R; it also provides two functions that let\n    users get document content into data objects. A set of functions lets\n    add and remove images, tables and paragraphs of text in new or\n    existing documents.  The package does not require any installation of\n    Microsoft products to be able to write Microsoft files.",
+        "License": "MIT + file LICENSE",
+        "URL": "https://ardata-fr.github.io/officeverse/,\nhttps://davidgohel.github.io/officer/",
+        "BugReports": "https://github.com/davidgohel/officer/issues",
+        "Imports": "cli, graphics, grDevices, openssl, R6, ragg, stats, utils,\nuuid, xml2 (>= 1.1.0), zip (>= 2.1.0)",
+        "Suggests": "devEMF, doconv (>= 0.3.0), gdtools, ggplot2, knitr, magick,\nrmarkdown, rsvg, testthat, withr",
+        "Encoding": "UTF-8",
+        "RoxygenNote": "7.3.2",
+        "Collate": "'core_properties.R' 'custom_properties.R' 'defunct.R'\n'dev-utils.R' 'docx_add.R' 'docx_comments.R' 'docx_cursor.R'\n'docx_part.R' 'docx_replace.R' 'docx_section.R'\n'docx_settings.R' 'empty_content.R' 'formatting_properties.R'\n'fortify_docx.R' 'fortify_pptx.R' 'knitr_utils.R' 'officer.R'\n'ooxml.R' 'ooxml_block_objects.R' 'ooxml_run_objects.R'\n'openxml_content_type.R' 'openxml_document.R' 'pack_folder.R'\n'ph_location.R' 'post-proc.R' 'ppt_class_dir_collection.R'\n'ppt_classes.R' 'ppt_notes.R' 'ppt_ph_dedupe_layout.R'\n'ppt_ph_manipulate.R' 'ppt_ph_rename_layout.R'\n'ppt_ph_with_methods.R' 'pptx_informations.R'\n'pptx_layout_helper.R' 'pptx_matrix.R' 'utils.R'\n'pptx_slide_manip.R' 'read_docx.R' 'read_docx_styles.R'\n'read_pptx.R' 'read_xlsx.R' 'relationship.R' 'rtf.R'\n'shape_properties.R' 'shorcuts.R' 'docx_append_context.R'\n'utils-xml.R' 'deprecated.R' 'zzz.R'",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-09-03 13:37:14 UTC; davidgohel",
+        "Author": "David Gohel [aut, cre],\n  Stefan Moog [aut],\n  Mark Heckmann [aut] (ORCID: <https://orcid.org/0000-0002-0736-7417>),\n  ArData [cph],\n  Frank Hangler [ctb] (function body_replace_all_text),\n  Liz Sander [ctb] (several documentation fixes),\n  Anton Victorson [ctb] (fixes xml structures),\n  Jon Calder [ctb] (update vignettes),\n  John Harrold [ctb] (function annotate_base),\n  John Muschelli [ctb] (google doc compatibility),\n  Bill Denney [ctb] (ORCID: <https://orcid.org/0000-0002-5759-428X>,\n    function as.matrix.rpptx),\n  Nikolai Beck [ctb] (set speaker notes for .pptx documents),\n  Greg Leleu [ctb] (fields functionality in ppt),\n  Majid Eismann [ctb],\n  Hongyuan Jia [ctb] (ORCID: <https://orcid.org/0000-0002-0075-8183>),\n  Michael Stackhouse [ctb]",
+        "Maintainer": "David Gohel <david.gohel@ardata.fr>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-09-03 14:20:02 UTC",
+        "Built": "R 4.5.2; ; 2025-11-01 02:38:42 UTC; windows"
+      }
+    },
     "openssl": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -4128,6 +4503,38 @@
         "Repository": "CRAN",
         "Date/Publication": "2019-03-11 11:50:07 UTC",
         "Built": "R 4.5.1; ; 2025-10-06 00:59:47 UTC; windows"
+      }
+    },
+    "pander": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "pander",
+        "Authors@R": "c(\n    person(\"Gergely\", \"Daróczi\", , \"daroczig@rapporter.net\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0003-3149-8537\")),\n    person(\"Roman\", \"Tsegelskyi\", , \"roman.tsegelskyi@gmail.com\", role = c(\"aut\")))",
+        "Title": "An R 'Pandoc' Writer",
+        "Type": "Package",
+        "Encoding": "UTF-8",
+        "Description": "Contains some functions catching all messages, 'stdout' and other\n    useful information while evaluating R code and other helpers to return user\n    specified text elements (like: header, paragraph, table, image, lists etc.)\n    in 'pandoc' markdown or several type of R objects similarly automatically\n    transformed to markdown format. Also capable of exporting/converting (the\n    resulting) complex 'pandoc' documents to e.g. HTML, 'PDF', 'docx' or 'odt'. This\n    latter reporting feature is supported in brew syntax or with a custom reference\n    class with a smarty caching 'backend'.",
+        "Version": "0.6.6",
+        "Date": "2025-03-01",
+        "URL": "https://rapporter.github.io/pander/",
+        "BugReports": "https://github.com/rapporter/pander/issues",
+        "License": "AGPL-3 | file LICENSE",
+        "Depends": "R (>= 2.15.0)",
+        "Imports": "grDevices, graphics, methods, utils, stats, digest, tools,\nRcpp",
+        "Suggests": "grid, lattice, ggplot2 (>= 0.9.2), sylly, sylly.en, logger,\nsurvival, microbenchmark, zoo, nlme, descr, MASS, knitr,\nrmarkdown, tables, reshape, memisc, Epi, randomForest, tseries,\ngtable, rms, forecast, data.table",
+        "SystemRequirements": "pandoc (https://johnmacfarlane.net/pandoc) for\nexporting markdown files to other formats.",
+        "LinkingTo": "Rcpp",
+        "VignetteBuilder": "knitr",
+        "RoxygenNote": "7.3.2",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-03-01 00:02:44 UTC; daroczig",
+        "Author": "Gergely Daróczi [aut, cre] (<https://orcid.org/0000-0003-3149-8537>),\n  Roman Tsegelskyi [aut]",
+        "Maintainer": "Gergely Daróczi <daroczig@rapporter.net>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-03-01 01:30:02 UTC",
+        "Built": "R 4.5.2; x86_64-w64-mingw32; 2026-01-23 01:50:58 UTC; windows",
+        "Archs": "x64"
       }
     },
     "parallelly": {
@@ -5285,6 +5692,31 @@
         "Archs": "x64"
       }
     },
+    "sandwich": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "sandwich",
+        "Version": "3.1-1",
+        "Date": "2024-09-16",
+        "Title": "Robust Covariance Matrix Estimators",
+        "Authors@R": "c(person(given = \"Achim\", family = \"Zeileis\", role = c(\"aut\", \"cre\"), email = \"Achim.Zeileis@R-project.org\", comment = c(ORCID = \"0000-0003-0918-3766\")),\n             person(given = \"Thomas\", family = \"Lumley\", role = \"aut\", email = \"t.lumley@auckland.ac.nz\", comment = c(ORCID = \"0000-0003-4255-5437\")),\n\t     person(given = \"Nathaniel\", family = \"Graham\", role = \"ctb\", email = \"npgraham1@gmail.com\", comment = c(ORCID = \"0009-0002-1215-5256\")),\n\t     person(given = \"Susanne\", family = \"Koell\", role = \"ctb\"))",
+        "Description": "Object-oriented software for model-robust covariance matrix estimators. Starting out from the basic \n             robust Eicker-Huber-White sandwich covariance methods include: heteroscedasticity-consistent (HC)\n\t     covariances for cross-section data; heteroscedasticity- and autocorrelation-consistent (HAC)\n\t     covariances for time series data (such as Andrews' kernel HAC, Newey-West, and WEAVE estimators);\n\t     clustered covariances (one-way and multi-way); panel and panel-corrected covariances;\n\t     outer-product-of-gradients covariances; and (clustered) bootstrap covariances. All methods are\n\t     applicable to (generalized) linear model objects fitted by lm() and glm() but can also be adapted\n\t     to other classes through S3 methods. Details can be found in Zeileis et al. (2020) <doi:10.18637/jss.v095.i01>,\n\t     Zeileis (2004) <doi:10.18637/jss.v011.i10> and Zeileis (2006) <doi:10.18637/jss.v016.i09>.",
+        "Depends": "R (>= 3.0.0)",
+        "Imports": "stats, utils, zoo",
+        "Suggests": "AER, car, geepack, lattice, lme4, lmtest, MASS, multiwayvcov,\nparallel, pcse, plm, pscl, scatterplot3d, stats4, strucchange,\nsurvival",
+        "License": "GPL-2 | GPL-3",
+        "URL": "https://sandwich.R-Forge.R-project.org/",
+        "BugReports": "https://sandwich.R-Forge.R-project.org/contact.html",
+        "NeedsCompilation": "no",
+        "Packaged": "2024-09-15 20:36:02 UTC; zeileis",
+        "Author": "Achim Zeileis [aut, cre] (<https://orcid.org/0000-0003-0918-3766>),\n  Thomas Lumley [aut] (<https://orcid.org/0000-0003-4255-5437>),\n  Nathaniel Graham [ctb] (<https://orcid.org/0009-0002-1215-5256>),\n  Susanne Koell [ctb]",
+        "Maintainer": "Achim Zeileis <Achim.Zeileis@R-project.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2024-09-15 21:50:01 UTC",
+        "Built": "R 4.5.2; ; 2026-01-23 02:48:02 UTC; windows"
+      }
+    },
     "sass": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -6112,7 +6544,7 @@
         "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
         "Repository": "CRAN",
         "Date/Publication": "2023-02-22 09:20:06 UTC",
-        "Built": "R 4.5.0; ; 2025-05-31 02:55:31 UTC; windows"
+        "Built": "R 4.5.2; ; 2025-12-03 06:14:47 UTC; windows"
       }
     },
     "timechange": {
@@ -6527,12 +6959,12 @@
         "Package": "xfun",
         "Type": "Package",
         "Title": "Supporting Functions for Packages Maintained by 'Yihui Xie'",
-        "Version": "0.54",
+        "Version": "0.55",
         "Authors@R": "c(\n  person(\"Yihui\", \"Xie\", role = c(\"aut\", \"cre\", \"cph\"), email = \"xie@yihui.name\", comment = c(ORCID = \"0000-0003-0645-5666\", URL = \"https://yihui.org\")),\n  person(\"Wush\", \"Wu\", role = \"ctb\"),\n  person(\"Daijiang\", \"Li\", role = \"ctb\"),\n  person(\"Xianying\", \"Tan\", role = \"ctb\"),\n  person(\"Salim\", \"Brüggemann\", role = \"ctb\", email = \"salim-b@pm.me\", comment = c(ORCID = \"0000-0002-5329-5987\")),\n  person(\"Christophe\", \"Dervieux\", role = \"ctb\"),\n  person()\n  )",
         "Description": "Miscellaneous functions commonly used in other packages maintained by 'Yihui Xie'.",
         "Depends": "R (>= 3.2.0)",
         "Imports": "grDevices, stats, tools",
-        "Suggests": "testit, parallel, codetools, methods, rstudioapi, tinytex (>=\n0.30), mime, litedown (>= 0.6), commonmark, knitr (>= 1.50),\nremotes, pak, curl, xml2, jsonlite, magick, yaml, data.table,\nqs",
+        "Suggests": "testit, parallel, codetools, methods, rstudioapi, tinytex (>=\n0.30), mime, litedown (>= 0.6), commonmark, knitr (>= 1.50),\nremotes, pak, curl, xml2, jsonlite, magick, yaml, data.table,\nqs2, qs",
         "License": "MIT + file LICENSE",
         "URL": "https://github.com/yihui/xfun",
         "BugReports": "https://github.com/yihui/xfun/issues",
@@ -6540,12 +6972,12 @@
         "RoxygenNote": "7.3.3",
         "VignetteBuilder": "litedown",
         "NeedsCompilation": "yes",
-        "Packaged": "2025-10-30 16:52:28 UTC; yihui",
+        "Packaged": "2025-12-15 17:41:07 UTC; yihui",
         "Author": "Yihui Xie [aut, cre, cph] (ORCID:\n    <https://orcid.org/0000-0003-0645-5666>, URL: https://yihui.org),\n  Wush Wu [ctb],\n  Daijiang Li [ctb],\n  Xianying Tan [ctb],\n  Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>),\n  Christophe Dervieux [ctb]",
         "Maintainer": "Yihui Xie <xie@yihui.name>",
         "Repository": "CRAN",
-        "Date/Publication": "2025-10-30 17:40:02 UTC",
-        "Built": "R 4.5.2; x86_64-w64-mingw32; 2025-11-01 00:31:27 UTC; windows",
+        "Date/Publication": "2025-12-16 06:10:03 UTC",
+        "Built": "R 4.5.2; x86_64-w64-mingw32; 2025-12-30 01:27:26 UTC; windows",
         "Archs": "x64"
       }
     },
@@ -6657,6 +7089,31 @@
         "Built": "R 4.5.0; x86_64-w64-mingw32; 2025-05-31 00:22:18 UTC; windows",
         "Archs": "x64"
       }
+    },
+    "zoo": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "zoo",
+        "Version": "1.8-15",
+        "Date": "2025-12-15",
+        "Title": "S3 Infrastructure for Regular and Irregular Time Series (Z's\nOrdered Observations)",
+        "Authors@R": "c(person(given = \"Achim\", family = \"Zeileis\", role = c(\"aut\", \"cre\"), email = \"Achim.Zeileis@R-project.org\",\n                    comment = c(ORCID = \"0000-0003-0918-3766\")),\n             person(given = \"Gabor\", family = \"Grothendieck\", role = \"aut\", email = \"ggrothendieck@gmail.com\"),\n             person(given = c(\"Jeffrey\", \"A.\"), family = \"Ryan\", role = \"aut\", email = \"jeff.a.ryan@gmail.com\"),\n             person(given = c(\"Joshua\", \"M.\"), family = \"Ulrich\", role = \"ctb\", email = \"josh.m.ulrich@gmail.com\"),\n             person(given = \"Felix\", family = \"Andrews\", role = \"ctb\", email = \"felix@nfrac.org\"))",
+        "Description": "An S3 class with methods for totally ordered indexed\n             observations. It is particularly aimed at irregular time series\n             of numeric vectors/matrices and factors. zoo's key design goals\n             are independence of a particular index/date/time class and\n             consistency with ts and base R by providing methods to extend\n             standard generics.",
+        "Depends": "R (>= 3.1.0), stats",
+        "Suggests": "AER, coda, chron, ggplot2 (>= 3.5.0), mondate, scales,\nstinepack, strucchange, timeDate, timeSeries, tinyplot, tis,\ntseries, xts",
+        "Imports": "utils, graphics, grDevices, lattice (>= 0.20-27)",
+        "License": "GPL-2 | GPL-3",
+        "URL": "https://zoo.R-Forge.R-project.org/",
+        "NeedsCompilation": "yes",
+        "Packaged": "2025-12-15 12:01:09 UTC; zeileis",
+        "Author": "Achim Zeileis [aut, cre] (ORCID:\n    <https://orcid.org/0000-0003-0918-3766>),\n  Gabor Grothendieck [aut],\n  Jeffrey A. Ryan [aut],\n  Joshua M. Ulrich [ctb],\n  Felix Andrews [ctb]",
+        "Maintainer": "Achim Zeileis <Achim.Zeileis@R-project.org>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-12-15 14:30:02 UTC",
+        "Built": "R 4.5.2; x86_64-w64-mingw32; 2026-01-23 02:34:32 UTC; windows",
+        "Archs": "x64"
+      }
     }
   },
   "files": {
@@ -6664,7 +7121,7 @@
       "checksum": "d733f76fc64828988bbfc86704f34d29"
     },
     "app.R": {
-      "checksum": "cea237bd5c0b809a16ecf743a34ae170"
+      "checksum": "fd8d07e759e68527d7bd6a7eb02a86c2"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -6685,7 +7142,7 @@
       "checksum": "8952ddc95bdef9346124d5d4d53f6a37"
     },
     "code/external_data_OData.R": {
-      "checksum": "6a766a6eb0b6b423ff7a3f633df26bac"
+      "checksum": "e3cbdf826664ff63e86167bbf56b7821"
     },
     "code/extra_bits_dashboard_app.R": {
       "checksum": "341d8ed81158ebb96c6f763aba303dbd"
@@ -6702,11 +7159,14 @@
     "code/MAP_interactive.R": {
       "checksum": "a5ba6e0c20c08038f69a03fcf157ab26"
     },
+    "code/maternal_health_day.R": {
+      "checksum": "48a7592b7690cb086fb49453337ae467"
+    },
     "code/MLM_abortion.R": {
       "checksum": "09f9189f7a29b6c71650fb829803b073"
     },
     "code/MLM_alt.R": {
-      "checksum": "bd81f712ddcbeec27215d74114556859"
+      "checksum": "99898bdd0bccbb8c13f6780ef87201db"
     },
     "code/MLM_alt_other.R": {
       "checksum": "2f85f68ac733e2e0c80fc30f37b8f983"
@@ -6745,40 +7205,49 @@
       "checksum": "38f6c6eee213b8773cee2852e99b3a50"
     },
     "code/output/figures/unnamed-chunk-33-1.svg": {
-      "checksum": "3b019172f4a83d7e6802120817a49464"
+      "checksum": "07772a687d2b789c6d7f8fa9656ef923"
     },
     "code/output/figures/unnamed-chunk-34-1.svg": {
-      "checksum": "38f6c6eee213b8773cee2852e99b3a50"
+      "checksum": "8fe8968ca24eadd7290e4bb03986a8f2"
     },
     "code/output/figures/unnamed-chunk-35-1.svg": {
-      "checksum": "274ce68e505d805a0a09871633824fac"
+      "checksum": "2aa2f5c6c5a1ab151969f0c5ca997564"
     },
     "code/output/figures/unnamed-chunk-36-1.svg": {
-      "checksum": "1f22b9a901152ba900297a6ed88c07f3"
+      "checksum": "f90392ae94eb2a2a370455659181efef"
     },
     "code/output/figures/unnamed-chunk-37-1.svg": {
-      "checksum": "c83194554c84bf0958857c23a9ea491a"
+      "checksum": "4ac0cc638394a2ff6b9a885ffa57a681"
     },
     "code/output/figures/unnamed-chunk-38-1.svg": {
-      "checksum": "55bc7c6f9a7216f4119854ae9c746bd8"
+      "checksum": "fc49c847d4574338ca9f602df4381a6f"
     },
     "code/output/figures/unnamed-chunk-39-1.svg": {
-      "checksum": "b75b724d8ea040b9b1abe78dbef6f257"
+      "checksum": "1700b807c6651a0570ebe83dea7a43f7"
     },
     "code/output/figures/unnamed-chunk-40-1.svg": {
-      "checksum": "ee5b0d696c3b09638afed1a5afa796ba"
+      "checksum": "fedd096ce027bee565d857a221348d00"
     },
     "code/output/figures/unnamed-chunk-41-1.svg": {
-      "checksum": "c4b167edb24100b22309ce0a6df75d1f"
+      "checksum": "1ee2596b23571d29aadf2dcaf3779ea0"
     },
     "code/profile_pdf_plots_to delete.R": {
-      "checksum": "7e30b3ea413703a2e8de9eb6435f533e"
+      "checksum": "19c3a1d70a072fc3a3782b81240e54d9"
+    },
+    "code/SRHR_awareness_day.R": {
+      "checksum": "e5aa233db19a902160d31af2b9844824"
+    },
+    "code/Table1_code.R": {
+      "checksum": "3084fcbb3e26aa283a1a8d5b3946cff0"
     },
     "code/tables.R": {
       "checksum": "2026bb14d182cb7703e4409904bbe59c"
     },
     "code/theme_labels.R": {
       "checksum": "3311f10c99a23e4cb2ceba452595a671"
+    },
+    "code/timeline_code.R": {
+      "checksum": "de2b505e5dffb71a5d63cc18a7ed60fb"
     },
     "code/uhri_api.R": {
       "checksum": "1d1674ce90a79e868844337a38ff0f94"
@@ -6787,13 +7256,10 @@
       "checksum": "819bdff2e8b8a41b94ad1f057c3bb03c"
     },
     "code/UHRI_recommendation_definitions.html": {
-      "checksum": "e8c6535dc692360cf3e78e4a23570058"
+      "checksum": "5d285f8475d78b2396afc9a378d56d10"
     },
     "code/UHRI_recommendation_definitions.qmd": {
-      "checksum": "c9689fd20fc2885b36428f7aa6dd5de8"
-    },
-    "code/UHRI_recommendation_definitions.rmarkdown": {
-      "checksum": "2c3286b0cc1bc4b03c8ccffaab9916b1"
+      "checksum": "a1ea7d7f316fb166a041d703849918e9"
     },
     "code/UPR_extract.R": {
       "checksum": "d23f3d21a0afc6fda8bb8d93489803f3"
@@ -6817,13 +7283,13 @@
       "checksum": "20635439b5f5306800c6a95f62558957"
     },
     "data/API_data/abortion_rate.rds": {
-      "checksum": "286005b253c0a4e9b59f7bd5269a93a3"
+      "checksum": "5e2c5a17aae74405ccc5b0489ea73827"
     },
     "data/API_data/adolescent_birth_rate.rds": {
-      "checksum": "36d630e35985e0617bff30333805971a"
+      "checksum": "ebda512730ddb48c764dcb100d18108b"
     },
     "data/API_data/anc4.rds": {
-      "checksum": "d1e4fb2117dd107830f5c60e8920dc42"
+      "checksum": "c523763a8ae8283653fd8ec403eb174e"
     },
     "data/API_data/antenatal_WHO.rds": {
       "checksum": "464e57477504e383a5cb2cba78541b97"
@@ -6835,25 +7301,28 @@
       "checksum": "8dc9e1765a7977b51c01680125a7b481"
     },
     "data/API_data/contraceptive_prevalence.rds": {
-      "checksum": "fd04ffb37d712a501ba4d2505ca4b7a3"
+      "checksum": "93549b082af325d778f1ce4e48461b5b"
     },
     "data/API_data/DTP3_coverage.rds": {
-      "checksum": "19edca19017094a0f2e3fd14ba4a064c"
+      "checksum": "32ba0b78fd513466ea3f253b4b71197b"
     },
     "data/API_data/e01dt.rds": {
       "checksum": "c099bca8511e5e335f8062be7c38678e"
     },
     "data/API_data/family_planning.rds": {
-      "checksum": "2362b320440337d573f931a7530c321a"
+      "checksum": "70fca360b6f3905d13833059de036ab7"
     },
     "data/API_data/fertility_rate.rds": {
-      "checksum": "e1a626f054af600ca5480e05b5301074"
+      "checksum": "04544f65dc47479bc657e8a6792b8217"
     },
     "data/API_data/FINPROTECTION_CATA_TOT_10_POP.rds": {
-      "checksum": "f8adeea01899258db888215947f0b4fe"
+      "checksum": "ffc635c472dde3ebb3debdf829011310"
+    },
+    "data/API_data/GDP.rds": {
+      "checksum": "959b1654df046e5ca266fca787e65037"
     },
     "data/API_data/GHED_CHEGDP_SHA2011.rds": {
-      "checksum": "47a3fdc60a74038b169f46ad84dc2594"
+      "checksum": "ce327048a0484801dbec6a20bd5b5a2d"
     },
     "data/API_data/gho_api.rds": {
       "checksum": "d89fddb1c679778528efebd6ef93521e"
@@ -6862,22 +7331,22 @@
       "checksum": "2d3904a1ed84a91f1aab84faadba8247"
     },
     "data/API_data/HIV_death.rds": {
-      "checksum": "d95676518712fec74005799d1959809c"
+      "checksum": "36cb86dfa3777be32b1895dfbadde530"
     },
     "data/API_data/HPV_coverage.rds": {
-      "checksum": "0060fef88e56e36c811adf71b34d6b9b"
+      "checksum": "6cb571cc534f3e53eb1be2473500fdc8"
     },
     "data/API_data/HPV_national.rds": {
-      "checksum": "519b96c826b41b942cc9c523472edbe6"
+      "checksum": "eb21beb8e7b0ff687a6ea1319ac52b9c"
     },
     "data/API_data/HPV_national_alt.rds": {
       "checksum": "55ab32dd9d3367c58fd5e120c7c88921"
     },
     "data/API_data/informed_decisions.rds": {
-      "checksum": "0aa0d61bc1e4cf8373dc463aae909e57"
+      "checksum": "902e7f9d768c6b3112f46839f2a47ba0"
     },
     "data/API_data/institutional_birth.rds": {
-      "checksum": "612e29b026a80323d28f4549ea9f887d"
+      "checksum": "c68e038fad24dbcff68348d04bb7fda2"
     },
     "data/API_data/live_births.rds": {
       "checksum": "28c6fdbfc4bf9afc63e25bdbb74dd780"
@@ -6892,7 +7361,7 @@
       "checksum": "f67c5410d4e6cdd1b4f1213adac19f36"
     },
     "data/API_data/MMR.rds": {
-      "checksum": "e87e5bef814fe0f3c455aaccedf824ea"
+      "checksum": "34d6fb01b144822224f60b1ec70ea32e"
     },
     "data/API_data/mmr_data_WHO.rds": {
       "checksum": "cb1359263a72f60c1584db6b257e740b"
@@ -6907,7 +7376,7 @@
       "checksum": "f5ce74671a4522b4659a27b1bb54fee2"
     },
     "data/API_data/nursing_density.rds": {
-      "checksum": "e4fbab24a3a059c2ecb27bbbbc8220d8"
+      "checksum": "20f674645a0577295ff4d40248260e08"
     },
     "data/API_data/pop1dt.rds": {
       "checksum": "7fb6e9ee5f0fd04d6ba06aafe8fe61de"
@@ -6916,46 +7385,49 @@
       "checksum": "be7baf0509317600459b00f28a07a519"
     },
     "data/API_data/postnatal_care.rds": {
-      "checksum": "b70ab53506f15fd9f6e1424694aa17e2"
+      "checksum": "04db0b642a73153cabce2b8eefeb4f5b"
     },
     "data/API_data/postnatal_care_3.rds": {
-      "checksum": "f4771da8f89a076f12e8680ee279e0df"
+      "checksum": "a989400b19b8e42bc1b0bc207c768658"
     },
     "data/API_data/postnatal_care_5.rds": {
-      "checksum": "337fdf3ed6901c00f16e72ce7921c9fb"
+      "checksum": "33d7119d6dfed95f6246afbcdd37fc67"
     },
     "data/API_data/skilled_birth.rds": {
-      "checksum": "01000b7f599deccf9848d9ece7d69c73"
+      "checksum": "f34ddaf24e4316a02095ab997d07a0ad"
     },
     "data/API_data/tfr1dt.rds": {
       "checksum": "6924223367ad364b45f4ae8be8d8e5a7"
     },
     "data/API_data/UHC_all.rds": {
-      "checksum": "a8bbf21fdeb4e756c88dec54f42f721e"
+      "checksum": "9c05014cbd62fa5ef107da26971d9af3"
     },
     "data/API_data/UHC_AVAILABILITY_SCORE.rds": {
-      "checksum": "79cb3f365b54eb57629aa1a5d50a3be7"
+      "checksum": "fe274857d3282b4fd6835c363a92af09"
     },
     "data/API_data/UHC_INDEX_REPORTED.rds": {
-      "checksum": "7b59b81266465fc19a8ed7cb8d0eae76"
+      "checksum": "e65f2f9f6031583451fe6ef13155da2a"
     },
     "data/API_data/UHC_SCI_CAPACITY.rds": {
-      "checksum": "c5bd6cc89de7fc2cb7388495b6dd88c8"
+      "checksum": "5802b8e4ec24fedfb0f6ec1d885042bb"
     },
     "data/API_data/UHC_SCI_INFECT.rds": {
-      "checksum": "14619836afa6233660c53f0a9f48fc22"
+      "checksum": "636a16b46beb81d31b21bdc8d26d17e8"
     },
     "data/API_data/UHC_SCI_NCD.rds": {
-      "checksum": "40639ceaab4482329666609cc31f3e39"
+      "checksum": "faf3a3ca905b229e0d9c4e9e378f0cc6"
     },
     "data/API_data/UHC_SCI_RMNCH.rds": {
-      "checksum": "2f59b114228681a76b35653dca70b25d"
+      "checksum": "46d1f499299198a0dddeeb6c8d1f3eba"
     },
     "data/API_data/unintended_pregnancy.rds": {
-      "checksum": "9da30894fdf98d80c851c7904198291f"
+      "checksum": "d18409a6cc82979268f3c6416ff25b8f"
     },
     "data/API_data/world_abortion_laws.rds": {
       "checksum": "40afdb8307ed3b923536816b2b6741ae"
+    },
+    "data/API_NY.GDP.PCAP.PP.KD_DS2_en_csv_v2_1423.csv": {
+      "checksum": "ccd2dea34530c9042b0f0ecbc578425b"
     },
     "data/CARICOM_status.csv": {
       "checksum": "3efbd86fbeca5a69b2cc15d7ba30d586"
@@ -6992,6 +7464,9 @@
     },
     "data/Data 2025-08-20 12-18.xlsx": {
       "checksum": "ad4332c08bdc9f45317f8f8221d24fb4"
+    },
+    "data/Data 2026-01-22 12-22.xlsx": {
+      "checksum": "73f4602a672122d4d9ea6cc91d69f05f"
     },
     "data/ecsa_status.csv": {
       "checksum": "d5c8254614c95c4763845f89ee606421"
@@ -7044,8 +7519,11 @@
     "data/SouthCentre_status.csv": {
       "checksum": "e386fc68f31948dcb7f27754087e2527"
     },
+    "data/timeline_dates.xlsx": {
+      "checksum": "e441549c4e31b0e3ac9acd2b9c887685"
+    },
     "data/UHRI_full.rds": {
-      "checksum": "ac626f7230136184582c31f79145d5b4"
+      "checksum": "5e6532f08a851b9b95d076251461c6e2"
     },
     "data/UHRI_full_2025-09-29.rds": {
       "checksum": "b6e218bdb25c43f424f8d9386e79b0ca"
@@ -7086,11 +7564,17 @@
     "data/UHRI_full_2025-11-21.rds": {
       "checksum": "ac626f7230136184582c31f79145d5b4"
     },
+    "data/UHRI_full_2026-01-09.rds": {
+      "checksum": "014cf77fb0f3313b62ec8ec145a68877"
+    },
+    "data/UHRI_full_2026-01-21.rds": {
+      "checksum": "5e6532f08a851b9b95d076251461c6e2"
+    },
     "data/UHRI_full_export_20250929.xlsx": {
       "checksum": "402572ee1298d3d825943591c0a73928"
     },
     "data/UHRI_UPR.rds": {
-      "checksum": "e321bdaac087deda251652dc5dc3c07a"
+      "checksum": "2a1c7e06a4e8e1ebb82617f4d747df4c"
     },
     "data/UHRI_UPR_2025-10-16.rds": {
       "checksum": "4efb3edf84e0e609e676554e73a3f443"
@@ -7118,6 +7602,12 @@
     },
     "data/UHRI_UPR_2025-11-13.rds": {
       "checksum": "a32663cb06adc0bde01b4322d1bf47a3"
+    },
+    "data/UHRI_UPR_2026-01-09.rds": {
+      "checksum": "83643af28cef28336ed9bd54f2cd31c3"
+    },
+    "data/UHRI_UPR_2026-01-21.rds": {
+      "checksum": "2a1c7e06a4e8e1ebb82617f4d747df4c"
     },
     "data/UNSD_Methodology.csv": {
       "checksum": "9854b926dca8d16e91a153d1cf40f3ab"
@@ -7151,6 +7641,9 @@
     },
     "dkdk.xlsx": {
       "checksum": "64a08864f56d941480adc855cc83ce4f"
+    },
+    "Eswatini.png": {
+      "checksum": "94493b1f4dcc8cdff075ab1f5d4781f5"
     },
     "fhfh.csv": {
       "checksum": "5248e1bfa2585e006bfea995b1d88207"
@@ -7923,6 +8416,12 @@
     "logos/logo2-svg.svg": {
       "checksum": "6a1a4d910dbdb3e27d8de461629d44fb"
     },
+    "maternal_health_awareness.svg": {
+      "checksum": "a227b89b0732801266da1643dfb43399"
+    },
+    "maternal_health_awareness_2.svg": {
+      "checksum": "d8e1ef6d23b798dcea2407fc9b14c701"
+    },
     "mismatches_mattia_2511043296.rds": {
       "checksum": "54efaaf2b68b4c2ca95aba8b88f2a87c"
     },
@@ -7930,7 +8429,7 @@
       "checksum": "eb4d2d1d25b1955ab38135f59e59794d"
     },
     "MMR_70-2025-11-12.xlsx": {
-      "checksum": "492b964c5f04b1ce5ac42a1550ce71df"
+      "checksum": "65568265ab3718f3737c894895a95c3f"
     },
     "mmr_70.png": {
       "checksum": "00e6ece8b7cd5ca9ffb10353110c960c"
@@ -7938,14 +8437,44 @@
     "MMR_70.xlsx": {
       "checksum": "867abee215a3bb4cd30230a6b7f29b98"
     },
-    "MMR_70_2025-11-12.xlsx": {
-      "checksum": "a71e0bee6ae88ea4be119cc548a0ed7e"
+    "MMR_70_2026-01-06.xlsx": {
+      "checksum": "32888cb5d6a8a7fd840c1c95e33efec3"
+    },
+    "mmr_map.png": {
+      "checksum": "cae4a2bfc81d58a051f55cfc1bc502f3"
+    },
+    "mmr_map.svg": {
+      "checksum": "d6d0cf50a4aa955cf94707268c3d4846"
+    },
+    "mmr_map_bottom_nobg.png": {
+      "checksum": "fe984253acecc0a70d32b482c09c7488"
+    },
+    "mmr_map_side.png": {
+      "checksum": "d80f800d60f24c3344059620a23ce000"
+    },
+    "mmr_map_side.svg": {
+      "checksum": "93378374ab0f30cd222a425195c74255"
+    },
+    "mmr_map_side_nobg.png": {
+      "checksum": "989613aed75d0d8fc6837879b1973889"
+    },
+    "mmr_map_top_nobg.png": {
+      "checksum": "41590ca2a0524f2ed4f544d6d84edc4d"
     },
     "output/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
     "output/nearest_neighbors_list.rds": {
       "checksum": "e681890bd84e1a54ad7d8affe720620a"
+    },
+    "output/publication_figures/2026-02-03-1550_Characteristics_MMR.docx": {
+      "checksum": "ec6aa12623bbf917a2fbe1b1618e4306"
+    },
+    "output/publication_figures/2026-02-03-1602_Characteristics_MH_recommendations.docx": {
+      "checksum": "1b6511b8605422e1d65c5434491f5a48"
+    },
+    "output/publication_figures/2026-02-03-1617_Characteristics_MH_acceptance.docx": {
+      "checksum": "b1720468dc4261c26ca9fab1db37f69c"
     },
     "output/recs_WHO_Regions.html": {
       "checksum": "706ef28604d408f3ed70f31d6d94ba24"
@@ -7957,7 +8486,7 @@
       "checksum": "47d0cdb205be5fbd87195b16aee07536"
     },
     "output/UHRI_UPR_enhanced.rds": {
-      "checksum": "661eb528f666f40e122c9fa678594d77"
+      "checksum": "6f6cc3601684bb7df637d3510168583b"
     },
     "output/validation/UPR_validation_2510302222.rds": {
       "checksum": "b5238d4333c3dc01e9f640386836f828"
@@ -8076,6 +8605,15 @@
     "report-template_files/figure-latex/unnamed-chunk-4-1.pdf": {
       "checksum": "c8b99da6fc10aaeca5f067e21d0b029f"
     },
+    "SRHR_awareness_3.svg": {
+      "checksum": "8c8e9778481ae581a6f7c2116c8a4e66"
+    },
+    "SRHR_awareness_4.svg": {
+      "checksum": "cb3de2a64b53ae81762421c1d093accb"
+    },
+    "SRHR_plot_1.png": {
+      "checksum": "7663dd48bcbc8987e0d5819b76820efe"
+    },
     "testing.pdf": {
       "checksum": "96a61e75563f257a5b65369b26404da3"
     },
@@ -8093,6 +8631,9 @@
     },
     "theme_plot_cycle.svg": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "timeline_Sierra Leone.svg": {
+      "checksum": "e035cab226893a2b4e97b48607bfcaba"
     },
     "upr_cleaned_mattia.csv": {
       "checksum": "6646a87c9a0b7c55c56bdd924e79d85d"
