@@ -650,7 +650,7 @@ Under the Right to Health, States have the following obligations:
                        style = css(grid_template_columns = "1fr 1fr"),
                        navset_card_tab(
                          full_screen = TRUE,
-                         nav_panel("Health-related recommendations", 
+                         nav_panel("Health-related Recommendations", 
                                    card(
                                      # fill = FALSE,
                                      card_body(
