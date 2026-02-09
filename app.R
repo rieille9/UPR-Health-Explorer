@@ -925,7 +925,7 @@ Under the Right to Health, States have the following obligations:
               # )
               card(full_screen = TRUE, 
                    # fill=FALSE,
-                   card_header("Met need for family planning  using modern methods (%, latest year available)"),
+                   card_header("Met need for family planning using modern methods (%, latest year available)"),
                    markdown("Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%). Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/proportion-of-women-of-reproductive-age-who-have-their-need-for-family-planning-satisfied-with-modern-methods' target='_blank'>WHO</a>"),
                    leafletOutput("family_planning_map_interactive")),
               
