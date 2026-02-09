@@ -851,8 +851,9 @@ Under the Right to Health, States have the following obligations:
                          width=1,
                          card(
                            full_screen = TRUE,
-                           card_header("Births attended by skilled health personnel (%), latest year")
-                           , leafletOutput("skilled_birth_map_interactive")
+                           card_header("Births attended by skilled health personnel (%), latest year"),
+                           markdown("Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/births-attended-by-skilled-health-personnel-(-)' target='_blank'>WHO</a>"),
+                           leafletOutput("skilled_birth_map_interactive")
                            # ,plotOutput("skilled_birth")
                          ),
                          card(
@@ -865,8 +866,9 @@ Under the Right to Health, States have the following obligations:
                          width=1,
                          card(
                            full_screen = TRUE,
-                           card_header("Proportion of births delivered in a health facility (%), latest year")
-                           , leafletOutput("institutional_birth_map_interactive")
+                           card_header("Proportion of births delivered in a health facility (%), latest year"),
+                           markdown("Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/institutional-births-(-)' target='_blank'>WHO</a>"),
+                           leafletOutput("institutional_birth_map_interactive")
                            # ,plotOutput("births_facility")
                          ),
                          card(
@@ -883,26 +885,27 @@ Under the Right to Health, States have the following obligations:
                      layout_column_wrap(
                        card(
                          # fill = FALSE,
-                            full_screen = TRUE,
-                            card_header("Abortion Laws (evaluated June 2023)"),
-                            leafletOutput("abortion_laws_map_interactive"),
-                            # plotOutput("abortion_map_sur"),
-                            markdown("Data: <a href='https://reproductiverights.org/maps/worlds-abortion-laws/' target='_blank'>Center for Reproductive Rights</a>")
+                         full_screen = TRUE,
+                         card_header("Abortion Laws (evaluated June 2023)"),
+                         leafletOutput("abortion_laws_map_interactive"),
+                         # plotOutput("abortion_map_sur"),
+                         markdown("Data: <a href='https://reproductiverights.org/maps/worlds-abortion-laws/' target='_blank'>Center for Reproductive Rights</a>")
                        ),
                        layout_column_wrap(
                          width = 1,
                          card(
                            full_screen = TRUE,
                            card_header("Estimated abortion rate, per 1,000 (annual estimate for the period 2015-2019)"),
+                           markdown("Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/SRH_ABORTION_RATE' target='_blank'>WHO</a>"),
                            leafletOutput("abortion_rate_map_interactive")
                            # plotOutput("abortion_rate")
                          ),
                          card(
                            full_screen = TRUE,
-                           card_header("Estimated unintended pregnancy rate, per 1,000 (annual estimate for the period 2015-2019)"),
-                           leafletOutput("unintended_pregnancy_map_interactive")
-                           # card_header("Estimated Unintended Pregnancy Rate (2015-2019)"),
-                           # plotOutput("unintended_pregnancy")
+                           card_header("Maternal deaths attributed to abortion and miscarriage in 2021 (per 100,000)"),
+                           markdown("Data: <a href='https://gbd2021.healthdata.org/gbd-results/' target='_blank'>GBD Study</a>"),
+                           leafletOutput("abortion_deaths_map_interactive")
+                           # plotOutput("abortion_rate")
                          )
                        )
                      )
@@ -922,9 +925,18 @@ Under the Right to Health, States have the following obligations:
               # )
               card(full_screen = TRUE, 
                    # fill=FALSE,
-                   card_header("Met Need for Family planning (%, latest year available)"),
+                   card_header("Met need for family planning  using modern methods (%, latest year available)"),
                    markdown("Women of reproductive age (aged 15-49 years) who have their need for family planning satisfied with modern methods (%). Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/proportion-of-women-of-reproductive-age-who-have-their-need-for-family-planning-satisfied-with-modern-methods' target='_blank'>WHO</a>"),
-                   leafletOutput("family_planning_map_interactive"))
+                   leafletOutput("family_planning_map_interactive")),
+              
+              card(
+                full_screen = TRUE,
+                card_header("Estimated unintended pregnancy rate, per 1,000 (annual estimate for the period 2015-2019)"),
+                markdown("Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/SRH_PREGNANCY_UNINTENDED_RATE' target='_blank'>WHO</a>"),
+                leafletOutput("unintended_pregnancy_map_interactive")
+                # card_header("Estimated Unintended Pregnancy Rate (2015-2019)"),
+                # plotOutput("unintended_pregnancy")
+              )
             )
   ),
   
@@ -4144,6 +4156,51 @@ server <- function(input, output, session) {
                      coord_selected_SUR = coord_selected_SUR(),
                      zoom_level = m_zoom(),
                      fill_outcome =  "NumericValue")
+    
+  })
+  
+  #### Abortion deaths ----
+  ##### Map - interactive ---------------------
+  output$abortion_deaths_map_interactive <- renderLeaflet({
+    
+    abortion_deaths_data <- maternal_disorders_deaths_longitudinal |> 
+      filter(cause_name == "Maternal abortion and miscarriage") |> 
+      rename(abortion_deaths = val) |> 
+      group_by(country) |> slice_max(year) |> ungroup() |> 
+      select(abortion_deaths, country) |> 
+      mutate(country = case_match(
+        country,
+        "Turkey" ~ "T\u00fcrkiye",
+        "United Kingdom" ~ "United Kingdom of Great Britain and Northern Ireland",
+        .default = country
+      )) |> 
+      right_join(state_geo_reactive(), by=join_by(country==country)) |> 
+      mutate(selected_sur = case_when(country == input$selected_SUR ~ TRUE, .default = FALSE)) |> 
+      mutate(abortion_lab = case_when(
+        abortion_deaths < 0.01 ~ "<0.01",
+        .default = as.character(round(abortion_deaths,2))
+      )
+      ) |> 
+      st_as_sf() |> 
+      st_set_geometry("polygon")
+    
+    pal <- colorNumeric(
+      palette = "RdYlBu"
+      , reverse = TRUE
+      , domain = NULL
+    )
+    
+    hover_labels <- sprintf(
+      "<strong>%s</strong><br/>%s",
+      abortion_deaths_data$country,
+      abortion_deaths_data$abortion_lab
+    ) %>% lapply(htmltools::HTML)
+    
+    leaflet_function(data =  abortion_deaths_data, pal_object = pal, hover_labels = hover_labels, 
+                     legend_title = NULL,
+                     coord_selected_SUR = coord_selected_SUR(),
+                     zoom_level = m_zoom(),
+                     fill_outcome =  "abortion_deaths")
     
   })
   

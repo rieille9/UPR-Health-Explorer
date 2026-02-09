@@ -7121,7 +7121,7 @@
       "checksum": "d733f76fc64828988bbfc86704f34d29"
     },
     "app.R": {
-      "checksum": "fd8d07e759e68527d7bd6a7eb02a86c2"
+      "checksum": "5289c4ac7875c9056df772a10e5011a9"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -7235,10 +7235,10 @@
       "checksum": "19c3a1d70a072fc3a3782b81240e54d9"
     },
     "code/SRHR_awareness_day.R": {
-      "checksum": "e5aa233db19a902160d31af2b9844824"
+      "checksum": "60fa164b316691ec6a5c9e0159790515"
     },
     "code/Table1_code.R": {
-      "checksum": "3084fcbb3e26aa283a1a8d5b3946cff0"
+      "checksum": "3bf5643bed4e9091bbdcaba2d95e0adf"
     },
     "code/tables.R": {
       "checksum": "2026bb14d182cb7703e4409904bbe59c"
@@ -7473,6 +7473,9 @@
     },
     "data/export-full-en_20250929.json": {
       "checksum": "ecb98e369d6b63098ea8111c4c397d73"
+    },
+    "data/fusion_GLOBAL_DATAFLOW_UNICEF_1.0_all.csv": {
+      "checksum": "4c7c0120b11a4f7739e24bc477caf235"
     },
     "data/GBD/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -8416,12 +8419,6 @@
     "logos/logo2-svg.svg": {
       "checksum": "6a1a4d910dbdb3e27d8de461629d44fb"
     },
-    "maternal_health_awareness.svg": {
-      "checksum": "a227b89b0732801266da1643dfb43399"
-    },
-    "maternal_health_awareness_2.svg": {
-      "checksum": "d8e1ef6d23b798dcea2407fc9b14c701"
-    },
     "mismatches_mattia_2511043296.rds": {
       "checksum": "54efaaf2b68b4c2ca95aba8b88f2a87c"
     },
@@ -8467,14 +8464,23 @@
     "output/nearest_neighbors_list.rds": {
       "checksum": "e681890bd84e1a54ad7d8affe720620a"
     },
-    "output/publication_figures/2026-02-03-1550_Characteristics_MMR.docx": {
-      "checksum": "ec6aa12623bbf917a2fbe1b1618e4306"
+    "output/publication_figures/2026-02-06-0952_Characteristics_MMR.docx": {
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
     },
-    "output/publication_figures/2026-02-03-1602_Characteristics_MH_recommendations.docx": {
-      "checksum": "1b6511b8605422e1d65c5434491f5a48"
+    "output/publication_figures/2026-02-06-1020_Characteristics_IB.docx": {
+      "checksum": "c6709334c6b8e047d84dadb944b38234"
     },
-    "output/publication_figures/2026-02-03-1617_Characteristics_MH_acceptance.docx": {
-      "checksum": "b1720468dc4261c26ca9fab1db37f69c"
+    "output/publication_figures/2026-02-06-1021_Characteristics_SBA.docx": {
+      "checksum": "f4d4e0206d94c62a9bc9d40bea89169c"
+    },
+    "output/publication_figures/2026-02-06-1041_Characteristics_FP.docx": {
+      "checksum": "afc297f9ba05537636a090f8b81ec5c5"
+    },
+    "output/publication_figures/2026-02-06-1058_Characteristics_ANC4.docx": {
+      "checksum": "37028aeb6f3aab83824dc16f0858a138"
+    },
+    "output/publication_figures/2026-02-06-1111_Characteristics_FCS.docx": {
+      "checksum": "af09d1eabdcb7aab119b6cf28e22bdd5"
     },
     "output/recs_WHO_Regions.html": {
       "checksum": "706ef28604d408f3ed70f31d6d94ba24"
@@ -8578,11 +8584,32 @@
     "output/validation/UPR_validation_master_251107100532.rds": {
       "checksum": "32f797d168eb26147516e65638aea7fa"
     },
+    "policy_brief.html": {
+      "checksum": "9ced25e65a1df00467cfd24aeec3a59a"
+    },
+    "policy_brief.Rmd": {
+      "checksum": "84fc3331a7c6f28f851ff1ebd8ce8025"
+    },
+    "Policy_Brief_Sierra_Leone.log": {
+      "checksum": "dafb340ca2b5d723202eff5db5fc9a41"
+    },
+    "Policy_Brief_Sierra_Leone.Rmd": {
+      "checksum": "eaada5c4ca3ddcfc93c790b6c8f39cb1"
+    },
+    "Policy_Brief_Sierra_Leone.tex": {
+      "checksum": "06ff78d920e15ce66729b846e046c7b7"
+    },
     "preamble.tex": {
       "checksum": "e7e34feb84795dc3eda188539687ff47"
     },
     "README.md": {
       "checksum": "d7471989dc64d96c24ba333b42005331"
+    },
+    "recs_by_FCS.svg": {
+      "checksum": "2cc878882010abd139e6a80ce62d51fb"
+    },
+    "recs_by_MMR.svg": {
+      "checksum": "27f04da99706496e468d2ae6f72132ef"
     },
     "report-template-2.Rmd": {
       "checksum": "bfa3c2d307a592e7b49bd51218a2049b"
@@ -8605,8 +8632,20 @@
     "report-template_files/figure-latex/unnamed-chunk-4-1.pdf": {
       "checksum": "c8b99da6fc10aaeca5f067e21d0b029f"
     },
+    "SRHR_awareness_1.svg": {
+      "checksum": "a227b89b0732801266da1643dfb43399"
+    },
+    "SRHR_awareness_2.png": {
+      "checksum": "2246da761a85411930975aca22a13085"
+    },
+    "SRHR_awareness_3.png": {
+      "checksum": "d8042dbf8855154dab500d5e94272da5"
+    },
     "SRHR_awareness_3.svg": {
       "checksum": "8c8e9778481ae581a6f7c2116c8a4e66"
+    },
+    "SRHR_awareness_4.png": {
+      "checksum": "2ab19c66b3b47e042915f0e00a678912"
     },
     "SRHR_awareness_4.svg": {
       "checksum": "cb3de2a64b53ae81762421c1d093accb"
