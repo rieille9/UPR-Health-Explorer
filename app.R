@@ -4167,7 +4167,7 @@ server <- function(input, output, session) {
       filter(cause_name == "Maternal abortion and miscarriage") |> 
       rename(abortion_deaths = val) |> 
       group_by(country) |> slice_max(year) |> ungroup() |> 
-      select(abortion_deaths, country) |> 
+      select(abortion_deaths, lower, upper, country) |> 
       mutate(country = case_match(
         country,
         "Turkey" ~ "T\u00fcrkiye",
@@ -4176,31 +4176,59 @@ server <- function(input, output, session) {
       )) |> 
       right_join(state_geo_reactive(), by=join_by(country==country)) |> 
       mutate(selected_sur = case_when(country == input$selected_SUR ~ TRUE, .default = FALSE)) |> 
-      mutate(abortion_lab = case_when(
-        abortion_deaths < 0.01 ~ "<0.01",
-        .default = as.character(round(abortion_deaths,2))
-      )
+      mutate(
+        abortion_lab = case_when(
+          abortion_deaths < 0.001 ~ sprintf("%1.4f", abortion_deaths),
+          abortion_deaths < 0.01 ~ sprintf("%1.3f", abortion_deaths),
+          .default = sprintf("%1.2f", abortion_deaths)
+        ),
+        lower = case_when(
+          lower < 0.001 ~ sprintf("%1.4f", lower),
+          lower < 0.01 ~ sprintf("%1.3f", lower),
+          .default = sprintf("%1.2f", lower)
+        ),
+        upper = case_when(
+          upper < 0.001 ~ sprintf("%1.4f", upper),
+          upper < 0.01 ~ sprintf("%1.3f", upper),
+          .default = sprintf("%1.2f", upper)
+        ),
+        full_estimate = paste0(abortion_lab, " [", lower, "-",upper,"]"),
+        abortion_deaths_cat = case_when(
+          abortion_deaths < 0.01 ~ "<0.01",
+          abortion_deaths < 0.1 ~ "0.01 - 0.09",
+          abortion_deaths < 0.5 ~ "0.1 - 0.49",
+          abortion_deaths < 1 ~ "0.5 - 0.99",
+          abortion_deaths < 2 ~ "1 - 1.99",
+          abortion_deaths >= 2 ~ "2+"
+        )
       ) |> 
       st_as_sf() |> 
       st_set_geometry("polygon")
     
-    pal <- colorNumeric(
+    # pal <- colorNumeric(
+    #   palette = "RdYlBu"
+    #   , reverse = TRUE
+    #   , domain = NULL
+    # )
+    
+    pal <- colorFactor(
       palette = "RdYlBu"
       , reverse = TRUE
+      # palette = c("chartreuse4", "cyan3", "gold", "chocolate1", "red3", "purple")
       , domain = NULL
     )
     
     hover_labels <- sprintf(
       "<strong>%s</strong><br/>%s",
       abortion_deaths_data$country,
-      abortion_deaths_data$abortion_lab
+      abortion_deaths_data$full_estimate
     ) %>% lapply(htmltools::HTML)
     
     leaflet_function(data =  abortion_deaths_data, pal_object = pal, hover_labels = hover_labels, 
                      legend_title = NULL,
                      coord_selected_SUR = coord_selected_SUR(),
                      zoom_level = m_zoom(),
-                     fill_outcome =  "abortion_deaths")
+                     fill_outcome =  "abortion_deaths_cat")
     
   })
   
