@@ -351,7 +351,7 @@ ui <- page_navbar(
                             "CARICOM Membership",
                             # "South Centre Membership", 
                             # "OACPS Membership", "OACPS Member regions", 
-                            # "COMESA Membership", 
+                            "COMESA Membership",
                             "Fragile and Conflict-affected States (2026)"
                 ),
                 selected = "Global"),
@@ -1491,7 +1491,7 @@ server <- function(input, output, session) {
       ggplot(aes(
         x = perc, y = fct_rev(theme_label), 
         customdata = paste(theme_label, response_upr, sep = "|"),
-        text = paste0(response_upr, ": n = ", n, " ", n_sup,"\n(click to view text of recommendations)")
+        text = paste0(response_upr, ": n = ", n, " ", n_sup,"\n(click to view text)")
       )) +
       geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
       scale_fill_manual(values = c("#ec5557", "#1c164d"))+
@@ -1718,7 +1718,7 @@ server <- function(input, output, session) {
       #                                .default = as.character(n_tot_theme))) |> 
       ggplot(aes(x = perc, y = fct_rev(cycle2), 
                  customdata = paste(theme_label, response_upr, cycle, sep = "|"),
-                 text = paste0(cycle, " - ", response_upr,  ": n = ", n, " ", n_sup,"\n(click to view text of recommendations)")
+                 text = paste0(cycle, " - ", response_upr,  ": n = ", n, " ", n_sup,"\n(click to view text)")
       ))+
       geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.95)+
       facet_grid(
@@ -1891,7 +1891,7 @@ server <- function(input, output, session) {
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
       ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label
                  ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr_raw, sep = "|"),
-                 text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
+                 text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text)")
       ))+
       geom_col(alpha = 1, width = 0.8)+
       scale_fill_manual(values = c(
@@ -2430,7 +2430,7 @@ server <- function(input, output, session) {
       ggplot(aes(
         x = perc, y = fct_rev(theme_label), 
         customdata = paste(theme_label, response_upr, sep = "|"),
-        text = paste0(response_upr, ": n = ", n, " ", n_sup,"\n(click to view text of recommendations)")
+        text = paste0(response_upr, ": n = ", n, " ", n_sup,"\n(click to view text)")
       )) +
       geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
       scale_fill_manual(values = c("#ec5557", "#1c164d"))+
@@ -2546,7 +2546,7 @@ server <- function(input, output, session) {
           scale_x_continuous(
             # labels = function(x) paste0(x, "%"),
             # limits = c(0, max_a + 2),
-            expand = expansion(mult = c(0, 0.2))
+            expand = expansion(mult = c(0, 0.25))
           ) +
           labs(
             title = paste0("Health-related recommendations of the UPR"
@@ -2659,7 +2659,7 @@ server <- function(input, output, session) {
       #                                .default = as.character(n_tot_theme))) |> 
       ggplot(aes(x = perc, y = fct_rev(cycle2), 
                  customdata = paste(theme_label, response_upr, cycle, sep = "|"),
-                 text = paste0(cycle, " - ", response_upr,  ": n = ", n, " ", n_sup,"\n(click to view text of recommendations)")
+                 text = paste0(cycle, " - ", response_upr,  ": n = ", n, " ", n_sup,"\n(click to view text)")
       ))+
       geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.95)+
       facet_grid(
@@ -2838,7 +2838,7 @@ server <- function(input, output, session) {
       filter(recommending_state_upr %in% c(ccp |> pull(recommending_state_upr))) |> 
       ggplot(aes(x= reorder(recommending_state_upr, n_tot), y=n,fill=theme_label
                  ,customdata = paste(theme_label, "Supported", NA, recommending_state_upr_raw, sep = "|"),
-                 text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text of recommendations)")
+                 text = paste0(recommending_state_upr, " - ", theme_label,  ": n = ", n,"\n(click to view text)")
       ))+
       geom_col(alpha = 1, width = 0.8)+
       scale_fill_manual(values = c(
