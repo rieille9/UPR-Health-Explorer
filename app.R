@@ -278,9 +278,10 @@ ui <- page_navbar(
   id = "main_navbar",
   theme = app_theme,
   # Rearrange the tags so the link only wraps the image
+  
   title = span(
     tags$a(
-      href = "https://www.cehdi.org/", 
+      href = "https://www.cehdi.org/",
       # label = "Go to CeHDI homepage",
       # target = "_blank",
       img(src = "logo_5.png"
@@ -370,9 +371,16 @@ ui <- page_navbar(
                   pull(country),
                 multiple = FALSE),
     
-    # ### PDF downloader ------------------------
+    ### PDF downloader ------------------------
     # downloadButton(
     #   outputId = "download_report",
+    #   label = "Download Country Profile"
+    #   # ,style = "width: 100%;" # Make the button full-width
+    # ),
+    
+    ### JESSE's PDF downloader ------------------------
+    # downloadButton(
+    #   outputId = "download_report_JESSE",
     #   label = "Download Country Profile"
     #   # ,style = "width: 100%;" # Make the button full-width
     # ),
@@ -777,12 +785,12 @@ Under the Right to Health, States have the following obligations:
                 # card(full_screen = TRUE,card_header("UHC Service Coverage Index (2021)"), plotOutput("UHC_map")),
                 card(full_screen = TRUE, 
                      # fill=FALSE,
-                     card_header("UHC Service Coverage Index (2021)"),
+                     card_header("UHC Service Coverage Index (2023)"),
                      markdown("Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/uhc-index-of-service-coverage' target='_blank'>WHO</a>"),
                      leafletOutput("UHC_map_interactive")),
                 card(full_screen = TRUE, 
                      # fill=FALSE,
-                     card_header("UHC sub-index on reproductive, maternal, newborn, and child health (2021)"),
+                     card_header("UHC sub-index on reproductive, maternal, newborn, and child health (2023)"),
                      markdown("Data: <a href='https://www.who.int/data/gho/data/indicators/indicator-details/GHO/uhc-sci-components-reproductive-maternal-newborn-and-child-health' target='_blank'>WHO</a>"),
                      leafletOutput("UHC_RMNCH_map_interactive"))
                 # card(full_screen = TRUE,card_header("UHC sub-index on RMNCH (2021)"), plotOutput("UHC_RMNCH_map"))
@@ -1238,10 +1246,12 @@ server <- function(input, output, session) {
         temp_dir <- tempdir()
         
         # Copy Rmd and other relevant files into that directory.
-        temp_report_path <- file.path(temp_dir, "report-template.Rmd")
-        file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
+        # temp_report_path <- file.path(temp_dir, "report-template.Rmd")
+        # file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
         # temp_report_path <- file.path(temp_dir, "report-template-2.Rmd")
         # file.copy("report-template-2.Rmd", temp_report_path, overwrite = TRUE)
+        temp_report_path <- file.path(temp_dir, "report-template-3.Rmd")
+        file.copy("report-template-3.Rmd", temp_report_path, overwrite = TRUE)
         file.copy("preamble.tex", temp_dir, overwrite = TRUE)
         file.copy("logo.png", temp_dir, overwrite = TRUE)
         file.copy("logo2.png", temp_dir, overwrite = TRUE)
@@ -1273,6 +1283,23 @@ server <- function(input, output, session) {
         # Copy the generated PDF from the temporary directory to the final
         #    download path that Shiny expects.
         file.copy(file.path(temp_dir, "report.pdf"), file, overwrite = TRUE)
+        
+        incProgress(1, detail = "Done!")
+      })
+    }
+  )
+  
+  ## PDF JESSE Country profile -------------------------------------------------------
+  output$download_report_JESSE <- downloadHandler(
+    filename = function() {
+      paste0("CeHDI-Profile-", input$selected_SUR, ".pdf")
+    },
+    
+    content = function(file) {
+      withProgress(message = 'Downloading your report', value = 0, {
+
+        # Copy the generated PDF to the final download path that Shiny expects.
+        file.copy(file.path("report_pdfs", paste0(input$selected_SUR,".pdf")), file, overwrite = TRUE)
         
         incProgress(1, detail = "Done!")
       })
@@ -1370,8 +1397,8 @@ server <- function(input, output, session) {
         med_n_tot = sum(med_n),
         perc = (med_n / med_n_tot) * 100,
         perc = case_when(
-          health_related == "Other" ~ "",
-          .default = paste0(sprintf("%1.0f", perc), "%")
+          health_related == "Other" ~ paste0(med_n),
+          .default = paste0(med_n, " (", sprintf("%1.0f", perc), "%)")
         )
       )
     
@@ -1389,13 +1416,13 @@ server <- function(input, output, session) {
         # ,caption = "*Cycle 4 is currently underway"
       ) +
       geom_text(aes(label = perc), position = position_stack(vjust = 0.5)
-                , size = 4
+                , size = 4.5
       ) +
-      geom_text(aes(label = sprintf("%1.0f", med_n_tot), y = med_n_tot, vjust = -0.2), 
-                size = 5,
-                fontface = "bold") +
-      scale_y_continuous(limits = c(0,rec_max+25),
-                         expand = expansion(mult = c(0, 0.05)))+
+      # geom_text(aes(label = sprintf("%1.0f", med_n_tot), y = med_n_tot, vjust = -0.2), 
+      #           size = 5,
+      #           fontface = "bold") +
+      # scale_y_continuous(limits = c(0,rec_max+25),
+      #                    expand = expansion(mult = c(0, 0.05)))+
       theme_bw() +
       facet_wrap(.~region)+
       theme(
@@ -3019,8 +3046,8 @@ server <- function(input, output, session) {
         n_tot = sum(med_n),
         perc = (med_n / n_tot) * 100,
         perc = case_when(
-          health_related == "Other" ~ "",
-          .default = paste0(sprintf("%1.0f", perc), "%")
+          health_related == "Other" ~ paste0(med_n),
+          .default = paste0(med_n, " (", sprintf("%1.0f", perc), "%)")
         )
       )
     
@@ -3034,12 +3061,12 @@ server <- function(input, output, session) {
         fill = NULL
       ) +
       geom_text(aes(label = perc), position = position_stack(vjust = 0.5), size = 5) +
-      geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold") +
+      # geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold") +
       theme_bw() +
       facet_wrap(. ~ state_under_review, nrow = 2) +
-      scale_y_continuous(
-        expand = expansion(mult = c(0, 0.15))
-      )+
+      # scale_y_continuous(
+      #   expand = expansion(mult = c(0, 0.15))
+      # )+
       theme(
         panel.grid = element_blank(),
         axis.text.x = element_text(size = 12),
@@ -3077,7 +3104,7 @@ server <- function(input, output, session) {
         file,
         plot = rec_plot_object()+
           labs(y="Recommendations (N)")+
-          geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold", color = "white") +
+          # geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold", color = "white") +
           scale_fill_manual(values = c("Health-related" = "#ec5557", "Other" = "grey80"))+
           theme(
             panel.grid = element_blank(),
@@ -3599,7 +3626,7 @@ server <- function(input, output, session) {
   output$UHC_map_interactive <- renderLeaflet({
     
     UHC_dat <- UHC_all |>
-      filter(YEAR == 2021) |> 
+      filter(YEAR == 2023) |> 
       filter(SpatialDimType == "COUNTRY") |> 
       filter(IndicatorCode == "UHC_INDEX_REPORTED") |> 
       right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
@@ -3633,7 +3660,7 @@ server <- function(input, output, session) {
   output$UHC_RMNCH_map_interactive <- renderLeaflet({
     
     UHC_RMNCH_dat <- UHC_all |>
-      filter(YEAR == 2021) |> 
+      filter(YEAR == 2023) |> 
       filter(SpatialDimType == "COUNTRY") |> 
       filter(IndicatorCode == "UHC_SCI_RMNCH") |> 
       right_join(state_geo_reactive(), by = c("COUNTRY" = "iso3")) |>
@@ -4269,9 +4296,9 @@ server <- function(input, output, session) {
   })
   
   ## Constitutions ---------
-  ## Right to health ----------
+  ### Right to health ----------
   
-  ### Map - interactive ---------------------
+  #### Map - interactive ---------------------
   output$const_anyhealth_map_interactive <- renderLeaflet({
     
     constitution_data <- constitutions |> 
