@@ -25,7 +25,7 @@
 
 
 % Set the main page and text colors
-\pagecolor{bgcolor}
+% \pagecolor{bgcolor}
 \color{CeHDIBlue}
 \newcommand{\hlCeHDIBlue}[1]{{\sethlcolor{CeHDIBlue}\hl{#1}}}
 \newcommand{\hlCeHDIRed}[1]{{\sethlcolor{CeHDIRed}\hl{#1}}}
@@ -89,7 +89,7 @@
 % ----- Part 1: Header/Footer for ALL PAGES EXCEPT THE FIRST -----
 \pagestyle{fancy}
 \fancyhf{} % Clear all existing header and footer fields
-\fancyhead[L]{\sffamily\color{CeHDIBlue}Country Profiles: Maternal Health and the UPR} % Left header text
+\fancyhead[L]{\sffamily\color{CeHDIBlue}The Right to Health in the Universal Periodic Review} % Left header text
 \rhead{\includegraphics[width=2cm]{logo2}}
 % \fancyfoot[C]{\color{fgcolor}\thepage} % Page number in the center of the footer
 \renewcommand{\headrulewidth}{0.4pt} % A thin line under the header
@@ -110,38 +110,40 @@
   % On the first page, we want a blank canvas, so we use the 'empty' pagestyle
   \thispagestyle{empty}
   % Draw the custom title block using tikz
+  
   \begin{tikzpicture}[remember picture, overlay]
     
-    % The red title box
-    \node[
-        anchor=north west, % Pin the box from its top-left corner
-        fill=CeHDIBlue,      % Set the background color
-        text=fgcolor,       % Set the text color
-        minimum width=\paperwidth, % Make the box span the full page width
-        minimum height=2cm,      % Set the height of the box
-        font=\Huge\bfseries\sffamily % Set the font style (Huge, Bold, Sans-Serif)
-        % ,text width=\paperwidth-5cm, % Set the text box width to be the page width minus padding
-        % align=center                % Center the (now potentially multi-line) text
-    ] 
-    at (current page.north west) % Position the box at the top-left of the page
-    {\@title}; % This places the document title from the YAML inside the box
+    % 1. The blue background banner (spans full width, 2cm tall)
+    \fill[CeHDIBlue] (current page.north west) rectangle ++(\paperwidth, -2cm);
 
-
-    % The logo in the top left
+    % 2. The title text
     \node[
-        anchor=north west, % Anchor the image from its top-left corner
+        anchor=north, % Anchor the node from its top-center
+        text=fgcolor,
+        font=\LARGE\bfseries\sffamily,
+        text width=\paperwidth-6cm, % Width minus padding so it doesn't overlap logos
+        align=center % Horizontally center the text
     ] 
-    at ($(current page.north west) + (0cm, -0.45cm)$) % Position it with an offset from the page corner
+    at ($(current page.north) + (0cm, -0.2cm)$) % Position at top-center, dropped down by 0.4cm
+    {\@title};
+
+    % 3. The logo in the top left
+    \node[
+        anchor=north west, 
+    ] 
+    at ($(current page.north west) + (0cm, -0.45cm)$) 
     {\includegraphics[height=1cm]{logo.png}};
     
+    % 4. The flag in the top right
     \node[
-        anchor=north east, % Anchor the image from its top-left corner
+        anchor=north east, 
     ]
-    at ($(current page.north east) + (0cm, -0.15cm)$) % Position it with an offset from the page corner
+    at ($(current page.north east) + (0cm, -0.15cm)$) 
     {\includegraphics[height=1.5cm]{countryflag.png}};
 
   \end{tikzpicture}
-  % Add some vertical space after the title block before the content starts
-  \vspace*{-0.8cm} 
+  
+  % Bring the country name up into the fill block
+  \vspace*{-1.2cm}
 }
 \makeatother
