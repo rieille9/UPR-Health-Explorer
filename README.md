@@ -52,7 +52,6 @@ The full, version-locked dependency set lives in `manifest.json`.
 UPR-Health-Explorer/
 ├── app.R                       # Main Shiny app — Setup → UI (page_navbar) → Server → shinyApp()
 ├── manifest.json               # Posit Connect lockfile (R version, 262 pkgs, tracked files)
-├── utils.R                     # Helper functions (NOTE: currently empty — see Maintenance notes)
 │
 ├── code/                       # Data-prep & analysis scripts (run order matters — see Data pipeline)
 │   ├── geo_code.R                          # Country geometries → output/state_geo_enhanced.rds (+ neighbours)
@@ -166,13 +165,9 @@ The app is deployed to Posit Connect Cloud from this Git repository.
 
   Then commit and push the updated `manifest.json`. Connect rebuilds the environment from this file, so a stale manifest is the most common cause of a deploy that works locally but fails (or silently lags) in production.
 
-## Maintenance notes & known issues
-
-Honest flags for whoever maintains this next:
+## Maintenance notes & known issues  
 
 - **The repository is heavy.** The working tree is ~170 MB and Git history is ~530 MB. `data/UHRI_full.rds` is **68 MB** (above GitHub's 50 MB warning threshold), with several other 20–30 MB `.rds` files. Cloning is slow. Consider **Git LFS** for the large binaries, and/or pruning intermediates that aren't needed at runtime.
-- **Likely redundant/legacy data.** The app loads `output/UHRI_UPR_enhanced.rds`, **not** the `data/` copies. `data/sdg_data.rds` (28 MB), `data/SDG_data_enhanced.rds`, and the dated `Data 2025-08-xx … .xlsx` exports appear to be from the older SDG-based pipeline (`01_recommendation_definitions.qmd`) and ad-hoc snapshots. Confirm before deleting, but they are good candidates for cleanup.
-- **`utils.R` is empty.** Some scripts and a commented line in `app.R` reference it (`source(here("utils.R"))`). `app.R` works around this by defining `relabel_na()` and `map_insetting()` inline so it can run standalone. If you re-enable sourcing `utils.R`, populate it first.
 - **PDF country-profile download is built but disabled.** `report-template.Rmd`, `report-template-2.Rmd`, and `preamble.tex` generate parameterised country profiles, but the download buttons in the sidebar are currently commented out in `app.R`. Re-enable them there if you want the feature live (and ensure `tinytex` is installed on the server).
 - **Live data dependency.** `external_data_OData.R` depends on the WHO GHO OData API and WHO/UN download endpoints being reachable and stable; indicator codes occasionally change upstream. Re-run and spot-check after each refresh.
 - **No automated tests.** Validation of the classifier is manual (the `validation_*` scripts). Treat changes to the keyword dictionaries with care and re-run the validation comparison.
