@@ -2726,6 +2726,36 @@
         "Archs": "x64"
       }
     },
+    "ggridges": {
+      "Source": "CRAN",
+      "Repository": "https://cran.rstudio.com",
+      "description": {
+        "Package": "ggridges",
+        "Type": "Package",
+        "Title": "Ridgeline Plots in 'ggplot2'",
+        "Version": "0.5.7",
+        "Authors@R": "\n    person(\n      given = \"Claus O.\",\n      family = \"Wilke\",\n      role = c(\"aut\", \"cre\"),\n      email = \"wilke@austin.utexas.edu\",\n      comment = c(ORCID = \"0000-0002-7470-9261\")\n    )",
+        "Description": "Ridgeline plots provide a convenient way of visualizing changes in distributions over time or space. This package enables the creation of such plots in 'ggplot2'.",
+        "URL": "https://wilkelab.org/ggridges/",
+        "BugReports": "https://github.com/wilkelab/ggridges/issues",
+        "Depends": "R (>= 3.2)",
+        "Imports": "ggplot2 (>= 3.5.0), grid (>= 3.0.0), scales (>= 0.4.1), withr\n(>= 2.1.1)",
+        "License": "GPL-2 | file LICENSE",
+        "LazyData": "true",
+        "Suggests": "covr, dplyr, patchwork, ggplot2movies, forcats, knitr,\nrmarkdown, testthat, vdiffr",
+        "VignetteBuilder": "knitr",
+        "Collate": "'data.R' 'ggridges.R' 'geoms.R' 'geomsv.R' 'geoms-gradient.R'\n'geom-density-line.R' 'position.R' 'scale-cyclical.R'\n'scale-point.R' 'scale-vline.R' 'stats.R' 'theme.R'\n'utils_ggplot2.R' 'utils.R'",
+        "RoxygenNote": "7.3.2",
+        "Encoding": "UTF-8",
+        "NeedsCompilation": "no",
+        "Packaged": "2025-08-26 23:53:58 UTC; clauswilke",
+        "Author": "Claus O. Wilke [aut, cre] (ORCID:\n    <https://orcid.org/0000-0002-7470-9261>)",
+        "Maintainer": "Claus O. Wilke <wilke@austin.utexas.edu>",
+        "Repository": "CRAN",
+        "Date/Publication": "2025-08-27 05:10:01 UTC",
+        "Built": "R 4.5.3; ; 2026-06-11 19:31:25 UTC; windows"
+      }
+    },
     "ggtext": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -7539,11 +7569,14 @@
     ".RData": {
       "checksum": "f79e257e2da4921d5d6254b19041d2b8"
     },
-    "a.csv": {
-      "checksum": "d733f76fc64828988bbfc86704f34d29"
-    },
     "app.R": {
-      "checksum": "9ff487ebdf65d224092cc22c25e73be4"
+      "checksum": "9de3820d21911d1bb9ff5f3e887f46c3"
+    },
+    "book_trends.svg": {
+      "checksum": "b1d17d406b7a3cfb2f72e0b5f2d3eace"
+    },
+    "book_trends_region.svg": {
+      "checksum": "b1d17d406b7a3cfb2f72e0b5f2d3eace"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -7559,6 +7592,9 @@
     },
     "code/app3.R": {
       "checksum": "e6ab5871ec4a71323f4ed8bdb79af9c6"
+    },
+    "code/book_map.R": {
+      "checksum": "5f31fea4ce7cabbd7d7543468516262e"
     },
     "code/constitutions_analysis.R": {
       "checksum": "e521f1a5aedb3b5cb10d1c9d529bcfcc"
@@ -7598,6 +7634,9 @@
     },
     "code/interactive_plot.R": {
       "checksum": "513ac6c7578fe7ca5539e14b4a4f7f18"
+    },
+    "code/manual_plots_themes_profiles.R": {
+      "checksum": "22fbf40071ebad9050329744f11305ec"
     },
     "code/MAP_interactive.R": {
       "checksum": "a5ba6e0c20c08038f69a03fcf157ab26"
@@ -7693,7 +7732,7 @@
       "checksum": "19c3a1d70a072fc3a3782b81240e54d9"
     },
     "code/PubMed search terms.R": {
-      "checksum": "0a50a4a25619c0927787e00a11b1720f"
+      "checksum": "2972875d6e3311981816d567888826cb"
     },
     "code/recommending_countries.R": {
       "checksum": "21306927eb5b33f3e49470d055e19e4d"
@@ -7726,7 +7765,7 @@
       "checksum": "830d19a7587951de9c5c489c76f015fe"
     },
     "code/theme_labels.R": {
-      "checksum": "72e8a60b2812e254f3d8fd30fdbad0ec"
+      "checksum": "8ac531c00166e345098a7a52db280769"
     },
     "code/timeline_code.R": {
       "checksum": "de2b505e5dffb71a5d63cc18a7ed60fb"
@@ -7752,14 +7791,8 @@
     "code/validation_files_script.R": {
       "checksum": "f3f2eb5db5981eb86e064a50510d0d5b"
     },
-    "conditionalFormattingExample.xlsx": {
-      "checksum": "1a333ae7cd9dc1340a61ecac6f9c9d8f"
-    },
     "countryflag.png": {
       "checksum": "55c6210b6b320b5788235a6ed99be646"
-    },
-    "dat_table.csv": {
-      "checksum": "56223935bfe0890a430b351f5f8d63ac"
     },
     "data/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -8179,7 +8212,7 @@
       "checksum": "34ac24af765e9175812bd4142d98a465"
     },
     "data/UPR_WG_docs/classify_provisional.qmd": {
-      "checksum": "d86865591bcbe14f8de65d09908323c9"
+      "checksum": "39fd0957445f5657ddd49bf11ae4050d"
     },
     "data/UPR_WG_docs/Denmark - Draft report circulated on 11 May 2026.docx": {
       "checksum": "9f6862b7ca520648a0e2ae5aec234727"
@@ -8203,7 +8236,16 @@
       "checksum": "2923460fc81b07e60aee9f41a074c461"
     },
     "data/UPR_WG_docs/extract_recs.R": {
-      "checksum": "be652eee777f54e607dcce9a84362488"
+      "checksum": "4cc42b28f10f6c4efd985d1866e0aa38"
+    },
+    "data/UPR_WG_docs/Latvia - full draft report for circulation - ad referendum.docx": {
+      "checksum": "fd7624b31b26217a0cea33b377fff724"
+    },
+    "data/UPR_WG_docs/Latvia_profile.png": {
+      "checksum": "1f09e99832d8620a42b5bf1b11842879"
+    },
+    "data/UPR_WG_docs/Latvia_upr_recommendations.rds": {
+      "checksum": "5fba887e4283f6194b39a331c2e64486"
     },
     "data/UPR_WG_docs/Mozambique - Draft report circulated on 7 May 2026.docx": {
       "checksum": "9a86c4411028cf42b56dfc03460b5581"
@@ -8285,18 +8327,6 @@
     },
     "data/WorldBank_income.xlsx": {
       "checksum": "24aeb7709cac71baf7fec119123deafe"
-    },
-    "dkdk.xlsx": {
-      "checksum": "64a08864f56d941480adc855cc83ce4f"
-    },
-    "Eswatini.png": {
-      "checksum": "94493b1f4dcc8cdff075ab1f5d4781f5"
-    },
-    "FCS_MMR_change.png": {
-      "checksum": "f0807ef7d546bea38e714925ed012f52"
-    },
-    "fhfh.csv": {
-      "checksum": "5248e1bfa2585e006bfea995b1d88207"
     },
     "flags/ad.png": {
       "checksum": "5074501fe7dee5dcdd6e1fb6cf4e46f2"
@@ -9048,12 +9078,6 @@
     "flags/zw.png": {
       "checksum": "ada2b312e1377be4b749c4aa47ae491d"
     },
-    "health_plot.svg": {
-      "checksum": "600f952944c394fb5ea592bd6bc48a9b"
-    },
-    "ICESC.png": {
-      "checksum": "23d2e3977dee1883d489b4b51463516d"
-    },
     "logo.png": {
       "checksum": "ff8f04ba9185dde3ba807f748c32bd57"
     },
@@ -9075,11 +9099,38 @@
     "logplot2.svg": {
       "checksum": "e23a44d29fa72ac86fdf9780f6fc7a97"
     },
-    "mismatches_mattia_2511043296.rds": {
-      "checksum": "54efaaf2b68b4c2ca95aba8b88f2a87c"
+    "maps.png": {
+      "checksum": "02fe922ee9a970544e7cfb61663b80bb"
     },
-    "mismatches_mattia_251105155745.rds": {
-      "checksum": "eb4d2d1d25b1955ab38135f59e59794d"
+    "maps.svg": {
+      "checksum": "ed013b0a747f029dfe810d1ad374160f"
+    },
+    "maps_all.png": {
+      "checksum": "315ec7ba973a4f833b524099525dcde2"
+    },
+    "maps_book.svg": {
+      "checksum": "12313c1620001cb009f326fedfbe8731"
+    },
+    "maps_book_all cycles_color.png": {
+      "checksum": "35bcf154357c8f517b92ba2309ba5f34"
+    },
+    "maps_book_all cycles_grey.png": {
+      "checksum": "8bd1cd16af6571af8ef6cabee2f2d9ec"
+    },
+    "maps_boxplots.svg": {
+      "checksum": "6392559a83b4190b2748c9f105a4ba38"
+    },
+    "maps_boxplots2.svg": {
+      "checksum": "15683eef09d2115458310c20ecbf95bc"
+    },
+    "maps_boxplots3.svg": {
+      "checksum": "0e6a29ea9e28d281553ecf99d1dd39e8"
+    },
+    "maps_each cycle_color.png": {
+      "checksum": "f3d5827cf706254341fa316f2fdf17a7"
+    },
+    "maps_ridge_cycle.svg": {
+      "checksum": "243964e1f27da4f3019a50ab76def5eb"
     },
     "MMR_70-2025-11-12.xlsx": {
       "checksum": "65568265ab3718f3737c894895a95c3f"
@@ -9092,30 +9143,6 @@
     },
     "MMR_70_2026-01-06.xlsx": {
       "checksum": "32888cb5d6a8a7fd840c1c95e33efec3"
-    },
-    "mmr_map.png": {
-      "checksum": "cae4a2bfc81d58a051f55cfc1bc502f3"
-    },
-    "mmr_map.svg": {
-      "checksum": "d6d0cf50a4aa955cf94707268c3d4846"
-    },
-    "mmr_map_bottom_nobg.png": {
-      "checksum": "fe984253acecc0a70d32b482c09c7488"
-    },
-    "mmr_map_side.png": {
-      "checksum": "d80f800d60f24c3344059620a23ce000"
-    },
-    "mmr_map_side.svg": {
-      "checksum": "93378374ab0f30cd222a425195c74255"
-    },
-    "mmr_map_side_nobg.png": {
-      "checksum": "989613aed75d0d8fc6837879b1973889"
-    },
-    "mmr_map_top_nobg.png": {
-      "checksum": "41590ca2a0524f2ed4f544d6d84edc4d"
-    },
-    "model_check.png": {
-      "checksum": "07e735f0bff769d91722310e21343f8f"
     },
     "output/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -9333,35 +9360,38 @@
     "output/UHRI_UPR_enhanced.rds": {
       "checksum": "234b46d729ae6d11373b74ade6395b00"
     },
-    "policy_brief.html": {
-      "checksum": "9ced25e65a1df00467cfd24aeec3a59a"
-    },
-    "policy_brief.Rmd": {
-      "checksum": "84fc3331a7c6f28f851ff1ebd8ce8025"
-    },
-    "Policy_Brief_Sierra_Leone.log": {
-      "checksum": "dafb340ca2b5d723202eff5db5fc9a41"
-    },
-    "Policy_Brief_Sierra_Leone.Rmd": {
-      "checksum": "eaada5c4ca3ddcfc93c790b6c8f39cb1"
-    },
-    "Policy_Brief_Sierra_Leone.tex": {
-      "checksum": "06ff78d920e15ce66729b846e046c7b7"
-    },
     "preamble.tex": {
       "checksum": "cd7da1252074595b65722f72729689b3"
     },
     "README.md": {
-      "checksum": "d7471989dc64d96c24ba333b42005331"
+      "checksum": "af892f91325f2ed19d9a2b9b8158357c"
     },
-    "recs_by_FCS.svg": {
-      "checksum": "1fb3c8fd98195148a481f8142bf4d241"
+    "Recommendations_Ian.xlsx": {
+      "checksum": "ddbffaca388d595d9ee73ac51d706c93"
     },
-    "recs_by_MMR.svg": {
-      "checksum": "27f04da99706496e468d2ae6f72132ef"
+    "recs_all_cycles_response.xlsx": {
+      "checksum": "6fc66c4ec79ce29be6d9fbe85fd4873a"
     },
-    "recs_countries.csv": {
-      "checksum": "ed9153457aa20dfae796621415b2373e"
+    "recs_by_cycle.png": {
+      "checksum": "2b1416b7499133dbffbeba6024b0b5dd"
+    },
+    "recs_by_cycle.xlsx": {
+      "checksum": "a3e396e8c8335d22a26cf9db77465cc8"
+    },
+    "recs_by_region.xlsx": {
+      "checksum": "4500eb311f8a3dbb93c807b6f373e5df"
+    },
+    "recs_percent of health.xlsx": {
+      "checksum": "c045408083c2006a2946cf0ccdcf7923"
+    },
+    "recs_region_all_cycles.png": {
+      "checksum": "e267f2fb8e3f8bd6b4dad4eaf3314262"
+    },
+    "recs_region_by_cycle.png": {
+      "checksum": "18f39287dfcbeb7f8442bf96a3533e47"
+    },
+    "recs_tot.xlsx": {
+      "checksum": "5f3bebdeb49764729618d71b706d64a8"
     },
     "report-template-2.Rmd": {
       "checksum": "bfa3c2d307a592e7b49bd51218a2049b"
@@ -9369,26 +9399,11 @@
     "report-template-3.Rmd": {
       "checksum": "43dd883022aec3d235b21b483fde15c7"
     },
-    "report-template-3_files/figure-latex/unnamed-chunk-3-1.pdf": {
-      "checksum": "50e588d965d4547f81e854fc7b6558cd"
-    },
     "report-template.ent": {
       "checksum": "68b329da9893e34099c7d8ad5cb9c940"
     },
-    "report-template.pdf": {
-      "checksum": "fe8c733ee694b64703617ca98030c7b1"
-    },
     "report-template.Rmd": {
       "checksum": "955d2b99df77f302d10fc1226ee74855"
-    },
-    "report-template.tex": {
-      "checksum": "a6480d06b6dec6000ee1547024072643"
-    },
-    "report-template_files/figure-latex/unnamed-chunk-3-1.pdf": {
-      "checksum": "3f1f00a042780b53ce8f7899f160964f"
-    },
-    "report-template_files/figure-latex/unnamed-chunk-4-1.pdf": {
-      "checksum": "c8b99da6fc10aaeca5f067e21d0b029f"
     },
     "report_pdfs/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
@@ -9402,65 +9417,23 @@
     "report_pdfs/Namibia.pdf": {
       "checksum": "e71b235748025732b6f8aa11c7b12db5"
     },
-    "Rplot.png": {
-      "checksum": "6d7752ebc31a62a9b07057556667c84e"
-    },
-    "Rplot01.png": {
-      "checksum": "638b750def432389fa6e3e40b0343fad"
-    },
-    "SRHR_awareness_1.svg": {
-      "checksum": "a227b89b0732801266da1643dfb43399"
-    },
-    "SRHR_awareness_2.png": {
-      "checksum": "2246da761a85411930975aca22a13085"
-    },
-    "SRHR_awareness_3.png": {
-      "checksum": "d8042dbf8855154dab500d5e94272da5"
-    },
-    "SRHR_awareness_3.svg": {
-      "checksum": "8c8e9778481ae581a6f7c2116c8a4e66"
-    },
-    "SRHR_awareness_4.png": {
-      "checksum": "2ab19c66b3b47e042915f0e00a678912"
-    },
-    "SRHR_awareness_4.svg": {
-      "checksum": "cb3de2a64b53ae81762421c1d093accb"
-    },
-    "SRHR_plot_1.png": {
-      "checksum": "7663dd48bcbc8987e0d5819b76820efe"
-    },
-    "testing.pdf": {
-      "checksum": "96a61e75563f257a5b65369b26404da3"
-    },
     "testing.Rmd": {
       "checksum": "a200fe3f7004aecb8fa7e8362d3f286b"
-    },
-    "testing.tex": {
-      "checksum": "832c11121deee0a681fbc3bfbcce47dc"
-    },
-    "theme_boxplots.svg": {
-      "checksum": "678a9d815e9466b3d5e271ccd969b003"
-    },
-    "theme_plot.svg": {
-      "checksum": "be0a5e5ec83c6c1d2d530c7eeae70618"
-    },
-    "theme_plot_all.svg": {
-      "checksum": "e15dbfa5c6cc925296df5ed7825d9023"
-    },
-    "theme_plot_cycle.svg": {
-      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "timeline.xls": {
       "checksum": "514ace73b4a300a81f9a4a0e1dd28111"
     },
-    "timeline_All.svg": {
-      "checksum": "60666c6e7afa6cc1c09cf3ced9324823"
+    "togo_by_theme.png": {
+      "checksum": "9690bc6c7cb8e0d70218b2fb6ae875fc"
     },
-    "timeline_Sierra Leone.svg": {
-      "checksum": "6f124dcf209e37eb7bd3b82369f2ecb1"
+    "togo_health_fr.png": {
+      "checksum": "51eb1291b0faf18b8bff9ec030fdb763"
     },
-    "upr_cleaned_mattia.csv": {
-      "checksum": "6646a87c9a0b7c55c56bdd924e79d85d"
+    "togo_health_fr.zip": {
+      "checksum": "308fefa295e0c7ba2e907420ae9caa97"
+    },
+    "total_recs_by_cycle_region.png": {
+      "checksum": "a0e6b78bd741fda302565170bcf150e0"
     },
     "upr_cleaned_mattia.zip": {
       "checksum": "22f171c09dffbfe323490450a5260afe"
@@ -9468,14 +9441,8 @@
     "upr_cols.csv": {
       "checksum": "64a02b52049db9228904ccfdec2d2bee"
     },
-    "upr_extract_2025-10-27.xlsx": {
-      "checksum": "99e4dcba22af46629db0edb4b4cc8676"
-    },
     "utils.R": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
-    },
-    "void_map.png": {
-      "checksum": "f9153654abb494ccefe6ababadc7a328"
     },
     "www/custom_bslib.css": {
       "checksum": "1160c7dacb22688b3c0a93588d39da95"
