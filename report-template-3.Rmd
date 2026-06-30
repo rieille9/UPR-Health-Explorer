@@ -555,7 +555,7 @@ a |>
 \textbf{{Population:}}\footnote{\href{https://population.un.org/wpp}{population.un.org/wpp} \label{fn:WPP}} `r pop_text`  
 \textbf{{Life expectancy at birth:}}\textsuperscript{\ref{fn:WPP}} `r life_expectancy_text`  
 \textbf{{GDP per capita (PPP):}} `r GDP_text`  
-\textbf{{Health expenditure (\\% of GDP):}} `r health_expenditure_text`  
+\textbf{{Health expenditure (\% of GDP):}} `r health_expenditure_text`  
 \textbf{{Years on list of Fragile and Conflict-affected Situations:}}\footnote{\href{https://www.worldbank.org/ext/en/topic/fragility-conflict-and-violence}{2006-2023; worldbank.org/ext/en/topic/fragility-conflict-and-violence} \label{fn:WBFCS}} `r FCS_count`  
 \begin{center}\textcolor{fgcolor}{\textbf{\hlCeHDIRed{\ \ \ \ Sexual and Reproductive Health \ \ \ \ }}}\end{center}  
 \textbf{{Total fertility rate:}}\textsuperscript{\ref{fn:WPP}} `r fertility_rate_text`  
