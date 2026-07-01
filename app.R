@@ -31,8 +31,6 @@ pacman::p_load(
 source(here("code", "external_data_GBD.R"))
 
 # Read in pre-processed datasets
-# sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
-#   mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
 sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
   mutate(response_upr = fct_recode(response_upr, 
                                    "Noted" = "Partially supported"),
@@ -225,25 +223,6 @@ leaflet_function <- function(data, pal_object, fill_outcome, hover_labels, legen
       title = legend_title,
       position = "bottomright"
     )
-  
-  # if(legend_type == "factor"){
-  #   p2 <- p1 |> addLegend(
-  #     pal = pal_object,
-  #     values = ~data[[fill_outcome]],
-  #     opacity = 0.7,
-  #     title = legend_title,
-  #     position = "bottomright"
-  #   )
-  # } else{
-  #   p2 <- p1 |> addLegendNumeric(
-  #     pal = pal_object,
-  #     values = ~data[[fill_outcome]],
-  #     opacity = 0.7,
-  #     title = legend_title,
-  #     position = "bottomright",
-  #     bins = bins_num
-  #   )
-  # }
 }
 
 ## Plot resolutions ------------------------------------------
@@ -289,22 +268,6 @@ ui <- page_navbar(
           # , style = "margin-right:10px;"
       )
     )
-    # , "Health"
-    # , <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>
-    # ,tags$a(
-    #   href = "https://cehdi-haro.share.connect.posit.cloud/",
-    #   label = "Reload",
-    #   # target = "_blank",
-    #   img(src = "logo_5.png"
-    #       , height = "50px"
-    #       , style = "margin-right:10px;"
-    #   )
-    # )
-    # ,actionLink(
-    #   inputId = "home_button",
-    #   label = "HaRO: Health & Rights Observatory",
-    #   style = "color: white; text-decoration: none; font-size: 1.125rem; background: none; border: none; padding: 0;"
-    # )
   ),
   bg = "#1c164d",
   header = tags$head(
@@ -395,15 +358,6 @@ Data related to various indicators (e.g. maternal mortality ratio and estimated 
 Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
 
 **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
-        #         markdown("This dashboard displays the results of a **preliminary** analysis regarding recommendations from the first four cycles of the Universal Periodic Review (UPR). ***Results are subject to change as the classification methodology continues to be refined***.
-        # 
-        # UPR recommendations were downloaded from a database maintained by the Danish Institute for Human Rights: the ['SDG-Human Rights Data Explorer'](https://www.humanrights.dk/sdg-human-rights-data-explorer). Their database in turn relies partly on UPR Info's [Database of Recommendations](https://upr-info-database.uwazi.io/).
-        # 
-        # Data related to various indicators (e.g. maternal mortality ratio and estimated abortion rates) were accessed via the [Global Health Observatory's API](https://www.who.int/data/gho/info/gho-odata-api), and data regarding the causes of maternal death were obtained using the [IHME's GBD Results tool](https://vizhub.healthdata.org/gbd-results/).
-        # 
-        # Grouping by Fragile/Conflict-affected Situations (**FCS status**) was made according to the [FCS grouping obtained from the World Bank](https://thedocs.worldbank.org/en/doc/5c7e4e268baaafa6ef38d924be9279be-0090082025/original/FCSListFY26.pdf).
-        # 
-        # **Map disclaimer:** CeHDI makes no statement or judgment about the legal status or borders of any country, territory, or city shown on these maps. The information is for reference only.")
       ,  ### PDF downloader ------------------------
       downloadButton(
         outputId = "download_report",
@@ -624,29 +578,6 @@ Under the Right to Health, States have the following obligations:
                            card_body(DTOutput("plotly_table_regional"))
                          )
                        )
-                       # layout_column_wrap(
-                       #   width=1,
-                       #   # This sets a 3:2 height ratio
-                       #   style = css(grid_template_rows = "3fr 1fr"),
-                       #   card(
-                       #     # fill = FALSE,
-                       #     full_screen = TRUE,
-                       #     card_header("Recommending States (top 20)"),
-                       #     card_body(
-                       #       # markdown("(Themes of maternal health, family planning, and abortion)"),
-                       #       plotOutput("recommending_states_REGION"))
-                       #   ),
-                       #   # card(
-                       #   #   full_screen = TRUE,
-                       #   #   card_header("Health-Related Recommendations"),
-                       #   #   card_body(plotOutput("global_plot"))
-                       #   # ),
-                       #   card(
-                       #     full_screen = TRUE,
-                       #     # card_header("Regional map"),
-                       #     card_body(plotOutput("regional_map"))
-                       #   )
-                       # )
                      )
            ),
            
@@ -670,27 +601,9 @@ Under the Right to Health, States have the following obligations:
                                          label = "Download as PNG"
                                        )
                                      )
-                                     # card(
-                                     #   fill = FALSE,
-                                     #   card_body(
-                                     #     plotOutput("upr_themes_all_global"
-                                     #                ,width = paste0(upr_width,"px")
-                                     #                ,height =  paste0(upr_height,"px")
-                                     #     )),
-                                     #   card_footer(
-                                     #     downloadButton(
-                                     #       outputId = "download_upr_themes_all_global",
-                                     #       label = "Download as PNG"
-                                     #     )
-                                     #   )
                                    )),
                          nav_panel("Per UPR Cycle", 
                                    card(
-                                     # fill=FALSE,
-                                     # card_body(plotOutput("upr_themes_cycle_global", 
-                                     #                      width = paste0(upr_width*1.05,"px"),
-                                     #                      height =  paste0(upr_height*1.6,"px")
-                                     # ))
                                      card_body(
                                        min_height = 550,
                                        plotlyOutput("plotly_UPR_SUR_cycle")
@@ -748,29 +661,6 @@ Under the Right to Health, States have the following obligations:
                            card_body(DTOutput("plotly_table_SUR"))
                          )
                        )
-                       # layout_column_wrap(
-                       #   width=1,
-                       #   # This sets a 3:2 height ratio
-                       #   style = css(grid_template_rows = "3fr 1fr"),
-                       #   card(
-                       #     # fill = FALSE,
-                       #     full_screen = TRUE,
-                       #     card_header("Recommending States (top 20)"),
-                       #     card_body(
-                       #       # markdown("(Themes of maternal health, family planning, and abortion)"),
-                       #       plotOutput("recommending_states_REGION"))
-                       #   ),
-                       #   # card(
-                       #   #   full_screen = TRUE,
-                       #   #   card_header("Health-Related Recommendations"),
-                       #   #   card_body(plotOutput("global_plot"))
-                       #   # ),
-                       #   card(
-                       #     full_screen = TRUE,
-                       #     # card_header("Regional map"),
-                       #     card_body(plotOutput("regional_map"))
-                       #   )
-                       # )
                      )
            )
   ),
