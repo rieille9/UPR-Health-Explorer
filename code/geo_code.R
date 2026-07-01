@@ -11,6 +11,7 @@ pacman::p_load(
 # !!!!! consider upgrading to using the GISCO map data:
 # world1 <- giscoR::gisco_get_countries()
 
+
 # WPP Locations
 # https://population.un.org/wpp/downloads?folder=Documentation&group=Documentation
 httr::GET("https://population.un.org/wpp/assets/Excel%20Files/4_Metadata/WPP2024_F01_LOCATIONS.xlsx", 
@@ -18,57 +19,100 @@ httr::GET("https://population.un.org/wpp/assets/Excel%20Files/4_Metadata/WPP2024
 locations <-  read_xlsx(tf, sheet = "DB") |>
   janitor::clean_names() |> 
   filter(!is.na(iso3_code)) |> 
-  select(loc_id, iso3_code);unlink(tf);rm(tf)
+  mutate(sub_reg_name = case_when(is.na(sub_reg_name) ~ sdg_sub_reg_name, 
+                                  .default=sub_reg_name)) |> 
+  select(loc_id, sub_reg_name, sdg_reg_name, geo_reg_name, iso3_code);unlink(tf);rm(tf)
 
-state_geo_prep <- necountries::ne_countries |> 
-  # filter(type == "main"|country == "Alaska") #|>
-  filter(status == "member"|status == "observer"|country == "Alaska"|country == "Greenland"|country=="Somaliland"|country == "Western Sahara") |> 
-  select(iso2:sovereign, status, region:polygon)
+state_geo_prep2 <- giscoR::gisco_get_countries(year="2024") |> 
+  filter(NAME_ENGL!="Antarctica") |>
+  mutate(
+    to_shift = case_when(
+      ISO3_CODE %in% c("RUS", "KIR", "WSM", "TON", "TUV", "FJI", "PYF", "NZL",
+                       "UMI", "TKL", "WLF", "NIU", "COK", "ASM") ~ TRUE,
+      .default = FALSE),
+    main_status = factor(case_when(
+      SVRG_UN %in% c("UN Member State", "Non-member observer state") ~ "Main", 
+      .default = "Other"), levels=c("Main", "Other"))
+  ) |> 
+  left_join(locations, by=join_by(ISO3_CODE == iso3_code)) |> 
+  rename(iso2 = CNTR_ID, country = NAME_ENGL, iso3 = ISO3_CODE);state_geo_prep2 |> ggplot()+geom_sf()
 
-# Combine US and Alaska
-us_alaska <- state_geo_prep |> 
-  filter(sovereign == "United States of America") |> 
+state_geo_prep3 <- rbind(state_geo_prep2 |> filter(to_shift) |> st_shift_longitude(),
+                         state_geo_prep2 |> filter(!to_shift));state_geo_prep3 |> ggplot()+geom_sf()
+
+# Simplify US and Alaska
+us_alaska <- state_geo_prep3 |> 
+  filter(country == "United States") |> 
   st_cast("POLYGON") %>%
   mutate(area = st_area(.)) |> 
   group_by(country) |> 
-  slice_max(order_by = area, n = 1) |> 
+  slice_max(order_by = area, n = 3) |> 
   ungroup() |> 
   st_union() |> st_sf() |> 
   rename("polygon" = 1) |> 
+  mutate(country = "United States");us_alaska |> ggplot()+geom_sf()
+
+state_geo_prep4 <- state_geo_prep3 |> 
+  mutate(geometry = case_when(iso3 == "USA" ~ us_alaska$polygon,
+                             .default = geometry)) |> 
+  rename(polygon = geometry) |> 
+  arrange(country)
+
+# state_geo_prep <- state_geo_prep4
+
+##############
+state_geo_prep <- necountries::ne_countries |>
+  # filter(type == "main"|country == "Alaska") #|>
+  filter(status == "member"|status == "observer"|country == "Alaska"|country == "Greenland"|country=="Somaliland"|country == "Western Sahara") |>
+  select(iso2:sovereign, status, region:polygon)
+
+# Combine US and Alaska
+us_alaska <- state_geo_prep |>
+  filter(sovereign == "United States of America") |>
+  st_cast("POLYGON") %>%
+  mutate(area = st_area(.)) |>
+  group_by(country) |>
+  slice_max(order_by = area, n = 1) |>
+  ungroup() |>
+  st_union() |> st_sf() |>
+  rename("polygon" = 1) |>
   mutate(country = "United States of America")
 
 # Combine Somalia and Somaliland
-somalia <- state_geo_prep |> 
-  filter(sovereign %in% c("Somalia", "Somaliland")) |> 
-  st_union() |> st_sf() |> 
-  rename("polygon" = 1) |> 
+somalia <- state_geo_prep |>
+  filter(sovereign %in% c("Somalia", "Somaliland")) |>
+  st_union() |> st_sf() |>
+  rename("polygon" = 1) |>
   mutate(country = "Somalia")
 
 # Separate Siberian artifact for mapping simplicity
 gg_artifact_split <- state_geo_prep |> filter(country=="Russia")
-gg_russia <- st_cast(gg_artifact_split, "POLYGON")[-c(4,6,9),] |> 
-  st_union() |> st_sf() |> 
-  rename("polygon" = 1) |> 
+gg_russia <- st_cast(gg_artifact_split, "POLYGON")[-c(4,6,9),] |>
+  st_union() |> st_sf() |>
+  rename("polygon" = 1) |>
   mutate(country = "Russia")
-gg_siberia <- st_cast(gg_artifact_split, "POLYGON")[c(4,6,9),] |> 
-  st_union() |> st_sf() |> 
-  rename("polygon" = 1) |> 
+gg_siberia <- st_cast(gg_artifact_split, "POLYGON")[c(4,6,9),] |>
+  st_union() |> st_sf() |>
+  rename("polygon" = 1) |>
   mutate(country = "Siberian Artifact")
 
 # Update geometry for US and Alaska
-state_geo_prep <- state_geo_prep |> 
-  add_row(country="Siberian Artifact") |> 
+state_geo_prep <- state_geo_prep |>
+  add_row(country="Siberian Artifact") |>
   mutate(polygon = case_when(iso3 == "USA" ~ us_alaska$polygon,
                              country == "Somalia" ~ somalia$polygon,
                              country == "Russia" ~ gg_russia$polygon,
                              country == "Siberian Artifact" ~ gg_siberia$polygon,
-                             .default = polygon)) |> 
+                             .default = polygon)) |>
   filter(!country %in% c("Somaliland", "Alaska"))
 
 # Get the centroid of each state and update dataset
 point_centroid <- st_centroid(state_geo_prep, of_largest_polygon = TRUE)
 state_geo_prep$point_centroid <- point_centroid$polygon
-rm(us_alaska, somalia, point_centroid, gg_artifact_split, gg_russia, gg_siberia)
+rm(us_alaska, somalia, point_centroid, 
+   # gg_artifact_split, 
+   gg_russia, gg_siberia, 
+   state_geo_prep2, state_geo_prep3, state_geo_prep4)
 
 # Update state names for compatability with SDG dataset
 state_geo_prep <- state_geo_prep |> 
@@ -183,6 +227,27 @@ FCS_countries <- tibble("country" = state_geo_prep$country) |>
     ),
     levels = c("Institutional and social fragility", "Conflict")))
 
+# FCS_2023: https://thedocs.worldbank.org/en/doc/b7176d1485821af6f7638e63e266c717-0090082025/original/FCSList-FY06toFY25.pdf
+FCS_2023 <- read_csv(here("data", "FCS_status_2023.csv")) |> 
+  mutate(FCS_status = fct_recode(FCS_status, "Institutional and social fragility" = "Institutional and Social Fragility")) |> 
+  rename(FCS_2023 = FCS_status)
+
+FCS_all <- read_csv(here("data", "FCS_status_all.csv")) |> 
+  mutate(
+    FCS_status2 = fct_recode(FCS_status, "Other FCS" = "Other"),
+    FCS_status = "FCS"
+         ) 
+
+FCS_all_wide <- FCS_all |> 
+  pivot_wider(names_from = year, values_from = c(FCS_status, FCS_status2))
+
+FCS_count <- FCS_all |>
+  filter(year <= 2023) |>
+  droplevels() |>
+  group_by(iso3) |> summarise(FCS_count = n()) |> 
+  mutate(FCS_count_name = case_when(
+    FCS_count >= 10 ~ "FCS status >= 10 years"))
+
 # Regional partners ----
 ecsa_states <- read_csv(here("data", "ecsa_status.csv")) |> select(-country) |> 
   mutate(ECSA_status = factor(case_when(ECSA_status == "Member" ~ "ECSA-HC Member",
@@ -211,11 +276,14 @@ COMESA <- read_csv(here("data", "COMESA_status.csv")) |> select(-country) |>
 state_geo <- left_join(state_geo_prep, UN_official, join_by(country == english_short)) |> 
   mutate(english_formal = case_when(country == "Greenland" ~ "Greenland", .default = english_formal)) |> 
   rowid_to_column() |> 
-  mutate(income = factor(income, 
-                         levels = c("1. High income: OECD", "2. High income: nonOECD", 
-                                    "3. Upper middle income", "4. Lower middle income", 
-                                    "5. Low income"))) |> 
+  mutate(income = factor(income,
+                         levels = c("1. High income: OECD", "2. High income: nonOECD",
+                                    "3. Upper middle income", "4. Lower middle income",
+                                    "5. Low income"))) |>
   left_join(FCS_countries) |> 
+  left_join(FCS_2023 |> select(-country)) |> 
+  left_join(FCS_all_wide) |> 
+  left_join(FCS_count) |> 
   left_join(who_regions) |> 
   arrange(region, WHO_region, subregion) |> 
   mutate(subregion = fct_inorder(subregion)) |> 
@@ -233,8 +301,13 @@ greenland_row <- state_geo$country == "Greenland"
 columns_to_change <- state_geo |> sf::st_drop_geometry() |> select(region:wbregion, WHO_region) |>  names()
 # Assign NA to those specific cells
 state_geo[greenland_row, columns_to_change] <- NA
+state_geo <- state_geo |> sf::st_set_geometry("polygon")
+state_geo2 <- state_geo |> mutate(polygon = case_when(iso3 == "RUS" ~ gg_artifact_split$polygon,
+                                                      .default = polygon)) |> 
+  filter(country != "Siberian Artifact") |> sf::st_set_geometry("polygon")
 
 saveRDS(state_geo, here("output", "state_geo_enhanced.rds"))
+saveRDS(state_geo2, here("output", "state_geo2_enhanced.rds"))
 
 state_geo_dist <- state_geo |> 
   filter(!country %in% c("Greenland", "Siberian Artifact")) |> 
