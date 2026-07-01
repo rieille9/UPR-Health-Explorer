@@ -1645,36 +1645,6 @@
         "Archs": "x64"
       }
     },
-    "ggforce": {
-      "Source": "CRAN",
-      "Repository": "https://cran.rstudio.com",
-      "description": {
-        "Package": "ggforce",
-        "Type": "Package",
-        "Title": "Accelerating 'ggplot2'",
-        "Version": "0.5.0",
-        "Authors@R": "\n    c(person(given = \"Thomas Lin\",\n             family = \"Pedersen\",\n             role = c(\"cre\", \"aut\"),\n             email = \"thomasp85@gmail.com\",\n             comment = c(ORCID = \"0000-0002-5147-4711\")),\n      person(\"RStudio\",\n             role = \"cph\"))",
-        "Maintainer": "Thomas Lin Pedersen <thomasp85@gmail.com>",
-        "Description": "The aim of 'ggplot2' is to aid in visual data investigations. This\n    focus has led to a lack of facilities for composing specialised plots.\n    'ggforce' aims to be a collection of mainly new stats and geoms that fills\n    this gap. All additional functionality is aimed to come through the official\n    extension system so using 'ggforce' should be a stable experience.",
-        "URL": "https://ggforce.data-imaginist.com,\nhttps://github.com/thomasp85/ggforce",
-        "BugReports": "https://github.com/thomasp85/ggforce/issues",
-        "License": "MIT + file LICENSE",
-        "Encoding": "UTF-8",
-        "Depends": "ggplot2 (>= 3.5.0), R (>= 3.3.0)",
-        "Imports": "grid, scales, MASS, tweenr (>= 0.1.5), gtable, rlang,\npolyclip, stats, grDevices, tidyselect, withr, utils,\nlifecycle, cli, vctrs, systemfonts",
-        "RoxygenNote": "7.3.2",
-        "LinkingTo": "cpp11",
-        "Suggests": "sessioninfo, deldir, latex2exp, reshape2, units (>= 0.8.0),\ncovr",
-        "Collate": "'aaa.R' 'shape.R' 'arc_bar.R' 'arc.R' 'autodensity.R'\n'autohistogram.R' 'autopoint.R' 'bezier.R' 'bspline.R'\n'bspline_closed.R' 'circle.R' 'concaveman.R' 'cpp11.R'\n'diagonal.R' 'diagonal_wide.R' 'ellipse.R' 'errorbar.R'\n'facet_grid_paginate.R' 'facet_matrix.R' 'facet_row.R'\n'facet_stereo.R' 'facet_wrap_paginate.R' 'facet_zoom.R'\n'ggforce-package.R' 'ggproto-classes.R' 'interpolate.R'\n'labeller.R' 'link.R' 'mark_circle.R' 'mark_ellipse.R'\n'mark_hull.R' 'mark_label.R' 'mark_rect.R' 'parallel_sets.R'\n'position-jitternormal.R' 'position_auto.R'\n'position_floatstack.R' 'regon.R' 'scale-depth.R'\n'scale-unit.R' 'sina.R' 'spiro.R' 'themes.R' 'trans.R'\n'trans_linear.R' 'utilities.R' 'voronoi.R' 'zzz.R'",
-        "NeedsCompilation": "yes",
-        "Packaged": "2025-06-18 12:00:16 UTC; thomas",
-        "Author": "Thomas Lin Pedersen [cre, aut] (ORCID:\n    <https://orcid.org/0000-0002-5147-4711>),\n  RStudio [cph]",
-        "Repository": "CRAN",
-        "Date/Publication": "2025-06-18 12:40:02 UTC",
-        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-07-14 02:10:08 UTC; windows",
-        "Archs": "x64"
-      }
-    },
     "ggh4x": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -3285,32 +3255,6 @@
         "Archs": "x64"
       }
     },
-    "polyclip": {
-      "Source": "CRAN",
-      "Repository": "https://cran.rstudio.com",
-      "description": {
-        "Package": "polyclip",
-        "Version": "1.10-7",
-        "Date": "2024-07-23",
-        "Title": "Polygon Clipping",
-        "Authors@R": "c(person(\"Angus\", \"Johnson\", role = \"aut\", \n   \t    comment=\"C++ original, http://www.angusj.com/delphi/clipper.php\"),\n\t     person(\"Adrian\", \"Baddeley\", role = c(\"aut\", \"trl\", \"cre\"),\n\t\t     email = \"Adrian.Baddeley@curtin.edu.au\"),\n\t     person(\"Kurt\", \"Hornik\", role = \"ctb\"),\n\t     person(c(\"Brian\", \"D.\"), \"Ripley\", role = \"ctb\"),\n\t     person(\"Elliott\", \"Sales de Andrade\", role=\"ctb\"),\n\t     person(\"Paul\", \"Murrell\", role = \"ctb\"),\n\t     person(\"Ege\", \"Rubak\", role=\"ctb\"),\n\t     person(\"Mark\", \"Padgham\", role=\"ctb\"))",
-        "Maintainer": "Adrian Baddeley <Adrian.Baddeley@curtin.edu.au>",
-        "Depends": "R (>= 3.5.0)",
-        "Description": "R port of Angus Johnson's open source library 'Clipper'. Performs polygon clipping operations (intersection, union, set minus, set difference) for polygonal regions of arbitrary complexity, including holes. Computes offset polygons (spatial buffer zones, morphological dilations, Minkowski dilations) for polygonal regions and polygonal lines. Computes Minkowski Sum of general polygons. There is a function for removing self-intersections from polygon data.",
-        "License": "BSL",
-        "URL": "https://www.angusj.com,\nhttps://sourceforge.net/projects/polyclipping,\nhttps://github.com/baddstats/polyclip",
-        "BugReports": "https://github.com/baddstats/polyclip/issues",
-        "ByteCompile": "true",
-        "Note": "built from Clipper C++ version 6.4.0",
-        "NeedsCompilation": "yes",
-        "Packaged": "2024-07-22 23:24:18 UTC; adrian",
-        "Author": "Angus Johnson [aut] (C++ original,\n    http://www.angusj.com/delphi/clipper.php),\n  Adrian Baddeley [aut, trl, cre],\n  Kurt Hornik [ctb],\n  Brian D. Ripley [ctb],\n  Elliott Sales de Andrade [ctb],\n  Paul Murrell [ctb],\n  Ege Rubak [ctb],\n  Mark Padgham [ctb]",
-        "Repository": "CRAN",
-        "Date/Publication": "2024-07-23 06:10:02 UTC",
-        "Built": "R 4.5.0; x86_64-w64-mingw32; 2025-04-08 00:44:06 UTC; windows",
-        "Archs": "x64"
-      }
-    },
     "prettyunits": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -4798,35 +4742,6 @@
         "Archs": "x64"
       }
     },
-    "tweenr": {
-      "Source": "CRAN",
-      "Repository": "https://cran.rstudio.com",
-      "description": {
-        "Package": "tweenr",
-        "Type": "Package",
-        "Title": "Interpolate Data for Smooth Animations",
-        "Version": "2.0.3",
-        "Authors@R": "\n    c(person(given = \"Thomas Lin\",\n             family = \"Pedersen\",\n             role = c(\"aut\", \"cre\"),\n             email = \"thomasp85@gmail.com\",\n             comment = c(ORCID = \"0000-0002-5147-4711\")))",
-        "Maintainer": "Thomas Lin Pedersen <thomasp85@gmail.com>",
-        "Description": "In order to create smooth animation between states of data,\n    tweening is necessary. This package provides a range of functions for\n    creating tweened data that can be used as basis for animation. Furthermore \n    it adds a number of vectorized interpolaters for common R data \n    types such as numeric, date and colour.",
-        "URL": "https://github.com/thomasp85/tweenr",
-        "BugReports": "https://github.com/thomasp85/tweenr/issues",
-        "License": "MIT + file LICENSE",
-        "Encoding": "UTF-8",
-        "Depends": "R (>= 3.2.0)",
-        "Imports": "farver, magrittr, rlang, vctrs",
-        "LinkingTo": "cpp11 (>= 0.4.2)",
-        "RoxygenNote": "7.2.3",
-        "Suggests": "testthat, covr",
-        "NeedsCompilation": "yes",
-        "Packaged": "2024-02-26 13:06:33 UTC; thomas",
-        "Author": "Thomas Lin Pedersen [aut, cre]\n    (<https://orcid.org/0000-0002-5147-4711>)",
-        "Repository": "CRAN",
-        "Date/Publication": "2024-02-26 13:50:03 UTC",
-        "Built": "R 4.5.1; x86_64-w64-mingw32; 2025-07-14 01:50:20 UTC; windows",
-        "Archs": "x64"
-      }
-    },
     "tzdb": {
       "Source": "CRAN",
       "Repository": "https://cran.rstudio.com",
@@ -5247,14 +5162,8 @@
     "code/geo_code.R": {
       "checksum": "6d59d826456787dad533ac72c1e971ca"
     },
-    "code/guage_code.R": {
-      "checksum": "4e69a634e761fb089a156fb7e689ce67"
-    },
     "code/manual_plots_themes_profiles.R": {
       "checksum": "baa146419351bed9c3a064fefa01d0e1"
-    },
-    "code/profile_pdf_plots_to delete.R": {
-      "checksum": "19c3a1d70a072fc3a3782b81240e54d9"
     },
     "code/theme_labels.R": {
       "checksum": "ca07e1b92987cbeeba9568c0acb37b75"
@@ -5475,21 +5384,6 @@
     "data/country_custom_text.xlsx": {
       "checksum": "db844d0f25c63447e243ab9f704498fa"
     },
-    "data/Data 2025-08-19 12-53.xlsx": {
-      "checksum": "197339fc967cba8234b99ca41bceab34"
-    },
-    "data/Data 2025-08-19 13-04.xlsx": {
-      "checksum": "9dc5fe1bca79d11d02cd8207f7f2981d"
-    },
-    "data/Data 2025-08-19 18-35.xlsx": {
-      "checksum": "774f91a9da044cab60be6d36465b15b5"
-    },
-    "data/Data 2025-08-20 12-18.xlsx": {
-      "checksum": "ad4332c08bdc9f45317f8f8221d24fb4"
-    },
-    "data/Data 2026-01-22 12-22.xlsx": {
-      "checksum": "73f4602a672122d4d9ea6cc91d69f05f"
-    },
     "data/ecsa_status.csv": {
       "checksum": "d5c8254614c95c4763845f89ee606421"
     },
@@ -5550,12 +5444,6 @@
     "data/OECD.DCD.FSD,DSD_DAC2@DF_DAC2A,+..206.USD.Q.csv": {
       "checksum": "bcdd18452bdc69a133d8749572735e48"
     },
-    "data/sdg_data.rds": {
-      "checksum": "d480236921710843142aa27f057651da"
-    },
-    "data/SDG_data_enhanced.rds": {
-      "checksum": "2120db946cbd5aafab62b96ea178a69f"
-    },
     "data/SouthCentre_status.csv": {
       "checksum": "e386fc68f31948dcb7f27754087e2527"
     },
@@ -5568,51 +5456,6 @@
     "data/UHRI_full.rds": {
       "checksum": "cac3c8468e38bc599b789375c390b2b7"
     },
-    "data/UHRI_full_2025-09-29.rds": {
-      "checksum": "b6e218bdb25c43f424f8d9386e79b0ca"
-    },
-    "data/UHRI_full_2025-10-06.rds": {
-      "checksum": "1e6b72f56b93931b8947faf0d8635628"
-    },
-    "data/UHRI_full_2025-10-07.rds": {
-      "checksum": "4428306f1193543c252e11524e9dc8d9"
-    },
-    "data/UHRI_full_2025-10-16.rds": {
-      "checksum": "52b62a252ae9ae6476b3e955e858bf1e"
-    },
-    "data/UHRI_full_2025-10-21.rds": {
-      "checksum": "948615600f41ffe5f39d491589aae0d3"
-    },
-    "data/UHRI_full_2025-10-27.rds": {
-      "checksum": "eb44e533ffdbdff5f3931ea7a12f368b"
-    },
-    "data/UHRI_full_2025-10-29.rds": {
-      "checksum": "7243fbe55803b7d6db38d0f49ef3ba97"
-    },
-    "data/UHRI_full_2025-10-30.rds": {
-      "checksum": "52fa042d6ff49ad4ae1ee6a7a8a46d75"
-    },
-    "data/UHRI_full_2025-10-31.rds": {
-      "checksum": "b4b1b3c77183c3833971447618b7fff4"
-    },
-    "data/UHRI_full_2025-11-07.rds": {
-      "checksum": "8acb273a73f8e615e0f1f87d3670a373"
-    },
-    "data/UHRI_full_2025-11-12.rds": {
-      "checksum": "9a263008a975d3f11c8ae841a1fee732"
-    },
-    "data/UHRI_full_2025-11-13.rds": {
-      "checksum": "ba3b251a834f9f25faa660db32247aa7"
-    },
-    "data/UHRI_full_2025-11-21.rds": {
-      "checksum": "ac626f7230136184582c31f79145d5b4"
-    },
-    "data/UHRI_full_2026-01-09.rds": {
-      "checksum": "014cf77fb0f3313b62ec8ec145a68877"
-    },
-    "data/UHRI_full_2026-01-21.rds": {
-      "checksum": "5e6532f08a851b9b95d076251461c6e2"
-    },
     "data/UHRI_full_2026-05-18.rds": {
       "checksum": "cac3c8468e38bc599b789375c390b2b7"
     },
@@ -5621,39 +5464,6 @@
     },
     "data/UHRI_UPR.rds": {
       "checksum": "4dd4d97a0047c52b3f318233a013238f"
-    },
-    "data/UHRI_UPR_2025-10-16.rds": {
-      "checksum": "4efb3edf84e0e609e676554e73a3f443"
-    },
-    "data/UHRI_UPR_2025-10-21.rds": {
-      "checksum": "87cd72cd8f02744de4332784c1ab3855"
-    },
-    "data/UHRI_UPR_2025-10-27.rds": {
-      "checksum": "a79176fac1e4f653ca21dcf66d529898"
-    },
-    "data/UHRI_UPR_2025-10-29.rds": {
-      "checksum": "3b814255f68218f407a7930e03efc53e"
-    },
-    "data/UHRI_UPR_2025-10-30.rds": {
-      "checksum": "14d22b028ab7910abeeef5a8946a1538"
-    },
-    "data/UHRI_UPR_2025-10-31.rds": {
-      "checksum": "1daceb85e7b6ff9ba197525a264c38ce"
-    },
-    "data/UHRI_UPR_2025-11-07.rds": {
-      "checksum": "c677f5677e1f05aad8ed5bbc060f2af0"
-    },
-    "data/UHRI_UPR_2025-11-12.rds": {
-      "checksum": "4ae3ed7e9dd8bd380ef0b11fb053caf6"
-    },
-    "data/UHRI_UPR_2025-11-13.rds": {
-      "checksum": "a32663cb06adc0bde01b4322d1bf47a3"
-    },
-    "data/UHRI_UPR_2026-01-09.rds": {
-      "checksum": "83643af28cef28336ed9bd54f2cd31c3"
-    },
-    "data/UHRI_UPR_2026-01-21.rds": {
-      "checksum": "2a1c7e06a4e8e1ebb82617f4d747df4c"
     },
     "data/UHRI_UPR_2026-05-18.rds": {
       "checksum": "4dd4d97a0047c52b3f318233a013238f"
@@ -6611,12 +6421,6 @@
     },
     "www/full_plot.png": {
       "checksum": "3bca12d8b12f4c9c6564fe3e2fbae5c6"
-    },
-    "www/full_plot_institutionalbirths.png": {
-      "checksum": "6923a1f94c2729ff348f2254e53db06c"
-    },
-    "www/full_plot_skilledbirth.png": {
-      "checksum": "b3f884fd04be9f1b6fcdc9478f277dbf"
     },
     "www/logo_5.png": {
       "checksum": "ff8f04ba9185dde3ba807f748c32bd57"
