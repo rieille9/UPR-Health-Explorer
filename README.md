@@ -180,7 +180,7 @@ The app is deployed to Posit Connect Cloud from this Git repository.
 
 Notes for whoever maintains this next:
 
-- The repository is large. The working tree is about 174 MB and Git history is about 537 MB. `data/UHRI_full.rds` (68 MB) and `data/UHRI_UPR.rds` (21 MB) are still tracked, and there is a 24 MB OECD CSV. A `.gitignore` rule for `data/UHRI_*` was added, but that only affects new files; it does not untrack files already in history. To actually shrink clone size, untrack them with `git rm --cached`, or migrate the large binaries to Git LFS, and then rewrite history.
+- The repository is large. Large files can be untracked with `git rm --cached filepath`.
 - The "UPR impact" analysis is not reproducible from the repository as it stands. The page shows a static image (`www/full_plot.png`), but the mixed-effects script that produced it (`MLM_alt.R`) has been removed. To update or reproduce that analysis, recover the script from Git history (`git log --diff-filter=D --name-only`) or rewrite it.
 - Draft UPR reports are committed to a public repository. `data/UPR_WG_docs/` contains draft Working Group reports, including several marked "circulated on [date]" and one marked "ad referendum" (Latvia). This repository is public. Confirm that these pre-adoption documents are cleared for public distribution, and move them elsewhere if not.
 - Bilingual labels must stay in sync. `theme_labels.R` now carries English and French labels, and `manual_plots_themes_profiles.R` uses both. If you add a theme, add both labels, or the French figures will break.
