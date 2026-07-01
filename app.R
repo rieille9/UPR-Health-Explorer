@@ -1145,13 +1145,18 @@ server <- function(input, output, session) {
         # Create a temporary directory for Quarto to work in.
         temp_dir <- tempdir()
         
-        # Copy Rmd and other relevant files into that directory.
+        # Copy Rmd and other relevant files into that directory (comment out unused versions as needed).
+        ## V1
         # temp_report_path <- file.path(temp_dir, "report-template.Rmd")
         # file.copy("report-template.Rmd", temp_report_path, overwrite = TRUE)
+        ## V2
         # temp_report_path <- file.path(temp_dir, "report-template-2.Rmd")
         # file.copy("report-template-2.Rmd", temp_report_path, overwrite = TRUE)
+        ## V3
         temp_report_path <- file.path(temp_dir, "report-template-3.Rmd")
         file.copy("report-template-3.Rmd", temp_report_path, overwrite = TRUE)
+        
+        # Remaining code
         file.copy("preamble.tex", temp_dir, overwrite = TRUE)
         file.copy("logo.png", temp_dir, overwrite = TRUE)
         file.copy("logo2.png", temp_dir, overwrite = TRUE)
