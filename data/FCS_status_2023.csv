@@ -1,0 +1,38 @@
+country,iso3,FCS_status
+Afghanistan,AFG,Conflict
+Burkina Faso,BFA,Conflict
+Cameroon,CMR,Conflict
+Central African Republic,CAF,Conflict
+"Congo, Democratic Republic of",COD,Conflict
+Ethiopia,ETH,Conflict
+Iraq,IRQ,Conflict
+Mali,MLI,Conflict
+Mozambique,MOZ,Conflict
+Myanmar,MMR,Conflict
+Niger,NER,Conflict
+Nigeria,NGA,Conflict
+Somalia,SOM,Conflict
+South Sudan,SSD,Conflict
+Syrian Arab Republic,SYR,Conflict
+Ukraine,UKR,Conflict
+"Yemen, Republic of",YEM,Conflict
+Burundi,BDI,Institutional and Social Fragility
+Chad,TCD,Institutional and Social Fragility
+Comoros,COM,Institutional and Social Fragility
+"Congo, Republic of",COG,Institutional and Social Fragility
+Eritrea,ERI,Institutional and Social Fragility
+Guinea-Bissau,GNB,Institutional and Social Fragility
+Haiti,HTI,Institutional and Social Fragility
+Kosovo,XKX,Institutional and Social Fragility
+Lebanon,LBN,Institutional and Social Fragility
+Libya,LBY,Institutional and Social Fragility
+Marshall Islands,MHL,Institutional and Social Fragility
+"Micronesia, Federated States of",FSM,Institutional and Social Fragility
+Papua New Guinea,PNG,Institutional and Social Fragility
+Solomon Islands,SLB,Institutional and Social Fragility
+Sudan,SDN,Institutional and Social Fragility
+Timor-Leste,TLS,Institutional and Social Fragility
+Tuvalu,TUV,Institutional and Social Fragility
+"Venezuela, RB",VEN,Institutional and Social Fragility
+West Bank and Gaza (territory),PSE,Institutional and Social Fragility
+Zimbabwe,ZWE,Institutional and Social Fragility

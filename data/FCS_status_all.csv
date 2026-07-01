@@ -1,0 +1,719 @@
+year,iso3,FCS_status
+2025,AFG,Conflict
+2025,BFA,Conflict
+2025,CMR,Conflict
+2025,CAF,Conflict
+2025,COD,Conflict
+2025,ETH,Conflict
+2025,HTI,Conflict
+2025,IRQ,Conflict
+2025,LBN,Conflict
+2025,MLI,Conflict
+2025,MOZ,Conflict
+2025,MMR,Conflict
+2025,NER,Conflict
+2025,NGA,Conflict
+2025,SOM,Conflict
+2025,SSD,Conflict
+2025,SDN,Conflict
+2025,SYR,Conflict
+2025,UKR,Conflict
+2025,YEM,Conflict
+2025,BDI,Institutional and social fragility
+2025,TCD,Institutional and social fragility
+2025,COM,Institutional and social fragility
+2025,COG,Institutional and social fragility
+2025,ERI,Institutional and social fragility
+2025,GNB,Institutional and social fragility
+2025,KIR,Institutional and social fragility
+2025,XKX,Institutional and social fragility
+2025,LBY,Institutional and social fragility
+2025,MHL,Institutional and social fragility
+2025,FSM,Institutional and social fragility
+2025,PNG,Institutional and social fragility
+2025,STP,Institutional and social fragility
+2025,SLB,Institutional and social fragility
+2025,TLS,Institutional and social fragility
+2025,TUV,Institutional and social fragility
+2025,VEN,Institutional and social fragility
+2025,ZWE,Institutional and social fragility
+2025,PSE,Institutional and social fragility
+2024,AFG,Conflict
+2024,BFA,Conflict
+2024,CMR,Conflict
+2024,CAF,Conflict
+2024,COD,Conflict
+2024,ETH,Conflict
+2024,IRQ,Conflict
+2024,MLI,Conflict
+2024,MOZ,Conflict
+2024,MMR,Conflict
+2024,NER,Conflict
+2024,NGA,Conflict
+2024,SOM,Conflict
+2024,SSD,Conflict
+2024,SDN,Conflict
+2024,SYR,Conflict
+2024,UKR,Conflict
+2024,YEM,Conflict
+2024,BDI,Institutional and social fragility
+2024,TCD,Institutional and social fragility
+2024,COM,Institutional and social fragility
+2024,COG,Institutional and social fragility
+2024,ERI,Institutional and social fragility
+2024,GNB,Institutional and social fragility
+2024,HTI,Institutional and social fragility
+2024,KIR,Institutional and social fragility
+2024,XKX,Institutional and social fragility
+2024,LBN,Institutional and social fragility
+2024,LBY,Institutional and social fragility
+2024,MHL,Institutional and social fragility
+2024,FSM,Institutional and social fragility
+2024,PNG,Institutional and social fragility
+2024,STP,Institutional and social fragility
+2024,SLB,Institutional and social fragility
+2024,TLS,Institutional and social fragility
+2024,TUV,Institutional and social fragility
+2024,VEN,Institutional and social fragility
+2024,ZWE,Institutional and social fragility
+2024,PSE,Institutional and social fragility
+2023,AFG,Conflict
+2023,BFA,Conflict
+2023,CMR,Conflict
+2023,CAF,Conflict
+2023,COD,Conflict
+2023,ETH,Conflict
+2023,IRQ,Conflict
+2023,MLI,Conflict
+2023,MOZ,Conflict
+2023,MMR,Conflict
+2023,NER,Conflict
+2023,NGA,Conflict
+2023,SOM,Conflict
+2023,SSD,Conflict
+2023,SYR,Conflict
+2023,UKR,Conflict
+2023,YEM,Conflict
+2023,BDI,Institutional and social fragility
+2023,TCD,Institutional and social fragility
+2023,COM,Institutional and social fragility
+2023,COG,Institutional and social fragility
+2023,ERI,Institutional and social fragility
+2023,GNB,Institutional and social fragility
+2023,HTI,Institutional and social fragility
+2023,XKX,Institutional and social fragility
+2023,LBN,Institutional and social fragility
+2023,LBY,Institutional and social fragility
+2023,MHL,Institutional and social fragility
+2023,FSM,Institutional and social fragility
+2023,PNG,Institutional and social fragility
+2023,SLB,Institutional and social fragility
+2023,SDN,Institutional and social fragility
+2023,TLS,Institutional and social fragility
+2023,TUV,Institutional and social fragility
+2023,VEN,Institutional and social fragility
+2023,ZWE,Institutional and social fragility
+2023,PSE,Institutional and social fragility
+2022,AFG,Conflict
+2022,SOM,Conflict
+2022,SYR,Conflict
+2022,YEM,Conflict
+2022,ARM,Conflict
+2022,AZE,Conflict
+2022,BFA,Conflict
+2022,BDI,Conflict
+2022,CMR,Conflict
+2022,CAF,Conflict
+2022,TCD,Conflict
+2022,COD,Conflict
+2022,ETH,Conflict
+2022,HTI,Conflict
+2022,IRQ,Conflict
+2022,LBY,Conflict
+2022,MLI,Conflict
+2022,MOZ,Conflict
+2022,MMR,Conflict
+2022,NER,Conflict
+2022,NGA,Conflict
+2022,SSD,Conflict
+2022,COG,Institutional and social fragility
+2022,ERI,Institutional and social fragility
+2022,GNB,Institutional and social fragility
+2022,XKX,Institutional and social fragility
+2022,LBN,Institutional and social fragility
+2022,PNG,Institutional and social fragility
+2022,SDN,Institutional and social fragility
+2022,VEN,Institutional and social fragility
+2022,PSE,Institutional and social fragility
+2022,ZWE,Institutional and social fragility
+2022,COM,Institutional and social fragility
+2022,KIR,Institutional and social fragility
+2022,MHL,Institutional and social fragility
+2022,FSM,Institutional and social fragility
+2022,SLB,Institutional and social fragility
+2022,TLS,Institutional and social fragility
+2022,TUV,Institutional and social fragility
+2021,AFG,Conflict
+2021,LBY,Conflict
+2021,SOM,Conflict
+2021,SYR,Conflict
+2021,YEM,Conflict
+2021,BFA,Conflict
+2021,CMR,Conflict
+2021,CAF,Conflict
+2021,TCD,Conflict
+2021,COD,Conflict
+2021,IRQ,Conflict
+2021,MLI,Conflict
+2021,MOZ,Conflict
+2021,MMR,Conflict
+2021,NER,Conflict
+2021,NGA,Conflict
+2021,SSD,Conflict
+2021,BDI,Institutional and social fragility
+2021,COG,Institutional and social fragility
+2021,ERI,Institutional and social fragility
+2021,GMB,Institutional and social fragility
+2021,GNB,Institutional and social fragility
+2021,HTI,Institutional and social fragility
+2021,XKX,Institutional and social fragility
+2021,LAO,Institutional and social fragility
+2021,LBN,Institutional and social fragility
+2021,LBR,Institutional and social fragility
+2021,PNG,Institutional and social fragility
+2021,SDN,Institutional and social fragility
+2021,VEN,Institutional and social fragility
+2021,PSE,Institutional and social fragility
+2021,ZWE,Institutional and social fragility
+2021,COM,Institutional and social fragility
+2021,KIR,Institutional and social fragility
+2021,MHL,Institutional and social fragility
+2021,FSM,Institutional and social fragility
+2021,SLB,Institutional and social fragility
+2021,TLS,Institutional and social fragility
+2021,TUV,Institutional and social fragility
+2020,AFG,Conflict
+2020,CAF,Conflict
+2020,LBY,Conflict
+2020,SOM,Conflict
+2020,SSD,Conflict
+2020,SYR,Conflict
+2020,YEM,Conflict
+2020,BFA,Conflict
+2020,BDI,Conflict
+2020,CMR,Conflict
+2020,COD,Conflict
+2020,IRQ,Conflict
+2020,MLI,Conflict
+2020,NER,Conflict
+2020,NGA,Conflict
+2020,SDN,Conflict
+2020,TCD,Institutional and social fragility
+2020,COG,Institutional and social fragility
+2020,ERI,Institutional and social fragility
+2020,GMB,Institutional and social fragility
+2020,GNB,Institutional and social fragility
+2020,HTI,Institutional and social fragility
+2020,XKX,Institutional and social fragility
+2020,LBN,Institutional and social fragility
+2020,LBR,Institutional and social fragility
+2020,MMR,Institutional and social fragility
+2020,PNG,Institutional and social fragility
+2020,VEN,Institutional and social fragility
+2020,ZWE,Institutional and social fragility
+2020,PSE,Institutional and social fragility
+2020,COM,Institutional and social fragility
+2020,KIR,Institutional and social fragility
+2020,MHL,Institutional and social fragility
+2020,FSM,Institutional and social fragility
+2020,SLB,Institutional and social fragility
+2020,TLS,Institutional and social fragility
+2020,TUV,Institutional and social fragility
+2019,AFG,Other
+2019,BDI,Other
+2019,CAF,Other
+2019,TCD,Other
+2019,COM,Other
+2019,COD,Other
+2019,COG,Other
+2019,CIV,Other
+2019,DJI,Other
+2019,ERI,Other
+2019,GMB,Other
+2019,GNB,Other
+2019,HTI,Other
+2019,KIR,Other
+2019,XKX,Other
+2019,LBR,Other
+2019,MLI,Other
+2019,MHL,Other
+2019,FSM,Other
+2019,MOZ,Other
+2019,MMR,Other
+2019,SLB,Other
+2019,SOM,Other
+2019,SSD,Other
+2019,SDN,Other
+2019,SYR,Other
+2019,TGO,Other
+2019,TUV,Other
+2019,YEM,Other
+2019,PSE,Other
+2019,PNG,Other
+2019,TLS,Other
+2019,ZWE,Other
+2019,IRQ,Other
+2019,LBN,Other
+2019,LBY,Other
+2018,AFG,Other
+2018,BDI,Other
+2018,CAF,Other
+2018,TCD,Other
+2018,COM,Other
+2018,COD,Other
+2018,COG,Other
+2018,CIV,Other
+2018,DJI,Other
+2018,ERI,Other
+2018,GMB,Other
+2018,GNB,Other
+2018,HTI,Other
+2018,KIR,Other
+2018,XKX,Other
+2018,LBR,Other
+2018,MLI,Other
+2018,MHL,Other
+2018,FSM,Other
+2018,MOZ,Other
+2018,MMR,Other
+2018,PNG,Other
+2018,SLE,Other
+2018,SLB,Other
+2018,SOM,Other
+2018,SSD,Other
+2018,SDN,Other
+2018,SYR,Other
+2018,TGO,Other
+2018,TUV,Other
+2018,YEM,Other
+2018,PSE,Other
+2018,ZWE,Other
+2018,IRQ,Other
+2018,LBN,Other
+2018,LBY,Other
+2017,AFG,Other
+2017,BDI,Other
+2017,CAF,Other
+2017,TCD,Other
+2017,COM,Other
+2017,COD,Other
+2017,CIV,Other
+2017,DJI,Other
+2017,ERI,Other
+2017,GMB,Other
+2017,GNB,Other
+2017,HTI,Other
+2017,KIR,Other
+2017,XKX,Other
+2017,LBR,Other
+2017,MDG,Other
+2017,MLI,Other
+2017,MHL,Other
+2017,FSM,Other
+2017,MMR,Other
+2017,PNG,Other
+2017,SLE,Other
+2017,SLB,Other
+2017,SOM,Other
+2017,SSD,Other
+2017,SDN,Other
+2017,TGO,Other
+2017,TUV,Other
+2017,YEM,Other
+2017,PSE,Other
+2017,ZWE,Other
+2017,IRQ,Other
+2017,LBN,Other
+2017,LBY,Other
+2017,SYR,Other
+2016,AFG,Other
+2016,BDI,Other
+2016,CAF,Other
+2016,TCD,Other
+2016,COM,Other
+2016,COD,Other
+2016,CIV,Other
+2016,ERI,Other
+2016,GMB,Other
+2016,GNB,Other
+2016,HTI,Other
+2016,KIR,Other
+2016,XKX,Other
+2016,LBR,Other
+2016,MDG,Other
+2016,MLI,Other
+2016,MHL,Other
+2016,FSM,Other
+2016,MMR,Other
+2016,SLE,Other
+2016,SLB,Other
+2016,SOM,Other
+2016,SSD,Other
+2016,SDN,Other
+2016,TGO,Other
+2016,TUV,Other
+2016,YEM,Other
+2016,PSE,Other
+2016,TLS,Other
+2016,ZWE,Other
+2016,BIH,Other
+2016,IRQ,Other
+2016,LBN,Other
+2016,LBY,Other
+2016,SYR,Other
+2015,AFG,Other
+2015,BDI,Other
+2015,CAF,Other
+2015,TCD,Other
+2015,COM,Other
+2015,COD,Other
+2015,CIV,Other
+2015,ERI,Other
+2015,GNB,Other
+2015,HTI,Other
+2015,KIR,Other
+2015,XKX,Other
+2015,LBR,Other
+2015,MDG,Other
+2015,MLI,Other
+2015,MHL,Other
+2015,FSM,Other
+2015,MMR,Other
+2015,SLE,Other
+2015,SLB,Other
+2015,SOM,Other
+2015,SSD,Other
+2015,SDN,Other
+2015,TGO,Other
+2015,TUV,Other
+2015,YEM,Other
+2015,PSE,Other
+2015,TLS,Other
+2015,ZWE,Other
+2015,BIH,Other
+2015,IRQ,Other
+2015,LBY,Other
+2015,SYR,Other
+2014,AFG,Other
+2014,BDI,Other
+2014,CAF,Other
+2014,TCD,Other
+2014,COM,Other
+2014,COD,Other
+2014,COG,Other
+2014,CIV,Other
+2014,ERI,Other
+2014,GNB,Other
+2014,HTI,Other
+2014,KIR,Other
+2014,XKX,Other
+2014,LBR,Other
+2014,MDG,Other
+2014,MWI,Other
+2014,MLI,Other
+2014,MHL,Other
+2014,FSM,Other
+2014,MMR,Other
+2014,NPL,Other
+2014,SLE,Other
+2014,SLB,Other
+2014,SOM,Other
+2014,SSD,Other
+2014,SDN,Other
+2014,TLS,Other
+2014,TGO,Other
+2014,TUV,Other
+2014,YEM,Other
+2014,PSE,Other
+2014,BIH,Other
+2014,ZWE,Other
+2014,IRQ,Other
+2014,LBY,Other
+2014,SYR,Other
+2013,AFG,Other
+2013,AGO,Other
+2013,BDI,Other
+2013,CAF,Other
+2013,TCD,Other
+2013,COM,Other
+2013,COD,Other
+2013,COG,Other
+2013,CIV,Other
+2013,ERI,Other
+2013,GIN,Other
+2013,GNB,Other
+2013,HTI,Other
+2013,KIR,Other
+2013,XKX,Other
+2013,LBR,Other
+2013,MHL,Other
+2013,FSM,Other
+2013,MMR,Other
+2013,NPL,Other
+2013,SLE,Other
+2013,SLB,Other
+2013,SOM,Other
+2013,SSD,Other
+2013,SDN,Other
+2013,TLS,Other
+2013,TGO,Other
+2013,TUV,Other
+2013,YEM,Other
+2013,PSE,Other
+2013,BIH,Other
+2013,ZWE,Other
+2013,IRQ,Other
+2013,LBY,Other
+2013,SYR,Other
+2012,AFG,Other
+2012,AGO,Other
+2012,BDI,Other
+2012,CAF,Other
+2012,TCD,Other
+2012,COM,Other
+2012,COD,Other
+2012,COG,Other
+2012,CIV,Other
+2012,ERI,Other
+2012,GIN,Other
+2012,GNB,Other
+2012,HTI,Other
+2012,KIR,Other
+2012,XKX,Other
+2012,LBR,Other
+2012,MHL,Other
+2012,FSM,Other
+2012,MMR,Other
+2012,NPL,Other
+2012,SLE,Other
+2012,SLB,Other
+2012,SOM,Other
+2012,SDN,Other
+2012,TLS,Other
+2012,TGO,Other
+2012,YEM,Other
+2012,PSE,Other
+2012,ESH,Other
+2012,BIH,Other
+2012,GEO,Other
+2012,ZWE,Other
+2012,IRQ,Other
+2011,AFG,Other
+2011,AGO,Other
+2011,BDI,Other
+2011,CAF,Other
+2011,TCD,Other
+2011,COM,Other
+2011,COD,Other
+2011,COG,Other
+2011,CIV,Other
+2011,ERI,Other
+2011,GIN,Other
+2011,GNB,Other
+2011,HTI,Other
+2011,XKX,Other
+2011,KIR,Other
+2011,LBR,Other
+2011,MMR,Other
+2011,NPL,Other
+2011,STP,Other
+2011,SLE,Other
+2011,SLB,Other
+2011,SOM,Other
+2011,SDN,Other
+2011,TJK,Other
+2011,TLS,Other
+2011,TGO,Other
+2011,YEM,Other
+2011,PSE,Other
+2011,ESH,Other
+2011,BIH,Other
+2011,GEO,Other
+2011,ZWE,Other
+2011,IRQ,Other
+2010,AFG,Other
+2010,AGO,Other
+2010,BDI,Other
+2010,CMR,Other
+2010,CAF,Other
+2010,TCD,Other
+2010,COM,Other
+2010,COD,Other
+2010,COG,Other
+2010,CIV,Other
+2010,DJI,Other
+2010,ERI,Other
+2010,GMB,Other
+2010,GIN,Other
+2010,GNB,Other
+2010,HTI,Other
+2010,KIR,Other
+2010,XKX,Other
+2010,LBR,Other
+2010,MMR,Other
+2010,NPL,Other
+2010,PNG,Other
+2010,STP,Other
+2010,SLE,Other
+2010,SLB,Other
+2010,SOM,Other
+2010,SDN,Other
+2010,TJK,Other
+2010,TLS,Other
+2010,TGO,Other
+2010,TON,Other
+2010,YEM,Other
+2010,PSE,Other
+2010,ESH,Other
+2010,BIH,Other
+2010,GEO,Other
+2010,ZWE,Other
+2009,AFG,Other
+2009,AGO,Other
+2009,BDI,Other
+2009,CAF,Other
+2009,TCD,Other
+2009,COM,Other
+2009,COD,Other
+2009,COG,Other
+2009,CIV,Other
+2009,ERI,Other
+2009,GIN,Other
+2009,GNB,Other
+2009,HTI,Other
+2009,XKX,Other
+2009,LBR,Other
+2009,MMR,Other
+2009,STP,Other
+2009,SLB,Other
+2009,SOM,Other
+2009,SDN,Other
+2009,TLS,Other
+2009,TGO,Other
+2009,TON,Other
+2009,PSE,Other
+2009,ZWE,Other
+2009,KHM,Other
+2009,CMR,Other
+2009,DJI,Other
+2009,GMB,Other
+2009,LAO,Other
+2009,KIR,Other
+2009,SLE,Other
+2009,TJK,Other
+2009,UZB,Other
+2009,YEM,Other
+2008,AFG,Other
+2008,BDI,Other
+2008,TCD,Other
+2008,COD,Other
+2008,CIV,Other
+2008,GIN,Other
+2008,HTI,Other
+2008,LBR,Other
+2008,STP,Other
+2008,SOM,Other
+2008,TLS,Other
+2008,TON,Other
+2008,PSE,Other
+2008,AGO,Other
+2008,CAF,Other
+2008,COM,Other
+2008,COG,Other
+2008,ERI,Other
+2008,GNB,Other
+2008,XKX,Other
+2008,MMR,Other
+2008,SLB,Other
+2008,SDN,Other
+2008,TGO,Other
+2008,UZB,Other
+2008,ZWE,Other
+2008,KHM,Other
+2008,DJI,Other
+2008,GMB,Other
+2008,KIR,Other
+2008,LAO,Other
+2008,PNG,Other
+2008,SLE,Other
+2008,VUT,Other
+2007,AFG,Other
+2007,CAF,Other
+2007,COM,Other
+2007,CIV,Other
+2007,LBR,Other
+2007,MMR,Other
+2007,SOM,Other
+2007,TGO,Other
+2007,PSE,Other
+2007,ZWE,Other
+2007,AGO,Other
+2007,BDI,Other
+2007,TCD,Other
+2007,COD,Other
+2007,COG,Other
+2007,ERI,Other
+2007,GIN,Other
+2007,GNB,Other
+2007,HTI,Other
+2007,XKX,Other
+2007,LAO,Other
+2007,SLB,Other
+2007,SDN,Other
+2007,TLS,Other
+2007,TON,Other
+2007,UZB,Other
+2007,KHM,Other
+2007,DJI,Other
+2007,GMB,Other
+2007,MRT,Other
+2007,NGA,Other
+2007,PNG,Other
+2007,STP,Other
+2007,SLE,Other
+2007,VUT,Other
+2006,AFG,Other
+2006,CAF,Other
+2006,COM,Other
+2006,LBR,Other
+2006,MMR,Other
+2006,SOM,Other
+2006,ZWE,Other
+2006,AGO,Other
+2006,BDI,Other
+2006,KHM,Other
+2006,COD,Other
+2006,COG,Other
+2006,CIV,Other
+2006,DJI,Other
+2006,ERI,Other
+2006,GIN,Other
+2006,GNB,Other
+2006,HTI,Other
+2006,XKX,Other
+2006,LAO,Other
+2006,NGA,Other
+2006,SLB,Other
+2006,SDN,Other
+2006,TLS,Other
+2006,TGO,Other
+2006,TON,Other
+2006,VUT,Other
+2006,PSE,Other
+2006,TCD,Other
+2006,GMB,Other
+2006,PNG,Other
+2006,STP,Other
+2006,SLE,Other
+2006,TJK,Other
+2006,UZB,Other
