@@ -215,6 +215,63 @@ constitutions <- read_xls(here("data", "constitutions", "WORLD_constitutions_202
     )
   )
 
+# ICESCR ------------------------------------------
+ICESCR <- read_xls(here("data", "UnderlyingData_ICESCR_OHCHR_02_07_2026.xls"), skip = 1) |> 
+  janitor::clean_names() |> 
+  filter(!str_detect(country, "Definitions and metadata|Database of the")) |> 
+  mutate(country = case_match(
+    country,
+    "State of Palestine" ~ "Palestine",
+    "Czech Republic" ~ "Czechia",
+    "Holy See" ~ "Vatican",
+    .default = country
+  )) |> 
+  filter(!is.na(country), !country %in% c("European Union", "Niue", "Cook Islands", "Palestine", "Vatican")) |>
+  mutate(
+    status = factor(case_when(
+      !is.na(date_of_ratification_accession) ~ "State Party",
+      !is.na(date_of_signature_dd_mm_yyyy) ~ "Signatory",
+      .default = "No Action"
+    ), levels  = c("State Party", "Signatory", "No Action")),
+    status_date = case_when(
+      status == "State Party" ~ date_of_ratification_accession,
+      status == "Signatory" ~ date_of_signature_dd_mm_yyyy
+    ),
+    date_of_signature_dd_mm_yyyy = case_when(
+      is.na(date_of_signature_dd_mm_yyyy) & !is.na(date_of_ratification_accession) ~ date_of_ratification_accession,
+      .default = date_of_signature_dd_mm_yyyy
+    )
+  ) |>
+  mutate(time_sign_ratify = time_length(difftime(date_of_ratification_accession, date_of_signature_dd_mm_yyyy), "years")) |> 
+  arrange(status, status_date) |> 
+  group_by(status) |> 
+  mutate(cumulative = cumsum(!is.na(status_date))) |> 
+  ungroup() |> 
+  arrange(date_of_signature_dd_mm_yyyy) |> 
+  mutate(cumulative_signed = cumsum(!is.na(date_of_signature_dd_mm_yyyy))) |> 
+  arrange(date_of_ratification_accession) |> 
+  mutate(cumulative_ratified = cumsum(!is.na(date_of_ratification_accession))) |> 
+  mutate(label_text = case_when(
+    status == "No Action" ~ "No Action",
+    status == "Signatory" ~ sprintf(
+      "<strong>Signed on:</strong> %s",
+      format.Date(date_of_signature_dd_mm_yyyy, format = "%B %d, %Y")
+    ),
+    # paste0("Signed on ", format.Date(date_of_signature_dd_mm_yyyy, format = "%B %d, %Y")),
+    status == "State Party" ~ sprintf(
+      "<strong>Signed on:</strong> %s<br/><strong>Ratified/acceded on:</strong> %s",
+      format.Date(date_of_signature_dd_mm_yyyy, format = "%B %d, %Y"),
+      format.Date(date_of_ratification_accession, format = "%B %d, %Y")
+    )
+  )) |> 
+  left_join(state_geo |> select(country, iso3) |>
+              st_drop_geometry()
+            # mutate(
+            #   country = case_when(country == "Greenland" ~ "Denmark",.default = country),
+            #   iso3 = case_when(country == "Greenland" ~ "DNK",.default = iso3)
+            #   )
+  )
+
 # WHO ---------------------------------------------
 # https://platform.who.int/data/maternal-newborn-child-adolescent-ageing/data-export
 live_births <- readxl::read_xlsx(here("data", "WHO_data_export_250917.xlsx"), 
