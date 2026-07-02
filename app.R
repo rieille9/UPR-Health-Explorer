@@ -45,8 +45,8 @@ theme_labels <- theme_labels |>
     "essential_medicines","TB_malaria", "NTD","vaccinations"
   ))
 
-sdg_data <- sdg_data |> select(-any_of(c("SRHR", "SOCED",
-                                         "essential_medicines","TB_malaria", 
+sdg_data <- sdg_data |> select(-any_of(c("SRHR", "SRHR_any", "Communicable_combined", "SOCED",
+                                         "essential_medicines","TB_malaria", "abortion_maternal",
                                          "NTD","vaccinations")))
 
 # Loop through API-generated files
