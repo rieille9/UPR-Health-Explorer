@@ -1,0 +1,392 @@
+---
+title: "Preparation of UPR Right-to-Health recommendations from UHRI"
+subtitle: "Download and pre-processing of the UHRI export into an analysis-ready table"
+author: "Anshu Uppal"
+date: "2026-06-19"
+date-modified: last-modified
+format:
+        html:
+                code-fold: true
+                toc: true
+                toc-location: left
+                toc-depth: 4
+                toc-title: "On this page"
+                smooth-scroll: true
+                embed-resources: true
+                grid:
+                  body-width: 1100px
+                  margin-width: 100px
+---
+
+## Purpose
+
+This document downloads the full UHRI dataset and pre-processes it into two tidy,
+analysis-ready tables:
+
+- `data/UHRI_full.rds` — every recommendation/observation (all bodies);
+- `data/UHRI_UPR.rds` — the Universal Periodic Review (UPR) subset, with the cleaned
+  recommendation text (`text_2`) and parsed identifiers used downstream.
+
+The **thematic classification** of these recommendations is a separate step and lives in
+`03_classify_UHRI_recommendations.qmd`, which consumes `data/UHRI_UPR.rds`.
+
+> This is a refactor of `02_prep_UHRI_recommendation_definitions.qmd`. It is **behaviour-equivalent**
+> to the original pre-processing (verified by running both pipelines on the same raw extract and
+> diffing the outputs) but the code is reorganised into small, documented helper functions and the
+> ~25 sequential text substitutions are collapsed into single vectorised passes.
+
+## Setup
+
+```{r}
+#| label: setup
+pacman::p_load(
+  here,
+  tidyverse,
+  janitor,
+  readxl,
+  httr,
+  sf
+)
+```
+
+## 1. Acquire the raw extract
+
+The full UHRI export is documented at <https://uhri.ohchr.org/en/our-data-api>; the direct
+download is <https://dataex.ohchr.org/uhri/export-results/export-full-en.xlsx>.
+
+To refresh the data, uncomment the download block below (it overwrites the cached
+`data/UHRI_extract_raw.rds`). Otherwise the most recently downloaded extract is reused, which
+keeps the pipeline fully reproducible between refreshes.
+
+```{r}
+#| label: download
+
+# --- Uncomment to download a fresh extract -----------------------------------------------------
+# httr::GET(
+#   "https://dataex.ohchr.org/uhri/export-results/export-full-en.xlsx",
+#   httr::write_disk(tf <- tempfile(fileext = ".xlsx"))
+# )
+# df_0 <- readxl::read_xlsx(
+#   tf,
+#   # specify column types explicitly, otherwise some columns import as all-NA
+#   col_types = c(rep("text", 7), "date", rep("text", 7), "date")
+# ) |>
+#   janitor::clean_names() |>
+#   mutate(date_accessed = ymd(Sys.Date()))
+# 
+# unlink(tf); rm(tf)
+# saveRDS(df_0, here("data", "UHRI_extract_raw.rds"))
+# -----------------------------------------------------------------------------------------------
+
+df_0 <- readRDS(here("data", "UHRI_extract_raw.rds"))
+
+# Country/region reference layer (ISO codes) used to enrich the recommendations.
+state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
+```
+
+## 2. Helper functions
+
+All of the fiddly string work is isolated here so the main pipeline reads as a sequence of
+named steps.
+
+### 2.1 Text cleaning
+
+The raw `text` field contains HTML entities, smart quotes, and a handful of recurring OCR-style
+glitches. These are fixed with two ordered substitution tables (applied in a single vectorised
+`str_replace_all` each) plus a few structural tidies.
+
+```{r}
+#| label: helper-clean-text
+# Ordered substitutions: HTML entities, smart quotes, spacing around parentheses/possessives.
+# str_replace_all() with a named vector applies these in order, element-wise - equivalent to the
+# original's long sequence of individual str_replace_all() calls, in one pass.
+html_entity_subs <- c(
+  "’"           = "'",          # right single quote
+  "“"           = "'",          # left double quote
+  "”"           = "'",          # right double quote
+  "\\( "             = "\\(",        # "( " -> "("
+  " \\)"             = "\\)",        # " )" -> ")"
+  " ' s "            = "'s ",
+  "' s "             = "'s ",
+  "&nbsp;"           = " ",
+  "&nbsp"            = " ",
+  "&rsquo;"          = "'",
+  "&ndash;|&#8209;"  = "-",
+  "&ocirc;"          = "ô",
+  "&ldquo;|&rdquo;"  = "'",
+  "&uacute;"         = "ú",
+  "&uuml;"           = "ü",
+  "&amp;"            = "&",
+  "&deg;"            = "°",
+  "&eacute;"         = "é",
+  "&egrave;"         = "è",
+  "&lrm;"            = "",
+  "&iacute;"         = "í"
+)
+
+# Recurring word-splitting glitches, fixed after squishing whitespace.
+typo_subs <- c(
+  "non- communicable"          = "non-communicable",
+  "l aw s on trans i tional"   = "laws on transitional",
+  "sexual a buse"              = "sexual abuse",
+  "ex ploit"                   = "exploit",
+  "heal thcare"                = "healthcare",
+  " h ealth"                   = " health"
+)
+
+clean_text <- function(x) {
+  x |>
+    str_replace_all(html_entity_subs) |>
+    str_squish() |>
+    str_replace("^R ", "") |>          # drop a stray leading "R " (only at the start)
+    str_remove_all("\\[...\\]") |>     # drop "[...]" elision markers (3 chars inside brackets)
+    str_replace_all(typo_subs)
+}
+```
+
+### 2.2 Parse the paragraph / recommendation identifier
+
+Recommendations carry an identifier prefix in several formats. A single engine,
+`parse_recommendation()`, returns **both** the normalised identifier (e.g. `96.21`) and the
+prefix-stripped recommendation text from the *same* per-format regular expression, so the two can
+never disagree. `derive_paragraph()` and `strip_prefix()` are thin wrappers that select the
+relevant column.
+
+The recognised formats, tried in order (first match wins), are:
+
+| Format | Example | Identifier |
+|---|---|---|
+| `Recommendation No.` | `Recommendation No. 41, para. 81: 41. Advance…` | `81.41` (`para.rec`) |
+| `contained in / from / of para` | `Recommendations contained in para. 79(a): 79(a). Take…` | `79(a)` |
+| `contained in <n>` (no "para") | `Recommendation contained in 25(a): Take…` | `25(a)` |
+| `para. <p>` | `paragraph 28: …` | `28` |
+| `<a>.<b>` (the dominant UPR form) | `137.197 Improve…` | `137.197` |
+| single number | `67. To continue…` | `67` |
+
+Design choices that fixed real data issues:
+
+- The `Recommendation No.` identifier reads the `No.` and `para.` numbers **directly** (the old
+  regex assumed the recommendation number was repeated after the colon, producing `paragraph =
+  "NA.NA"` and an un-stripped text whenever it was not — 166 rows).
+- A trailing **repeated** report number (`… 81: 41. <text>`, including lettered ones like `79(a).`)
+  is consumed as part of the prefix, replacing the old blind "strip any leading number" passes that
+  could eat genuine content (e.g. "`5 years…`").
+- The single-number rule requires 1–3 digits, so years (`2030 Agenda…`) are not mistaken for an id.
+
+```{r}
+#| label: helper-paragraph
+# One engine -> identifier + stripped text from the same regex per format (no drift between them).
+parse_recommendation <- function(text) {
+  n         <- length(text)
+  paragraph <- rep(NA_character_, n)
+  text_2    <- text
+  resolved  <- rep(FALSE, n)
+
+  # Apply one format to the not-yet-resolved rows: `re` is the prefix (with capture groups), and
+  # `id_of(m)` maps its str_match() matrix to the normalised identifier.
+  apply_fmt <- function(re, id_of) {
+    todo <- which(!resolved)
+    if (!length(todo)) return(invisible())
+    m   <- str_match(text[todo], re)
+    hit <- !is.na(m[, 1])
+    if (!any(hit)) return(invisible())
+    idx <- todo[hit]
+    paragraph[idx] <<- id_of(m[hit, , drop = FALSE])
+    text_2[idx]    <<- str_remove(text[idx], re)   # strip exactly the matched prefix
+    resolved[idx]  <<- TRUE
+  }
+
+  # F1: "Recommendation No. <rec>[(x)][, contained in] para <p>[: <rep>[(x)].]"  -> "<p>.<rec>"
+  #     (prefer the repeated report number for <rec> when present).
+  apply_fmt(
+    "^Recommendations?\\s*No\\s*\\.?\\s*(\\d+)(\\([a-z]\\))?\\s*,?\\s*(?:(?:contained|conatined) in\\s*)?para(?:graph|s)?\\.?\\s*(?:No\\.?\\s*)?(\\d+)\\s*:?\\s*(?:(\\d+)(\\([a-z]\\))?\\s*\\.\\s*)?",
+    \(m) {
+      use_rep <- !is.na(m[, 5]) & m[, 5] != ""
+      str_c(m[, 4], ".",
+            ifelse(use_rep, m[, 5], m[, 2]),
+            ifelse(use_rep, coalesce(m[, 6], ""), coalesce(m[, 3], "")))
+    }
+  )
+  # F2a: "Recommendation(s) contained in / from / of para <p>[(x)] ... : [<rep>[(x)].]"
+  apply_fmt(
+    "^Recommendations?\\s+(?:(?:contained|conatined) in|from|of)\\s+para(?:graph|s)?\\.?\\s*(?:No\\.?\\s*)?(\\d+)(\\([a-z]\\))?[^:]*:\\s*(?:\\d+(?:\\([a-z]\\))?\\s*\\.\\s*)?",
+    \(m) str_c(m[, 2], coalesce(m[, 3], ""))
+  )
+  # F2b: same, but with no colon (also consumes extra "para. <n>" refs and stray "br>").
+  apply_fmt(
+    "^Recommendations?\\s+(?:(?:contained|conatined) in|from|of)\\s+para(?:graph|s)?\\.?\\s*(?:No\\.?\\s*)?(\\d+)(\\([a-z]\\))?(?:\\s*,?\\s*(?:para(?:graph|s)?\\.?\\s*)?\\d+(?:\\([a-z]\\))?)*\\s*(?:br>\\s*)?",
+    \(m) str_c(m[, 2], coalesce(m[, 3], ""))
+  )
+  # F2c: "Recommendation(s) contained in <p>[(x)] ... :"  (no "para")
+  apply_fmt(
+    "^Recommendations?\\s+(?:contained|conatined) in\\s+(\\d+)(\\([a-z]\\))?[^:]*:\\s*(?:\\d+(?:\\([a-z]\\))?\\s*\\.\\s*)?",
+    \(m) str_c(m[, 2], coalesce(m[, 3], ""))
+  )
+  # F3: "para. <p>[(x)][: <rep>.]"
+  apply_fmt(
+    "^[Pp]ara(?:graph|s)?\\s*\\.?\\s*(\\d+)(\\([a-z]\\))?\\s*[:.]?\\s*(?:\\d+(?:\\([a-z]\\))?\\s*\\.\\s*)?",
+    \(m) str_c(m[, 2], coalesce(m[, 3], ""))
+  )
+  # F4: "<a>.<b> ..."  (dominant UPR form)
+  apply_fmt("^(\\d+\\.\\d+)\\.?\\s*", \(m) m[, 2])
+  # F5: single number (1-3 digits, so years are not captured), period or space separator
+  apply_fmt("^(\\d{1,3})[.\\s]+", \(m) m[, 2])
+
+  # Final tidy: drop any leading stray punctuation, then a single leftover "<n>. " numbering
+  # artifact (period-terminated, so "5 years ..." is left intact).
+  text_2 <- text_2 |>
+    str_remove("^[\\s.:;]+") |>
+    str_remove("^\\d{1,3}\\s*\\.\\s+") |>
+    str_squish()
+
+  tibble(paragraph = paragraph, text_2 = text_2)
+}
+
+# Thin wrappers keep the call sites in the pipeline unchanged.
+derive_paragraph <- function(text) parse_recommendation(text)$paragraph
+strip_prefix     <- function(text) parse_recommendation(text)$text_2
+```
+
+### 2.3 Sortable numeric key and recommending-state list
+
+```{r}
+#| label: helper-misc
+# UPR recommending states are stored as a single "-"-delimited string. Re-join them with a chosen
+# separator (vectorised; replaces the original separate_wider_delim()/unite() round-trip).
+collapse_states <- function(x, sep) {
+  na_if(map_chr(str_split(x, "-"), \(parts) str_c(str_squish(parts), collapse = sep)), "")
+}
+```
+
+The sortable key is built from a `title_a` (paragraph number) and `title_b` (zero-padded
+sub-number) which are retained as columns for compatibility with downstream use.
+
+## 3. Build the full table
+
+```{r}
+#| label: build-full
+df <- df_0 |>
+  mutate(
+    countries_concerned = str_remove(countries_concerned, "- "),
+    reccomending_body   = str_remove(reccomending_body, "- ")
+  ) |>
+  # Clean the recommendation text; keep the pre-clean version in `text1`.
+  mutate(text1 = text, text = clean_text(text)) |>
+  # Correct one mis-imported duplicate entry.
+  mutate(text = if_else(
+    text == "137.197 Improve the socioeconomic situation of the Roma national minority, also by ensuring adequate living conditions and access to education and health care (Germany);",
+    "137.197 Fully implement the right to equal usage of minority languages and scripts, in compliance with Croatia’s legal framework, with a special focus on those regions where this right especially applies (Germany);",
+    text
+  )) |>
+  arrange(countries_concerned, reccomending_body, document_publication_date) |>
+  rename(document = document_symbol, body = reccomending_body) |>
+  # Parse identifiers and UPR session/cycle metadata.
+  mutate(
+    paragraph          = derive_paragraph(text),
+    upr_session        = str_split_i(str_remove(upr_session, "- "), " - ", 1),
+    upr_session_number = as.numeric(str_extract(upr_session, "\\d+")),
+    upr_cycle = case_when(
+      upr_session_number <= 12 ~ "Cycle 1",
+      upr_session_number <= 26 ~ "Cycle 2",
+      upr_session_number <= 40 ~ "Cycle 3",
+      upr_session_number <= 54 ~ "Cycle 4"
+    ),
+    type         = str_remove(type, "- "),
+    upr_position = str_remove(upr_position, "- "),
+    # Sortable numeric key "<a>.<bbb>" from the paragraph id (title_a/title_b kept for downstream).
+    title_a = str_split_i(paragraph, "\\.", 1),
+    title_a = case_when(is.na(as.numeric(title_a)) ~ str_extract(title_a, "^\\d+"),
+                        .default = title_a),
+    title_b = str_pad(str_split_i(paragraph, "\\.", 2), width = 3, side = "left", pad = "0"),
+    title_b = case_when(is.na(title_b) | str_starts(title_b, "\\(") ~ "0",
+                        .default = title_b),
+    title_2 = as.numeric(paste(title_a, title_b, sep = "."))
+  ) |>
+  # Order the session/cycle factors by session number.
+  arrange(upr_session_number) |>
+  mutate(
+    upr_session = fct_inorder(upr_session),
+    upr_cycle   = fct_inorder(upr_cycle)
+  ) |>
+  relocate(paragraph, .after = document) |>
+  relocate(title_2, upr_position, type, .after = paragraph) |>
+  arrange(countries_concerned, body, document_publication_date, title_2, paragraph) |>
+  rename(
+    state_under_review     = countries_concerned,
+    document_code          = document,
+    session                = upr_session,
+    cycle                  = upr_cycle,
+    recommending_state_upr = upr_reccomending_states,
+    response_upr           = upr_position
+  ) |>
+  # Fix two states that imported with a trailing partner name.
+  mutate(state_under_review = case_when(
+    state_under_review == "South Sudan - Sudan"   ~ "South Sudan",
+    state_under_review == "Uzbekistan - Czechia"  ~ "Czechia",
+    .default = state_under_review
+  )) |>
+  # Enrich with ISO codes.
+  left_join(
+    state_geo |> select(country, iso3, iso2) |> st_drop_geometry(),
+    by = join_by(state_under_review == country)
+  )
+```
+
+## 4. Build the UPR subset
+
+```{r}
+#| label: build-upr
+upr_df <- df |>
+  filter(body == "UPR") |>
+  droplevels() |>
+  mutate(
+    recommending_state_upr    = str_remove(recommending_state_upr, "^- "),
+    recommending_states_count = if_else(
+      is.na(recommending_state_upr), NA_real_,
+      str_count(recommending_state_upr, "-") + 1
+    ),
+    text_2 = strip_prefix(text)
+  ) |>
+  # Drop non-recommendation rows.
+  filter(
+    !str_starts(text, "Response of "),
+    response_upr != "Concerns/Observations"
+  ) |>
+  rowid_to_column() |>
+  # Comma- and semicolon-separated renderings of the recommending-state list.
+  mutate(
+    recommending_state_upr_comma     = collapse_states(recommending_state_upr, ", "),
+    recommending_state_upr_semicolon = collapse_states(recommending_state_upr, "; ")
+  ) |>
+  mutate(recommending_state_upr_semicolon = recommending_state_upr_semicolon |>
+    str_replace("State of Palestine\\*", "Palestine") |>
+    str_replace("Holy See", "Vatican") |>
+    str_replace("Timor; Leste", "Timor-Leste")
+  ) |>
+  relocate(text1, text_2, .after = text) |>
+  relocate(
+    recommending_state_upr_comma, recommending_state_upr_semicolon, recommending_states_count,
+    .after = recommending_state_upr
+  ) |>
+  mutate(response_upr = factor(
+    case_when(
+      response_upr == "Supported/Noted" ~ "Partially supported",
+      .default = response_upr
+    ),
+    levels = c("Supported", "Partially supported", "Noted")
+  ))
+```
+
+For the present analysis, the dataset was downloaded on
+`r unique(upr_df$date_accessed)`. The UPR subset holds
+`r format(nrow(upr_df), big.mark = ",")` recommendations.
+
+## 5. Save
+
+```{r}
+#| label: save
+# saveRDS(df,     here("data", "UHRI_full.rds"))
+# saveRDS(df,     here("data", paste0("UHRI_full_", Sys.Date(), ".rds")))
+saveRDS(upr_df, here("data", "UHRI_UPR.rds"))
+saveRDS(upr_df, here("data", paste0("UHRI_UPR_", Sys.Date(), ".rds")))
+```

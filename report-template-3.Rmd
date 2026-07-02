@@ -40,7 +40,7 @@ pacman::p_load(
 
 # sdg_data <- readRDS(here("data", "SDG_data_enhanced.rds")) |> droplevels() |> 
 #   mutate(response_upr = fct_recode(response_upr, "Noted" = "Noted/Other"))
-sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
+sdg_data <- readRDS(here("output", "UHRI_UPR_classified.rds")) |> 
   mutate(
     response_upr_2 = response_upr,
     response_upr = fct_recode(response_upr, 

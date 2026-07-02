@@ -31,7 +31,7 @@ pacman::p_load(
 source(here("code", "external_data_GBD.R"))
 
 # Read in pre-processed datasets
-sdg_data <- readRDS(here("output", "UHRI_UPR_enhanced.rds")) |> 
+sdg_data <- readRDS(here("output", "UHRI_UPR_classified.rds")) |> 
   mutate(response_upr = fct_recode(response_upr, 
                                    "Noted" = "Partially supported"),
          response_upr = fct_relevel(response_upr, "Noted")) |> 
