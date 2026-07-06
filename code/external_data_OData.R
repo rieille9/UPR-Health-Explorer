@@ -216,6 +216,9 @@ constitutions <- read_xls(here("data", "constitutions", "WORLD_constitutions_202
   )
 
 # ICESCR ------------------------------------------
+# Downloaded from https://indicators.ohchr.org/ 
+# "International Covenant on Economics Social and Cultural Rights"
+
 ICESCR <- read_xls(here("data", "UnderlyingData_ICESCR_OHCHR_02_07_2026.xls"), skip = 1) |> 
   janitor::clean_names() |> 
   filter(!str_detect(country, "Definitions and metadata|Database of the")) |> 
