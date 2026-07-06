@@ -282,7 +282,7 @@ extract_upr_recommendations <- function(
 
 if (sys.nframe() == 0) {
   for (path in c(
-                 here("data", "UPR_WG_docs", "Latvia - full draft report for circulation - ad referendum.docx"))) {
+                 here("data", "UPR_WG_docs", "Mozambique - Draft report circulated on 7 May 2026_amended.docx"))) {
     if (!file.exists(path)) next
     cat("\n----", path, "----\n")
     recs <- extract_upr_recommendations(path)
@@ -290,4 +290,4 @@ if (sys.nframe() == 0) {
     print(tail(recs, 2))
   }
 }
-saveRDS(recs, here("data", "UPR_WG_docs", "Latvia_upr_recommendations.rds"))
+saveRDS(recs, here("data", "UPR_WG_docs", "Mozambique_upr_recommendations.rds"))
