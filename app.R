@@ -861,7 +861,14 @@ Under the Right to Health, States have the following obligations:
                 markdown("Approaches to health include the right to health, public health, or medical care. Data: <a href='https://www.worldpolicycenter.org/policies/does-the-constitution-explicitly-guarantee-an-approach-to-the-right-to-health' target='_blank'>World Policy Center</a>"),
                 leafletOutput("const_anyhealth_map_interactive")
                 # plotOutput("constitution_const_anyhealth")
+              ),
+              card(
+                full_screen = TRUE,
+                card_header("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)"),
+                markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
+                leafletOutput("ICESCR_status_map_interactive")
               )
+              
             )
   ),
   
@@ -4268,6 +4275,40 @@ server <- function(input, output, session) {
                      coord_selected_SUR = coord_selected_SUR(),
                      zoom_level = m_zoom(),
                      fill_outcome =  "const_anyhealth")
+    
+  })
+  
+  
+  ### ICESCR - Status ------
+  
+  #### Map - interactive -------
+  
+  output$ICESCR_status_map_interactive <- renderLeaflet({
+    
+    ICESCR_data <- ICESCR |> 
+      rename(convent_status = status) |> # avoid confusion with "status" column from state_geo_reactive()
+      select(-country) |> 
+      right_join(state_geo_reactive(), by = c("iso3" = "iso3")) |>
+      mutate(selected_sur = case_when(country == input$selected_SUR ~ TRUE, .default = FALSE)) |> 
+      st_as_sf() |> 
+      st_set_geometry("polygon")
+    
+    pal <- colorFactor(
+      palette = c("#548555", "#e3d191", "#de5e33")
+      , domain = NULL
+    )
+    
+    hover_labels <- sprintf(
+      "<strong>%s</strong><br/>%s",
+      ICESCR_data$country,
+      ICESCR_data$label_text
+    ) %>% lapply(htmltools::HTML)
+    
+    leaflet_function(data =  ICESCR_data, pal_object = pal, hover_labels = hover_labels, 
+                     legend_title = NULL,
+                     coord_selected_SUR = coord_selected_SUR(),
+                     zoom_level = m_zoom(),
+                     fill_outcome =  "convent_status")
     
   })
   
