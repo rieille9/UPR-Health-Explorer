@@ -1,89 +1,58 @@
-# Extract UPR recommendations from a draft report into a tidy data frame.
+# Extract UPR recommendations from a single document into a tidy rds file.
 #
-# v4 -- works directly on the ORIGINAL, unedited Working Group draft report.
-#       No manual pre-processing of the .docx is needed any more.
-#       Accepts .docx files, .pdf files, and URLs (see "Input types" below).
+# v5 -- wraps the v4 extraction machinery (extract_recs_refactored.R) in a
+#       single user-facing function, extract_upr_recs(), which processes ONE
+#       document at a time, stamps it with caller-supplied metadata, and
+#       saves the result to data/UPR_WG_docs/extracted_recs/.
 #
-# What's new relative to extract_recs.R (v3):
+#   extract_upr_recs(
+#     input,                  # docx / pdf / legacy .doc path, or a URL
+#     state_under_review,     # e.g. "Somalia"
+#     document_symbol,        # source document, e.g. "A/HRC/63/12"
+#     upr_session,            # UPR Working Group session, e.g. 52
+#     provisional             # TRUE for draft/provisional documents
+#   )
 #
-#   1. Section scoping. The script locates the "Conclusions and/or
-#      recommendations" heading and the closing disclaimer paragraph
-#      ("All conclusions and/or recommendations contained in the present
-#      report reflect the position ...") / "Annex" heading, and only looks
-#      for recommendations between the two. If no such heading exists
-#      (e.g. a file that was already trimmed by hand), it falls back to
-#      scanning the whole document, like v3 did.
+# Output: a tibble (also saved as "<state_under_review>_<upr_session>.rds"
+# in data/UPR_WG_docs/extracted_recs/) with the columns
 #
-#   2. Position column. Inside the section, literal-numbered lead-in
-#      paragraphs ("6.", "7.", "8.", ...) announce each block of
-#      recommendations:
-#        "... enjoy the support of X:"        -> Supported
-#        "... have been noted by X:"          -> Noted
-#        "... will be examined by X, which
-#         will provide responses in due time" -> Under consideration
-#      Every recommendation inherits the position of the nearest preceding
-#      lead-in. If a document contains ONLY "will be examined" lead-in(s)
-#      (i.e. the State under review has not yet responded to anything, as
-#      in the Mozambique draft), position is NA for all rows;
-#      "Under consideration" is only used when it appears alongside
-#      Supported/Noted blocks (as in the Somalia draft).
+#   state_under_review   caller-supplied
+#   recommendation       original text: paragraph prefix + recommendation +
+#                        the recommending state(s), e.g.
+#                        "6.1 Speed up its effort to ratify key human
+#                         rights treaties (India);"
+#                        (For auto-numbered reports, where Word generates
+#                        the numbering and it never appears as literal
+#                        text, the computed paragraph label is prepended so
+#                        every format starts with its prefix. The trailing
+#                        "Source of Position: ..." reference of the matrix
+#                        documents is always removed.)
+#   recommendation_clean recommendation text only -- no paragraph prefix,
+#                        no trailing "(State); (State);" list
+#   paragraph            paragraph label, e.g. "6.1"
+#   recommending_states  "; "-separated recommending states
+#   position             factor: Supported / Supported/Noted / Noted /
+#                        Under consideration / NA (state has not responded)
+#   document_symbol      caller-supplied
+#   upr_session          caller-supplied
+#   provisional          caller-supplied
 #
-#   3. Paragraph labels per block. In auto-numbered documents the labels
-#      are now "<lead-in number>.<n within block>" (numbering restarts at
-#      each lead-in, per UN convention), instead of a single global
-#      counter. Documents with one block are unaffected.
-#
-#   4. Input types. extract_upr_recommendations() accepts:
-#        - a .docx path (as before);
-#        - a .pdf path -- e.g. a final adopted report from the UN Official
-#          Document System. Page headers/footers/footnotes are stripped and
-#          the wrapped lines are reassembled into paragraphs, after which
-#          the document goes through exactly the same pipeline;
-#        - a legacy binary .doc, converted to .docx on the fly via
-#          Microsoft Word (COM automation; requires Word to be installed);
-#        - a URL. docs.un.org symbol links (e.g.
-#          https://docs.un.org/en/A/HRC/28/16) are resolved to the PDF they
-#          embed; any other URL is downloaded as-is and the file type is
-#          sniffed from its first bytes (PDF vs docx/zip vs legacy .doc).
-#      Older reports' wording "did not enjoy the support of X" is mapped to
-#      "Noted".
-#
-#   5. OHCHR "matrix of recommendations" documents (the thematic tables
-#      published on the UPR session pages, e.g.
-#      .../Session34/EG/UPR34_Egypt_Thematic_list_of_Recommendations.docx
-#      or the older .../Session20/EG/EgyptMatriceRecommendations.doc).
-#      Detected automatically: a docx whose table header contains
-#      "Recommendation" and "Position" columns is parsed row by row
-#      instead of paragraph by paragraph. The trailing source reference
-#      inside the recommendation cell ("Source of Position:
-#      A/HRC/43/16/Add.1 - Para.7") is stripped, the position comes from
-#      the Position column ("Supported", "Noted", and the mixed
-#      "Supported/Noted", which is kept as its own level), and recs
-#      repeated under several themes are deduplicated. When the matrix has
-#      a "Recommending state/s" column it is used as a fallback for recs
-#      whose text lacks the trailing "(State);" list.
-#
-# Everything else -- the two supported numbering formats, the rec-shape
-# detection, the state parser and the sanity warnings -- is carried over
-# from v3:
-#
-#   A. Auto-numbered (e.g. Mozambique/WG52). Every recommendation
-#      paragraph sits in a Word numbered list; the "6.1, 6.2, ..." labels
-#      are generated by Word from the list definition and never appear as
-#      literal text.
-#
-#   B. Literal-prefix (e.g. Somalia/WG52, Niger/WG52). The paragraphs are
-#      NOT in a Word numbered list. Instead each paragraph BEGINS with its
-#      own number as plain text -- e.g. "6.1\tRatify the Second Optional
-#      Protocol...".
-#
-# Detection: a paragraph is "rec-shaped" if it ends with "(State); ...".
-# If most rec-shaped paragraphs start with "N.M" plain-text prefixes,
-# that's format B. Otherwise format A.
-#
-# Tested on Mozambique (auto-numbered original, 292 recs, no positions)
-# and Somalia (literal-prefix original, 288 recs: 259 Supported /
-# 3 Under consideration / 26 Noted).
+# The extraction machinery extends extract_recs_refactored.R (v4) and
+# handles, auto-detected:
+#   - original Working Group draft reports (.docx), auto-numbered or
+#     literal-prefix, scoped to the "Conclusions and/or recommendations"
+#     section, with positions from the lead-in paragraphs;
+#   - final adopted reports as PDFs (e.g. from docs.un.org symbol links);
+#   - cycle-1 reports (e.g. A/HRC/12/2), where recommendations are
+#     numbered "1.", "2.", ... restarting under each lead-in paragraph
+#     ("sub-numbered" format; labels become 74.1, 74.2, ...) and
+#     recommending states are often attributed inline
+#     ("Consider ratifying (Turkey) / Ratify (Mexico) ...");
+#   - OHCHR "matrix of recommendations" tables (.docx, legacy .doc
+#     converted on the fly via Microsoft Word, or PDF -- for PDFs the
+#     table columns are rebuilt from the word coordinates), with positions
+#     from the matrix's Position column;
+#   - URLs for any of the above.
 
 suppressPackageStartupMessages({
   library(xml2)
@@ -366,7 +335,7 @@ classify_leadin <- function(text) {
 .finalize_matrix_rows <- function(df, verbose = TRUE) {
   df <- df |>
     mutate(
-      # Drop the trailing source reference the user never wants in the
+      # Drop the trailing source reference that must never appear in the
       # text ("Source of Position: A/HRC/43/16/Add.1 - Para.7")
       raw  = str_remove(raw, regex("\\s*Source of position:?[\\s\\S]*$",
                                    ignore_case = TRUE)),
@@ -389,26 +358,27 @@ classify_leadin <- function(text) {
 
   parsed <- lapply(df$body, parse_recommendation)
   out <- tibble(
-    sec            = as.integer(df$sec),
-    num            = df$num,
-    paragraph      = sprintf("%s.%d", df$sec, df$num),
-    recommendation = vapply(parsed, `[[`, character(1), "text"),
-    states         = vapply(parsed, `[[`, character(1), "states"),
-    position       = .normalize_matrix_position(df$pos_raw,
-                                                verbose = verbose)
+    sec                  = as.integer(df$sec),
+    num                  = df$num,
+    paragraph            = sprintf("%s.%d", df$sec, df$num),
+    recommendation       = df$raw,
+    recommendation_clean = vapply(parsed, `[[`, character(1), "text"),
+    recommending_states  = vapply(parsed, `[[`, character(1), "states"),
+    position             = .normalize_matrix_position(df$pos_raw,
+                                                      verbose = verbose)
   )
 
   # Fallback for recs whose text lacks the "(State);" trailer: use the
   # matrix's own "Recommending state/s" column when present
   fallback <- str_squish(str_replace_all(df$states_cell, "\n", "; "))
-  use_fb   <- is.na(out$states) & !is.na(fallback) & nzchar(fallback)
-  out$states[use_fb] <- fallback[use_fb]
+  use_fb   <- is.na(out$recommending_states) & !is.na(fallback) & nzchar(fallback)
+  out$recommending_states[use_fb] <- fallback[use_fb]
 
   # Matrices repeat a recommendation under each theme it belongs to:
   # collapse identical repeats, then keep the first occurrence of any
   # paragraph number that still conflicts
-  out <- distinct(out, paragraph, recommendation, states, position,
-                  .keep_all = TRUE)
+  out <- distinct(out, paragraph, recommendation, recommending_states,
+                  position, .keep_all = TRUE)
   n_conflict <- sum(duplicated(out$paragraph))
   if (verbose && n_conflict > 0L) {
     cat(sprintf(
@@ -418,7 +388,8 @@ classify_leadin <- function(text) {
   out |>
     distinct(paragraph, .keep_all = TRUE) |>
     arrange(sec, num) |>
-    select(paragraph, recommendation, states, position)
+    select(paragraph, recommendation, recommendation_clean,
+           recommending_states, position)
 }
 
 .extract_matrix_recs <- function(path, verbose = TRUE) {
@@ -584,7 +555,7 @@ classify_leadin <- function(text) {
   .finalize_matrix_rows(df, verbose = verbose)
 }
 
-# ---- Main extractor ---------------------------------------------------------
+# ---- Core extractor ---------------------------------------------------------
 #
 # Args:
 #   input           : one of
@@ -599,7 +570,8 @@ classify_leadin <- function(text) {
 #                     has no literal lead-in number -- defaults to "6"
 #   verbose         : print summary + warnings
 #
-# Returns: tibble with paragraph, recommendation, states, position.
+# Returns: tibble with paragraph, recommendation (original text incl.
+# prefix and states), recommendation_clean, recommending_states, position.
 
 extract_upr_recommendations <- function(
     input,
@@ -632,7 +604,7 @@ extract_upr_recommendations <- function(
   if (verbose) cat(sprintf("Read %d non-empty paragraphs from the %s.\n",
                            nrow(para_df), src$type))
 
-  # 2. Scope to the "Conclusions and/or recommendations" section.
+  # 3. Scope to the "Conclusions and/or recommendations" section.
   sec_start <- which(str_detect(para_df$text,
                                 regex(.SECTION_RE, ignore_case = TRUE)))
   if (length(sec_start) > 0L) {
@@ -665,12 +637,10 @@ extract_upr_recommendations <- function(
       has_prefix = !is.na(pre_match)
     )
 
-  # 3. Mode detection
+  # 4. Mode detection
   rec_paras <- filter(para_df, is_rec)
   if (nrow(rec_paras) == 0L) {
-    stop("No paragraphs match the recommendation shape '... (State);'. ",
-         "If this is a chronological-list-style draft (one rec per ",
-         "speaker block), use extract_chrono_recommendations() instead.")
+    stop("No paragraphs match the recommendation shape '... (State);'.")
   }
 
   if (mode == "auto") {
@@ -692,15 +662,15 @@ extract_upr_recommendations <- function(
     }
   }
 
-  # 3b. Cycle-1 sub-numbered documents rebuild their own lead-in blocks
-  #     (their recommendations start with "N." and would confuse the
-  #     generic lead-in detection below).
+  # 5. Cycle-1 sub-numbered documents rebuild their own lead-in blocks
+  #    (their recommendations start with "N." and would confuse the generic
+  #    lead-in detection below).
   if (mode == "sub-numbered") {
     out <- .extract_subnumbered(para_df, verbose = verbose)
     return(.finalize_output(out, verbose = verbose))
   }
 
-  # 4. Position blocks. A lead-in is a non-rec paragraph starting with a
+  # 6. Position blocks. A lead-in is a non-rec paragraph starting with a
   #    literal top-level number ("6." but not "6.1"). block 0 = anything
   #    before the first lead-in.
   para_df <- para_df |>
@@ -762,7 +732,7 @@ extract_upr_recommendations <- function(
     }
   }
 
-  # 5. Dispatch (re-filter so rec_paras carries the block columns)
+  # 7. Dispatch (re-filter so rec_paras carries the block columns)
   rec_paras <- filter(para_df, is_rec)
   out <- switch(mode,
                 "literal-prefix" = .extract_literal_prefix(para_df, rec_paras,
@@ -778,7 +748,8 @@ extract_upr_recommendations <- function(
 .finalize_output <- function(out, verbose = TRUE) {
   out <- mutate(out, position = factor(position, levels = .POSITION_LEVELS))
   if (verbose) {
-    n_pairs <- sum(str_count(out$states, ";"), na.rm = TRUE) + sum(!is.na(out$states))
+    n_pairs <- sum(str_count(out$recommending_states, ";"), na.rm = TRUE) +
+      sum(!is.na(out$recommending_states))
     cat(sprintf("\nExtracted %d recommendations (%d rec-state pairs).\n",
                 nrow(out), n_pairs))
     pos_counts <- table(out$position, useNA = "ifany")
@@ -793,6 +764,8 @@ extract_upr_recommendations <- function(
 
 # ---- Format A: auto-numbered (Mozambique-style) -----------------------------
 # Paragraph labels restart at each lead-in block: "<lead-in number>.<n>".
+# The numbering is generated by Word and never appears as literal text, so
+# the computed label is prepended to form the "original" recommendation.
 
 .extract_auto_numbered <- function(para_df, num_id, section_prefix, verbose) {
   if (is.null(num_id)) {
@@ -853,10 +826,11 @@ extract_upr_recommendations <- function(
   combined <- bind_rows(numbered, unnumbered) |> arrange(idx)
   parsed   <- lapply(combined$text, parse_recommendation)
   tibble(
-    paragraph      = combined$paragraph,
-    recommendation = vapply(parsed, `[[`, character(1), "text"),
-    states         = vapply(parsed, `[[`, character(1), "states"),
-    position       = combined$block_position
+    paragraph            = combined$paragraph,
+    recommendation       = str_squish(paste(combined$paragraph, combined$text)),
+    recommendation_clean = vapply(parsed, `[[`, character(1), "text"),
+    recommending_states  = vapply(parsed, `[[`, character(1), "states"),
+    position             = combined$block_position
   )
 }
 
@@ -922,11 +896,13 @@ extract_upr_recommendations <- function(
   }
 
   parsed <- lapply(prefixed$body, parse_recommendation)
+  labels <- sprintf("%s.%d", prefixed$sec, prefixed$num)
   tibble(
-    paragraph      = sprintf("%s.%d", prefixed$sec, prefixed$num),
-    recommendation = vapply(parsed, `[[`, character(1), "text"),
-    states         = vapply(parsed, `[[`, character(1), "states"),
-    position       = prefixed$block_position
+    paragraph            = labels,
+    recommendation       = str_squish(paste(labels, prefixed$body)),
+    recommendation_clean = vapply(parsed, `[[`, character(1), "text"),
+    recommending_states  = vapply(parsed, `[[`, character(1), "states"),
+    position             = prefixed$block_position
   )
 }
 
@@ -942,7 +918,8 @@ extract_upr_recommendations <- function(
 # (Turkey) / Ratify (Mexico) the Optional Protocol ..."), and parentheses
 # are also used for treaty acronyms ("(CEDAW)", "(OP-CAT)") and list
 # markers ("(a)"), so a parenthetical only counts as a recommending state
-# when it starts with an upper-case letter followed by a lower-case one.
+# when it starts with an upper-case letter followed by a lower-case one
+# ("Turkey", "United Kingdom" -- but not "CAT", "IDPs" or "(a)").
 
 .extract_subnumbered <- function(para_df, verbose = TRUE) {
   df <- para_df |>
@@ -1040,38 +1017,108 @@ extract_upr_recommendations <- function(
   }, character(1), USE.NAMES = FALSE)
 
   tibble(
-    paragraph      = recs$paragraph,
-    recommendation = vapply(parsed, `[[`, character(1), "text"),
-    states         = states,
-    position       = recs$block_position
+    paragraph            = recs$paragraph,
+    recommendation       = str_squish(paste(recs$paragraph, recs$body)),
+    recommendation_clean = vapply(parsed, `[[`, character(1), "text"),
+    recommending_states  = states,
+    position             = recs$block_position
   )
+}
+
+# ---- User-facing wrapper ------------------------------------------------------
+#
+# Extracts ONE document, adds the caller-supplied metadata, and saves the
+# result as "<state_under_review>_<upr_session>.rds" in output_dir.
+# Returns the tibble invisibly.
+
+extract_upr_recs <- function(
+    input,
+    state_under_review,
+    document_symbol,
+    upr_session,
+    provisional,
+    output_dir     = here("data", "UPR_WG_docs", "extracted_recs"),
+    mode           = c("auto", "auto-numbered", "literal-prefix", "sub-numbered"),
+    num_id         = NULL,
+    section_prefix = NULL,
+    verbose        = TRUE
+) {
+  stopifnot(
+    is.character(state_under_review), length(state_under_review) == 1L,
+    length(document_symbol) == 1L,
+    length(upr_session) == 1L,
+    is.logical(provisional), length(provisional) == 1L, !is.na(provisional)
+  )
+
+  recs <- extract_upr_recommendations(
+    input,
+    mode           = mode,
+    num_id         = num_id,
+    section_prefix = section_prefix,
+    verbose        = verbose
+  )
+
+  out <- recs |>
+    mutate(
+      state_under_review = .env$state_under_review,
+      document_symbol    = .env$document_symbol,
+      upr_session        = .env$upr_session,
+      provisional        = .env$provisional
+    ) |>
+    select(state_under_review, recommendation, recommendation_clean,
+           paragraph, recommending_states, position,
+           document_symbol, upr_session, provisional)
+
+  if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
+  out_file <- file.path(output_dir,
+                        paste0(state_under_review, "_", upr_session, ".rds"))
+  saveRDS(out, out_file)
+  if (verbose) cat("Saved:", out_file, "\n")
+
+  invisible(out)
 }
 
 # ---- Run --------------------------------------------------------------------
 
-if (sys.nframe() == 0) {
-  targets <- c(
-    # Mozambique = "Mozambique - Draft report circulated on 7 May 2026_original.docx",
-    Somalia    = "Somalia - Draft report circulated on 12 May 2026_original.docx",
-    # A final adopted report (Egypt, cycle 2), fetched as a PDF via its
-    # UN Official Document System symbol link:
-    Egypt      = "https://docs.un.org/en/A/HRC/28/16",
-    # OHCHR "matrix of recommendations" documents for the same state:
-    # cycle 2 (legacy .doc, converted via MS Word) and cycle 3 (docx)
-    Egypt_matrix_c2 = "https://www.ohchr.org/sites/default/files/lib-docs/HRBodies/UPR/Documents/Session20/EG/EgyptMatriceRecommendations.doc",
-    Egypt_matrix_c3 = "https://www.ohchr.org/sites/default/files/lib-docs/HRBodies/UPR/Documents/Session34/EG/UPR34_Egypt_Thematic_list_of_Recommendations.docx"
-  )
-  for (state in names(targets)) {
-    target <- targets[[state]]
-    if (!str_detect(target, "^https?://")) {
-      target <- here("data", "UPR_WG_docs", target)
-      if (!file.exists(target)) next
-    }
-    cat("\n----", targets[[state]], "----\n")
-    recs <- extract_upr_recommendations(target)
-    print(head(recs, 3))
-    print(tail(recs, 3))
-    saveRDS(recs, here("data", "UPR_WG_docs",
-                       paste0(state, "_upr_recommendations.rds")))
-  }
-}
+# if (sys.nframe() == 0) {
+#   # Draft (provisional) WG report circulated after the review
+#   extract_upr_recs(
+#     here("data", "UPR_WG_docs",
+#          "Somalia - Draft report circulated on 12 May 2026_original.docx"),
+#     state_under_review = "Somalia",
+#     document_symbol    = "A/HRC/63/12",
+#     upr_session        = 52,
+#     provisional        = TRUE
+#   )
+# 
+#   # OHCHR matrices of recommendations (final positions), cycle 2 and 3.
+#   # The cycle-2 matrix is a legacy .doc, converted via Microsoft Word.
+#   cat("\n")
+#   extract_upr_recs(
+#     "https://www.ohchr.org/sites/default/files/lib-docs/HRBodies/UPR/Documents/Session20/EG/EgyptMatriceRecommendations.doc",
+#     state_under_review = "Egypt",
+#     document_symbol    = "A/HRC/28/16",
+#     upr_session        = 20,
+#     provisional        = FALSE
+#   )
+# 
+#   cat("\n")
+#   extract_upr_recs(
+#     "https://www.ohchr.org/sites/default/files/lib-docs/HRBodies/UPR/Documents/Session34/EG/UPR34_Egypt_Thematic_list_of_Recommendations.docx",
+#     state_under_review = "Egypt",
+#     document_symbol    = "A/HRC/43/16",
+#     upr_session        = 34,
+#     provisional        = FALSE
+#   )
+# 
+#   # A final adopted report fetched as a PDF also works (this one would
+#   # save to the same Egypt_20.rds as the cycle-2 matrix above, so it is
+#   # left commented out):
+#   # extract_upr_recs(
+#   #   "https://docs.un.org/en/A/HRC/28/16",
+#   #   state_under_review = "Egypt",
+#   #   document_symbol    = "A/HRC/28/16",
+#   #   upr_session        = 20,
+#   #   provisional        = FALSE
+#   # )
+# }

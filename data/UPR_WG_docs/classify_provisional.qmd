@@ -51,7 +51,7 @@ pacman::p_load(
 ```
 
 ```{r}
-recs <- readRDS(here("data", "UPR_WG_docs", "Latvia_upr_recommendations.rds"))
+recs <- readRDS(here("data", "UPR_WG_docs", "Egypt_matrix_c2_upr_recommendations.rds"))
 provisional_data <- recs |> 
   # mutate(response = factor(case_when(
   #   str_starts(paragraph, "6") ~ "Supported",
