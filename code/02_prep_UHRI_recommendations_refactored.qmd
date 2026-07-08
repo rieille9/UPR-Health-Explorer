@@ -80,6 +80,13 @@ keeps the pipeline fully reproducible between refreshes.
 
 df_0 <- readRDS(here("data", "UHRI_extract_raw.rds"))
 
+# combine the raw extract with manually extracted recommendations
+# (see the folder data/UPR_WG_docs/)
+df_0_merged <- bind_rows(df_0, readRDS(here("data", "UPR_WG_docs", "recs_combined.rds"))) |> 
+  mutate(
+    across(c(provisional, manual_upload), \(x) case_when(is.na(x) ~ FALSE, .default = x))
+    )
+
 # Country/region reference layer (ISO codes) used to enrich the recommendations.
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
 ```
@@ -265,7 +272,7 @@ sub-number) which are retained as columns for compatibility with downstream use.
 
 ```{r}
 #| label: build-full
-df <- df_0 |>
+df <- df_0_merged |>
   mutate(
     countries_concerned = str_remove(countries_concerned, "- "),
     reccomending_body   = str_remove(reccomending_body, "- ")
@@ -370,15 +377,16 @@ upr_df <- df |>
   ) |>
   mutate(response_upr = factor(
     case_when(
+      provisional ~ "Response not available",
       response_upr == "Supported/Noted" ~ "Partially supported",
       .default = response_upr
     ),
-    levels = c("Supported", "Partially supported", "Noted")
+    levels = c("Supported", "Partially supported", "Noted", "Response not available")
   ))
 ```
 
 For the present analysis, the dataset was downloaded on
-`r unique(upr_df$date_accessed)`. The UPR subset holds
+`r max(upr_df$date_accessed, na.rm = TRUE)`. The UPR subset holds
 `r format(nrow(upr_df), big.mark = ",")` recommendations.
 
 ## 5. Save

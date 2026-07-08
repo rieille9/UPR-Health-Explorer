@@ -3871,7 +3871,7 @@
         "Maintainer": "Yihui Xie <xie@yihui.name>",
         "Repository": "CRAN",
         "Date/Publication": "2026-03-26 16:30:02 UTC",
-        "Built": "R 4.5.3; ; 2026-05-23 18:35:26 UTC; windows"
+        "Built": "R 4.5.3; ; 2026-07-01 04:11:10 UTC; windows"
       }
     },
     "rpart": {
@@ -5144,23 +5144,20 @@
     }
   },
   "files": {
-    ".RData": {
-      "checksum": "f79e257e2da4921d5d6254b19041d2b8"
+    ".claude/launch.json": {
+      "checksum": "f1221d7d0be30c76bb86e3c3c037bb6c"
     },
     "app.R": {
-      "checksum": "5c2c408c1184b7659fc74ffe52e1270c"
+      "checksum": "f2daeacc3db73f802960f3f4916c497f"
     },
     "code/.gitkeep": {
       "checksum": "81051bcc2cf1bedf378224b0a93e2877"
     },
     "code/01_prep_geo_code.R": {
-      "checksum": "8f560ef0e4d64ac72283137174b69f22"
+      "checksum": "c75c89da2d8211043d89a49f48e7cbac"
     },
     "code/02_prep_UHRI_recommendations_refactored.qmd": {
-      "checksum": "5abc6e8df131cefabcd8acc460c07c50"
-    },
-    "code/03_classify_UHRI_recommendations.html": {
-      "checksum": "ca3c85c7aab897072f58ec6c116e85d9"
+      "checksum": "62cb8acc2d93c67c61ea31e0170c51db"
     },
     "code/03_classify_UHRI_recommendations.qmd": {
       "checksum": "bbd96381585b9b6c3be1996b2a3243d3"
@@ -5169,13 +5166,13 @@
       "checksum": "8952ddc95bdef9346124d5d4d53f6a37"
     },
     "code/external_data_OData.R": {
-      "checksum": "df3563d57cd178a2ea93dc127bb8cf15"
+      "checksum": "096845edeb06add03fe3b2244c82ff62"
     },
     "code/geo_code.R": {
       "checksum": "6d59d826456787dad533ac72c1e971ca"
     },
     "code/manual_plots_themes_profiles.R": {
-      "checksum": "baa146419351bed9c3a064fefa01d0e1"
+      "checksum": "499abcf8cf9731696bb54dba55609e1a"
     },
     "code/theme_labels.R": {
       "checksum": "ca07e1b92987cbeeba9568c0acb37b75"
@@ -5266,6 +5263,9 @@
     },
     "data/API_data/I_HDI.rds": {
       "checksum": "06fb9ae95d475849d401a6ff499b76d3"
+    },
+    "data/API_data/ICESCR.rds": {
+      "checksum": "bad1cb02b7417b1ca8bac56e4dc2b4a9"
     },
     "data/API_data/informed_decisions.rds": {
       "checksum": "455add05feb4df1d23773f8d7bf6c5a8"
@@ -5427,7 +5427,7 @@
       "checksum": "c40be0d271432272412d32e98b9069a3"
     },
     "data/GOV_WGI_GE_WIDEF.csv": {
-      "checksum": "be6b2636a65ae0622ea9762085cb1d7c"
+      "checksum": "7bd4d1d4062b961b8aeb77faf55bafeb"
     },
     "data/HDR25_Composite_indices_complete_time_series.csv": {
       "checksum": "4026e513775f3431488a2d77bc6b6a1d"
@@ -5456,11 +5456,17 @@
     "data/UcdpPrioConflict_v25_1.rds": {
       "checksum": "b964313895a31f74ac7b2944bc71a1a9"
     },
-    "data/UnderlyingData_ICESCR_OHCHR_23_04_2026.xls": {
-      "checksum": "b3bd2fa3ca7eac723155a4819db2a4b4"
+    "data/UHRI_UPR_2026-07-07.rds": {
+      "checksum": "5560fb2a63dea3dfb5b0a6d538d62f49"
+    },
+    "data/UHRI_UPR_2026-07-08.rds": {
+      "checksum": "bda6a5cf3a91e5a697fe7189ef950419"
+    },
+    "data/UnderlyingData_ICESCR_OHCHR_02_07_2026.xls": {
+      "checksum": "06b7d4a39a9aefb8c6e0f58f456a2728"
     },
     "data/UNFPA_CPR_any_ALL.csv": {
-      "checksum": "0b228101ec8ca830913c10e53a0839c7"
+      "checksum": "69a2f46f55ef3254ed2f56a7b75e047f"
     },
     "data/UNSD_Methodology.csv": {
       "checksum": "9854b926dca8d16e91a153d1cf40f3ab"
@@ -5468,122 +5474,44 @@
     "data/upr_sessions.csv": {
       "checksum": "f61ea4e15843b7f9149530ca573674c7"
     },
-    "data/UPR_WG_docs/Belgium - Draft report after adoption.docx": {
-      "checksum": "64c4068e8caa7130943a59dca55de5a5"
-    },
-    "data/UPR_WG_docs/Belgium_profile.png": {
-      "checksum": "7e9fb0897b071853fe8a4d3bc078fae3"
-    },
-    "data/UPR_WG_docs/Belgium_profile_response.png": {
-      "checksum": "0026e0a9f2253be6e72aa6d32f7c6e7c"
-    },
-    "data/UPR_WG_docs/Belgium_upr_recommendations.rds": {
-      "checksum": "34ac24af765e9175812bd4142d98a465"
-    },
     "data/UPR_WG_docs/classify_provisional.qmd": {
-      "checksum": "39fd0957445f5657ddd49bf11ae4050d"
+      "checksum": "7715f16220baacc4a2f25e5e7caff704"
     },
-    "data/UPR_WG_docs/Denmark - Draft report circulated on 11 May 2026.docx": {
-      "checksum": "9f6862b7ca520648a0e2ae5aec234727"
+    "data/UPR_WG_docs/extract_recs_function.R": {
+      "checksum": "0ef3f46ff208659351d003205a756297"
     },
-    "data/UPR_WG_docs/Denmark_profile.png": {
-      "checksum": "73ba74b865a7269472dea3fa2a6a44d1"
+    "data/UPR_WG_docs/extract_recs_refactored.R": {
+      "checksum": "c33d63c84a7fb1465841b48252245849"
     },
-    "data/UPR_WG_docs/Denmark_upr_recommendations.rds": {
-      "checksum": "8f34c334c6a482a89253996eebfd4691"
+    "data/UPR_WG_docs/extracted_recs/Central African Republic_5.rds": {
+      "checksum": "b92fe07cd790b927f78863ba5dac3b9e"
     },
-    "data/UPR_WG_docs/Estonia - Draft report after adoption.docx": {
-      "checksum": "1c9e6e9f46a5d31d275235cbf4605c46"
+    "data/UPR_WG_docs/extracted_recs/Egypt_20.rds": {
+      "checksum": "812cf030d4b1bbab10a80b0f5b8fb2eb"
     },
-    "data/UPR_WG_docs/Estonia - Draft report circulated on 8 May 2026.docx": {
-      "checksum": "986bb17bec1214fe466c1f6001471756"
+    "data/UPR_WG_docs/extracted_recs/Gabon_14.rds": {
+      "checksum": "abeb97108e1623eaa74a3bccbdef2f29"
     },
-    "data/UPR_WG_docs/Estonia_profile.png": {
-      "checksum": "5f750aa791bb0a1c6787213e96661923"
+    "data/UPR_WG_docs/extracted_recs/Lesotho_21.rds": {
+      "checksum": "c2455ac29eca11ee7c6f592c97bf0c5d"
     },
-    "data/UPR_WG_docs/Estonia_upr_recommendations.rds": {
-      "checksum": "2923460fc81b07e60aee9f41a074c461"
+    "data/UPR_WG_docs/extracted_recs/Micronesia (Federated States of)_23.rds": {
+      "checksum": "690365cf7bd1d4f905c5f8449113e1db"
     },
-    "data/UPR_WG_docs/extract_recs.R": {
-      "checksum": "4cc42b28f10f6c4efd985d1866e0aa38"
+    "data/UPR_WG_docs/extracted_recs/Myanmar_37.rds": {
+      "checksum": "a75fb27ee9ab6be8cb2ce4093094ce8a"
     },
-    "data/UPR_WG_docs/Latvia - full draft report for circulation - ad referendum.docx": {
-      "checksum": "fd7624b31b26217a0cea33b377fff724"
+    "data/UPR_WG_docs/extracted_recs/Nigeria_17.rds": {
+      "checksum": "09f55ccd6648c9282447e0251df033a7"
     },
-    "data/UPR_WG_docs/Latvia_profile.png": {
-      "checksum": "1f09e99832d8620a42b5bf1b11842879"
+    "data/UPR_WG_docs/extracted_recs/Saint Lucia_23.rds": {
+      "checksum": "9af6727038ef80052933ce00368a12bb"
     },
-    "data/UPR_WG_docs/Latvia_upr_recommendations.rds": {
-      "checksum": "5fba887e4283f6194b39a331c2e64486"
+    "data/UPR_WG_docs/recs_combined.rds": {
+      "checksum": "4e89f2e0ed6c1da256b330b96e1994ee"
     },
-    "data/UPR_WG_docs/Mozambique - Draft report circulated on 7 May 2026.docx": {
-      "checksum": "9a86c4411028cf42b56dfc03460b5581"
-    },
-    "data/UPR_WG_docs/Mozambique_profile.png": {
-      "checksum": "cba6917334046f2c48c52fb393835469"
-    },
-    "data/UPR_WG_docs/Mozambique_upr_recommendations.rds": {
-      "checksum": "727f3ffaa49f704422daf0ecc692173d"
-    },
-    "data/UPR_WG_docs/Namibia - Draft report circulated on 6 May 2026.docx": {
-      "checksum": "71ca9db36e27440bd14bc96c6e8a6249"
-    },
-    "data/UPR_WG_docs/namibia_profile.png": {
-      "checksum": "98c7eb636317905d46e4fe13bf56e065"
-    },
-    "data/UPR_WG_docs/namibia_upr_recommendations.csv": {
-      "checksum": "c01761fd1722256a76eb0f3785aaa10a"
-    },
-    "data/UPR_WG_docs/namibia_upr_recommendations.rds": {
-      "checksum": "e90d2ba5cac337a77cb937a119af0333"
-    },
-    "data/UPR_WG_docs/Niger - Draft report circulated on 7 May 2026.docx": {
-      "checksum": "e976183f3a6b9a1721e2eae46b8a8ccc"
-    },
-    "data/UPR_WG_docs/niger_profile.png": {
-      "checksum": "9c53aac579029ca1a986d4826adc2a57"
-    },
-    "data/UPR_WG_docs/niger_upr_recommendations.rds": {
-      "checksum": "da62f399f0a5746c6f3052028436d764"
-    },
-    "data/UPR_WG_docs/Palau - Draft report circulated on 12 May 2026.docx": {
-      "checksum": "cca015b241c9f242a2a4463e8809bfce"
-    },
-    "data/UPR_WG_docs/Palau_profile.png": {
-      "checksum": "c8d95779aac0a02ef0b7c624deadff4c"
-    },
-    "data/UPR_WG_docs/Palau_upr_recommendations.rds": {
-      "checksum": "1de15f84c6bb94ec03a889bca56c81c3"
-    },
-    "data/UPR_WG_docs/Paraguay - Draft report circulated on 8 May 2026.docx": {
-      "checksum": "02903a3ec863003aed1f7753e9723512"
-    },
-    "data/UPR_WG_docs/Paraguay_profile.png": {
-      "checksum": "7003db0b70f887d9e5a9d1d56a828f82"
-    },
-    "data/UPR_WG_docs/Paraguay_upr_recommendations.rds": {
-      "checksum": "c18d39d704ddd409af657611f7e3e3f1"
-    },
-    "data/UPR_WG_docs/Sierra Leone - Draft report circulated on 14 May 2026.docx": {
-      "checksum": "9b2bafd2f5c85e63459df044f9d20c3f"
-    },
-    "data/UPR_WG_docs/Sierra Leone_profile.png": {
-      "checksum": "527d51fbf47d84d8f6a6336cb999b2a9"
-    },
-    "data/UPR_WG_docs/Sierra Leone_upr_recommendations.rds": {
-      "checksum": "39cff464fff0b36156bc06f98b9c4c7a"
-    },
-    "data/UPR_WG_docs/Somalia - Draft report circulated on 12 May 2026.docx": {
-      "checksum": "f240e078ee8ec8629e475df0827bd115"
-    },
-    "data/UPR_WG_docs/Somalia_profile.png": {
-      "checksum": "8542491c0ba7b9e086385ca28402fc5e"
-    },
-    "data/UPR_WG_docs/Somalia_profile_response.png": {
-      "checksum": "b111d942a5fa06d79114a1abd88be331"
-    },
-    "data/UPR_WG_docs/Somalia_upr_recommendations.rds": {
-      "checksum": "313b5ab2be64705c1b0047f0059b12e6"
+    "data/UPR_WG_docs/run_extract_function.R": {
+      "checksum": "6a7a8e85bc6c6d033dc02bcdea12d92b"
     },
     "data/WHO_data_export_250917.xlsx": {
       "checksum": "7108b5fa9d804d6318619a3e57e7ef51"
@@ -6347,6 +6275,12 @@
     "flags/zw.png": {
       "checksum": "ada2b312e1377be4b749c4aa47ae491d"
     },
+    "git_commands": {
+      "checksum": "060282f2a4c4f0a7b45879cb6dcf8442"
+    },
+    "LICENSE": {
+      "checksum": "3961fd61a9cd6590d92dfc70cbc54c89"
+    },
     "logos/logo-svg.svg": {
       "checksum": "d6058baf7467de377e4b85fd75b232e9"
     },
@@ -6366,16 +6300,13 @@
       "checksum": "e681890bd84e1a54ad7d8affe720620a"
     },
     "output/state_geo_enhanced.rds": {
-      "checksum": "0ed124751d182bef38e7313a785ebee7"
-    },
-    "output/state_geo2_enhanced.rds": {
-      "checksum": "e989c4f0fd9296dda68ec357fa7f64b3"
+      "checksum": "c69ebb04d782d13040531f7649a7d0b9"
     },
     "output/UHRI_UPR_classified.rds": {
-      "checksum": "a6e498bead48782ec2e3d4df787593b8"
+      "checksum": "b65316bf8c16f4c37f0de2130aea585f"
     },
     "output/UHRI_UPR_classified_long.rds": {
-      "checksum": "ba201d318f431f13531e7847102e1f1b"
+      "checksum": "de22f33e0be6e2dbb433edc871895ce0"
     },
     "output/UHRI_UPR_enhanced.rds": {
       "checksum": "234b46d729ae6d11373b74ade6395b00"
@@ -6408,7 +6339,7 @@
       "checksum": "e71b235748025732b6f8aa11c7b12db5"
     },
     "test.R": {
-      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+      "checksum": "98977f64962e5bf5f2ac5cb37c6c48c6"
     },
     "www/custom_bslib.css": {
       "checksum": "1160c7dacb22688b3c0a93588d39da95"
