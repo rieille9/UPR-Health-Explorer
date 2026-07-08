@@ -248,7 +248,7 @@ summarise_upr_themes <- function(data, by_cycle = FALSE) {
     group_by(across(all_of(group_vars))) |>
     summarise(across(c(health_related:other_health_related), ~ sum(.x != "Other"))) |>
     ungroup() |>
-    filter(response_upr %in% c("Supported", "Noted")) |>
+    # filter(response_upr %in% c("Supported", "Noted")) |>
     pivot_longer(
       cols = health_related:other_health_related,
       names_to = "theme",
@@ -260,7 +260,7 @@ summarise_upr_themes <- function(data, by_cycle = FALSE) {
     group_by(across(all_of(group_vars))) |>
     summarise(across(c(health_related:other_health_related), ~ sum(.x == "Other"))) |>
     ungroup() |>
-    filter(response_upr %in% c("Supported", "Noted")) |>
+    # filter(response_upr %in% c("Supported", "Noted")) |>
     pivot_longer(
       cols = health_related:other_health_related,
       names_to = "theme",
@@ -288,8 +288,14 @@ summarise_upr_themes <- function(data, by_cycle = FALSE) {
       ) |>
       group_by(cycle2, theme) |>
       mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
-        n_sup = case_when(n_tot_theme == 0 ~ "(NA)", .default = n_sup)
+        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr != "Response not available"]) * 100), "%)"),
+        n_sup = case_when(
+          response_upr == "Response not available" ~ "",
+          n_tot_theme == 0 ~ "", 
+          n_sup == "(NaN%)" ~ "",
+          .default = n_sup)
+        # n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
+        # n_sup = case_when(n_tot_theme == 0 ~ "(NA)", .default = n_sup)
       ) |>
       ungroup() |>
       filter(!theme %in% upr_excluded_themes) |>
@@ -314,8 +320,12 @@ summarise_upr_themes <- function(data, by_cycle = FALSE) {
       ) |>
       group_by(theme) |>
       mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
-        n_sup = case_when(n_tot_theme == 0 ~ "", .default = n_sup)
+        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr != "Response not available"]) * 100), "%)"),
+        n_sup = case_when(
+          response_upr == "Response not available" ~ "",
+          n_tot_theme == 0 ~ "", 
+          n_sup == "(NaN%)" ~ "",
+          .default = n_sup)
       ) |>
       ungroup() |>
       filter(!theme %in% upr_excluded_themes) |>
@@ -338,7 +348,7 @@ build_upr_themes_plot <- function(theme_summary, total_n) {
       text = paste0(response_upr, ": n = ", n, " ", n_sup,"\n(click to view text)")
     )) +
     geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
-    scale_fill_manual(values = c("#ec5557", "#1c164d"))+
+    scale_fill_manual(values = c("#ec5557", "#1c164d", "grey"))+
     labs(
       x = paste0(
         "% of all recommendations",
@@ -392,9 +402,9 @@ build_upr_cycle_plot <- function(theme_summary) {
     )+
     labs(x = "% of all recommendations in cycle", y = NULL,
          fill = "State's response",
-         caption = "*Numbers after the bars indicate N (% supported)")+
+         caption = "*Numbers after the bars indicate N (% supported, where a response is available)")+
     theme_classic()+
-    scale_fill_manual(values = c("#ec5557", "#1c164d"))+
+    scale_fill_manual(values = c("#ec5557", "#1c164d", "grey"))+
     scale_x_continuous(labels = function(x) paste0(x, "%"),
                        limits = c(0,max_a+1),
                        expand = expansion(mult = c(0, 0.05)) # 0 exactly on axis
@@ -591,7 +601,7 @@ upr_png_download <- function(plot_reactive, name_reactive, expand_right = 0.2) {
             title = paste0("Health-related recommendations of the UPR"
                            , "\n"
                            , name_reactive()),
-            caption = "*Numbers after the bars indicate N (% supported)"
+            caption = "*Numbers after the bars indicate N (% supported, where a response is available)"
           )+
           geom_text(
             data = p@data |> filter(response_upr == "Supported"),
@@ -610,7 +620,7 @@ upr_png_download <- function(plot_reactive, name_reactive, expand_right = 0.2) {
 
 # Table of recommendation texts shown next to the plots, driven by clicks on
 # any of the plotly charts (shared "click" event source). Call inside
-# renderDataTable() — it reads event_data() and req()
+# DT::renderDT() — it reads event_data() and req()
 upr_click_table <- function(data) {
   plot_data <- data |>
     select(text_2, state_under_review, response_upr, cycle, health_related:other_health_related, document_code,
@@ -1838,7 +1848,7 @@ server <- function(input, output, session) {
   })
 
   #### Table -------------------
-  output$plotly_table_regional <- renderDataTable({
+  output$plotly_table_regional <- DT::renderDT({
     upr_click_table(filtered_upr_region())
   })
   
@@ -1900,7 +1910,7 @@ server <- function(input, output, session) {
   })
 
   #### Table -------------------
-  output$plotly_table_SUR <- renderDataTable({
+  output$plotly_table_SUR <- DT::renderDT({
     upr_click_table(filtered_upr())
   })
   
@@ -2025,7 +2035,7 @@ server <- function(input, output, session) {
         x = "Proportion of all recommendations (%)", y = NULL,
         fill = "State's response",
         title = paste("All health-related recommendations of the UPR\n", input$selected_SUR),
-        caption = "*Numbers after the bars indicate N (% supported)"
+        caption = "*Numbers after the bars indicate N (% supported, where a response is available)"
       ) +
       theme_classic() +
       scale_x_continuous(
@@ -2116,7 +2126,7 @@ server <- function(input, output, session) {
   
   
   #### Render table ---------------------
-  output$DT_table <- renderDT({
+  output$DT_table <- DT::renderDT({
     req(nrow(filtered_upr()) > 0)
     DT_table_object() |> 
       filter(`State under Review` == input$selected_SUR) |> 
