@@ -55,7 +55,7 @@ pacman::p_load(
 country <- "Egypt"
 country_session <- 20
 
-recs <- readRDS(here("data", "UPR_WG_docs", "extracted_recs", paste0(country, "_", country_session, ".rds")))
+recs <- readRDS(here("data", "UPR_WG_docs", "extracted_recs", "dashboard", paste0(country, "_", country_session, ".rds")))
 provisional_data <- recs |> 
   # mutate(response = factor(case_when(
   #   str_starts(paragraph, "6") ~ "Supported",
