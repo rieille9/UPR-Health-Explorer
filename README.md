@@ -12,11 +12,11 @@ Contact: info[at]cehdi.org
 
 The Health & Rights Observatory helps diplomats, policymakers, and civil-society actors see how the right to health is reflected in UN human-rights processes and how it relates to population health. It combines three kinds of data:
 
-- UPR recommendations from the OHCHR Universal Human Rights Index, classified into health themes with a rule-based keyword algorithm.
+- UPR recommendations from the OHCHR Universal Human Rights Index, classified into health themes with a rule-based keyword algorithm. Recommendations that are missing from UHRI (for example from recently circulated draft reports, or for states with incomplete UHRI coverage) can be extracted directly from the UN documents and merged in — see "Manually extracting UPR recommendations" below.
 - Health indicators from the WHO Global Health Observatory, the WHO MNCAH platform, IHME's Global Burden of Disease study, UN World Population Prospects, the World Bank, OECD, and UNFPA.
 - Legal and normative context on constitutional right-to-health provisions and the world's abortion laws.
 
-The app also generates a downloadable per-country PDF profile, and a separate offline workflow produces standalone country-briefing figures (see Country briefing workflow below).
+The app also generates a downloadable per-country PDF profile, and a separate offline workflow produces standalone country-briefing figures (`code/manual_plots_themes_profiles.R`).
 
 One page ("UPR impact") presents a linear mixed-effects analysis of whether countries that engaged more with maternal-health UPR recommendations saw faster declines in the maternal mortality ratio (MMR). Those results are associational, not causal, and the app says so. Note that the script behind that figure is no longer in the repository (see Maintenance notes).
 
@@ -55,23 +55,34 @@ UPR-Health-Explorer/
 ├── manifest.json               # Posit Connect lockfile (R version, packages, tracked files)
 │
 ├── code/                       # Data-prep and analysis scripts (run order matters, see Data pipeline)
-│   ├── geo_code.R                          # Country geometries -> output/state_geo_enhanced.rds (+ neighbors)
+│   ├── 01_prep_geo_code.R                  # Country geometries -> output/state_geo_enhanced.rds (+ neighbors)
+│   ├── 02_prep_UHRI_recommendations_refactored.qmd  # UHRI download + cleaning; merges manual extractions -> data/UHRI_UPR.rds
+│   ├── 03_classify_UHRI_recommendations.qmd # Rule-based classifier -> output/UHRI_UPR_classified.rds
 │   ├── external_data_OData.R               # WHO GHO API + World Bank/OECD/UNFPA/UCDP files -> data/API_data/*.rds
 │   ├── external_data_GBD.R                 # Process IHME GBD 2021 extracts (also sourced at app startup)
 │   ├── theme_labels.R                      # Thematic variable -> label lookup, English and French (sourced at startup)
-│   ├── UHRI_recommendation_definitions.qmd # Rule-based classifier -> output/UHRI_UPR_enhanced.rds
-│   └── manual_plots_themes_profiles.R      # Offline generation of per-country profile figures (EN + FR)
+│   ├── manual_plots_themes_profiles.R      # Offline generation of per-country profile figures (EN + FR)
+│   ├── geo_code.R                          # LEGACY: superseded by 01_prep_geo_code.R
+│   └── UHRI_recommendation_definitions.qmd # LEGACY: superseded by the 02 + 03 pair
 │
 ├── output/                     # Processed datasets the app reads at startup
-│   ├── UHRI_UPR_enhanced.rds               # Main classified UPR dataset (loaded as `sdg_data`)
+│   ├── UHRI_UPR_classified.rds             # Main classified UPR dataset (loaded as `sdg_data`)
+│   ├── UHRI_UPR_classified_long.rds        # Long (one row per rec-theme) version of the same
 │   ├── state_geo_enhanced.rds              # Country geometries
-│   └── nearest_neighbors_list.rds          # Per-country nearest neighbors (for "trends vs neighbors")
+│   ├── nearest_neighbors_list.rds          # Per-country nearest neighbors (for "trends vs neighbors")
+│   └── UHRI_UPR_enhanced.rds               # LEGACY: output of the old classifier pipeline
 │
 ├── data/                       # Inputs and intermediates
 │   ├── API_data/                           # ~56 RDS indicator files, loaded in a loop at startup
 │   ├── GBD/                                # IHME GBD 2021 extracts (deaths, etiology, maternal disorders)
 │   ├── constitutions/                      # WORLD Policy Analysis Center constitutions data + dictionary
-│   ├── UPR_WG_docs/                        # Country-briefing workflow: draft reports, extractor, figures
+│   ├── UPR_WG_docs/                        # Manual recommendation-extraction toolkit (see below)
+│   │   ├── extract_recs_function.R         #   extract_upr_recs(): one UN document -> tidy rds
+│   │   ├── run_extract_function.R          #   Driver: per-country calls + combine into recs_combined.rds
+│   │   ├── extracted_recs/                 #   One rds per manually extracted state ("<State>_<session>.rds")
+│   │   ├── recs_combined.rds               #   All manual extractions, renamed to the UHRI schema
+│   │   └── extract_recs_refactored.R       #   Reference version of the extraction machinery
+│   ├── UHRI_extract_raw.rds                # Raw UHRI export (input to 02_prep_...)
 │   ├── UHRI_full.rds, UHRI_UPR.rds         # Large UPR extracts (see Maintenance notes on repo size)
 │   ├── *_status.csv, FCS_status_*.csv      # Regional-grouping and fragile-state membership
 │   └── *.csv, *.xlsx, *.xls                # World Bank, OECD, UNFPA, HDI, abortion laws, ICESCR, lookups
@@ -139,13 +150,15 @@ The app loads pre-processed `.rds` files from `output/` and `data/API_data/` at 
 
 The scripts in `code/` have implicit dependencies and should be run in order. Each step writes the files consumed by later steps and by the app. Run from the repo root.
 
-1. `code/geo_code.R` builds country geometries (`necountries` plus UN WPP locations), the nearest-neighbor lists, and the fragile-state grouping (from the World Bank FCS FY26 list). It writes `output/state_geo_enhanced.rds` and `output/nearest_neighbors_list.rds`. Run this first, because most other scripts read `state_geo_enhanced.rds`.
+1. `code/01_prep_geo_code.R` builds country geometries (`necountries` plus UN WPP locations), the nearest-neighbor lists, and the fragile-state grouping (from the World Bank FCS FY26 list). It writes `output/state_geo_enhanced.rds` and `output/nearest_neighbors_list.rds`. Run this first, because most other scripts read `state_geo_enhanced.rds`.
 
 2. `code/external_data_OData.R` pulls live WHO GHO data (via `ODataQuery`) and reads the manually downloaded files (World Bank WDI CSVs, OECD DAC2, UNFPA, UCDP, HDI, abortion laws, constitutions). It then saves every object in the workspace to `data/API_data/*.rds`. Read the header note: clear your R environment before sourcing the whole file, because the final loop serializes all workspace objects to `API_data/`. Any stray object becomes a junk file that the app then tries to load.
 
-3. `code/UHRI_recommendation_definitions.qmd` downloads UPR recommendations from UHRI and runs the rule-based classifier (keyword and term dictionaries mapped to WHO thematic groups). It writes the intermediates `data/UHRI_full.rds` and `data/UHRI_UPR.rds`, and the main app dataset `output/UHRI_UPR_enhanced.rds` (loaded as `sdg_data`).
+3. `code/02_prep_UHRI_recommendations_refactored.qmd` prepares the UPR recommendations. It reads the raw UHRI export (`data/UHRI_extract_raw.rds`; uncomment the download block to fetch a fresh one), **appends the manually extracted recommendations from `data/UPR_WG_docs/recs_combined.rds`** (see the next section), cleans the text, parses the recommending states and session/cycle metadata, and writes `data/UHRI_UPR.rds`. State responses are normalized to Supported / Partially supported / Noted, and recommendations flagged as provisional get "Response not available".
 
-4. `code/external_data_GBD.R` and `code/theme_labels.R` are sourced by `app.R` at startup, so no manual step is needed for a normal run. The first-run GBD ingestion block (combining the raw GBD CSVs) is commented out; uncomment it only when adding new GBD extracts to `data/GBD/`.
+4. `code/03_classify_UHRI_recommendations.qmd` runs the rule-based classifier (keyword and term dictionaries mapped to WHO thematic groups) on `data/UHRI_UPR.rds` and writes the main app dataset `output/UHRI_UPR_classified.rds` (loaded as `sdg_data`) plus `output/UHRI_UPR_classified_long.rds`.
+
+5. `code/external_data_GBD.R` and `code/theme_labels.R` are sourced by `app.R` at startup, so no manual step is needed for a normal run. The first-run GBD ingestion block (combining the raw GBD CSVs) is commented out; uncomment it only when adding new GBD extracts to `data/GBD/`.
 
 Supporting, run as needed:
 
@@ -153,15 +166,53 @@ Supporting, run as needed:
 
 After any data refresh, do a clean local run of the app before deploying, and check the "UPR recommendations" data table and a few country profiles for missing or duplicated rows.
 
-## Country briefing workflow (`data/UPR_WG_docs/`)
+## Manually extracting UPR recommendations (`data/UPR_WG_docs/`)
 
-This folder holds a separate, document-driven workflow for producing per-country UPR health briefings from Working Group draft reports:
+UHRI sometimes lags behind the UPR process or has gaps: newly circulated Working Group draft reports are not yet in the database, and a few state/cycle combinations are missing entirely (e.g. Myanmar's cycle 3). This folder holds the toolkit for extracting recommendations directly from the UN documents and feeding them into the same classification pipeline and dashboard as the UHRI data.
 
-1. `extract_recs.R` reads a Word draft report and extracts the recommendations into a tidy data frame. It handles two draft formats automatically: Word auto-numbered lists, and paragraphs that begin with a literal "6.1" style number as plain text.
-2. `classify_provisional.qmd` applies the same rule-based health classifier to those extracted recommendations before they appear in UHRI.
-3. `manual_plots_themes_profiles.R` (in `code/`) renders the profile figure, and the resulting `*_profile.png` files are saved alongside the source documents.
+### The extraction function
 
-See the Maintenance notes about the draft reports in this folder.
+`extract_recs_function.R` defines `extract_upr_recs()`, which processes **one document at a time** and auto-detects the document type:
+
+- Working Group draft reports (.docx) — both Word auto-numbered and literal "6.1"-prefix numbering, scoped to the "Conclusions and/or recommendations" section, with the state's positions read from the lead-in paragraphs;
+- final adopted reports as PDFs — pass a `docs.un.org` symbol link (e.g. `https://docs.un.org/en/A/HRC/29/9`) and the PDF is fetched and parsed;
+- cycle-1 reports, where recommendations are numbered "1.", "2." under each lead-in paragraph and recommending states are attributed inline;
+- OHCHR "matrix of recommendations" tables (.docx, legacy .doc, or PDF), with positions from the matrix's Position column. Converting a legacy `.doc` uses Microsoft Word via COM automation, so it requires Word on Windows.
+
+Local paths and URLs both work. Each call saves `extracted_recs/<state_under_review>_<upr_session>.rds` with the columns `state_under_review`, `recommendation` (original text incl. paragraph number and recommending states), `recommendation_clean`, `paragraph`, `recommending_states`, `position` (Supported / Supported/Noted / Noted / Under consideration / NA), `document_symbol`, `upr_session`, and `provisional`.
+
+### Step by step
+
+1. **Find the source document.** Best options, in order: the OHCHR matrix of recommendations or the final report PDF (both carry the state's positions), or the circulated draft Working Group report (positions only if the state has already responded). The UPR session number matters — the pipeline derives the cycle from it (sessions 1–12 = cycle 1, 13–26 = cycle 2, 27–40 = cycle 3, 41–54 = cycle 4).
+
+2. **Extract.** Source `extract_recs_function.R`, then add a call to `run_extract_function.R` (which keeps one call per country as a record):
+
+   ```r
+   source(here::here("data", "UPR_WG_docs", "extract_recs_function.R"))
+   extract_upr_recs(
+     input              = "https://docs.un.org/en/A/HRC/29/9",  # or a matrix URL / local file
+     state_under_review = "Lesotho",   # must match the country names used by the app
+     upr_session        = 21,
+     document_symbol    = "A/HRC/29/9",
+     provisional        = FALSE        # TRUE if the state has not yet given its positions
+   )
+   ```
+
+   `provisional = TRUE` marks the recommendations as not-yet-responded: the app then shows them in grey as "Response not available" (this is how Myanmar's cycle 3 is displayed). Use `FALSE` when the document carries the state's positions.
+
+3. **Check the diagnostics and the output.** The function prints which format it detected, the numbering spans, any gaps or unparsed rows, and the position counts — read these, they catch most document quirks. Then open the saved rds and spot-check a few rows against the source document (row count, positions, recommending states).
+
+4. **Rebuild the combined file.** Run the combine step at the bottom of `run_extract_function.R`. It stacks every file in `extracted_recs/`, renames the columns to the UHRI export schema (`text`, `countries_concerned`, `upr_reccomending_states`, `upr_position`), tags the rows with `manual_upload = TRUE`, and saves `recs_combined.rds`.
+
+5. **Re-run the recommendation pipeline**: `code/02_prep_UHRI_recommendations_refactored.qmd` (which appends `recs_combined.rds` to the UHRI extract) and then `code/03_classify_UHRI_recommendations.qmd`. This refreshes `output/UHRI_UPR_classified.rds`, the dataset the app loads.
+
+6. **Check in the app and deploy.** Run the app locally and open *UPR recommendations → By State* for the state you added: the counts should match the document, and provisional recommendations should appear as grey "Response not available" bars (excluded from the "% supported" labels). Then commit the refreshed `.rds` files (`extracted_recs/`, `recs_combined.rds`, `data/UHRI_UPR.rds`, `output/UHRI_UPR_classified*.rds`) and push — the deployed app reads the committed data.
+
+Notes:
+
+- When UHRI later publishes the same recommendations, remove the state's file from `extracted_recs/` and redo steps 4–6, otherwise the recommendations will be duplicated.
+- `state_under_review` is used verbatim in joins against the country geometries, so it must match the spelling in `output/state_geo_enhanced.rds` (e.g. "Micronesia (Federated States of)").
+- `extract_recs_refactored.R` is the same extraction machinery without the metadata/saving wrapper; keep the two in sync if you change the parsing.
 
 ## Deployment (Posit Connect Cloud)
 
@@ -181,8 +232,8 @@ The app is deployed to Posit Connect Cloud from this Git repository.
 Notes for whoever maintains this next:
 
 - The repository is large. Large files can be untracked with `git rm --cached filepath`.
-- The "UPR impact" analysis is not reproducible from the repository as it stands. The page shows a static image (`www/full_plot.png`), but the mixed-effects script that produced it (`MLM_alt.R`) has been removed. To update or reproduce that analysis, recover the script from Git history (`git log --diff-filter=D --name-only`) or rewrite it.
-- Draft UPR reports are committed to a public repository. `data/UPR_WG_docs/` contains draft Working Group reports, including several marked "circulated on [date]" and one marked "ad referendum" (Latvia). This repository is public. Confirm that these pre-adoption documents are cleared for public distribution, and move them elsewhere if not.
+- Legacy duplicates are kept for reference and can confuse newcomers: `code/geo_code.R` (superseded by `01_prep_geo_code.R`), `code/UHRI_recommendation_definitions.qmd` (superseded by the `02_prep_...` + `03_classify_...` pair), `output/UHRI_UPR_enhanced.rds` (output of the old pipeline; the app now loads `UHRI_UPR_classified.rds`), and `data/UPR_WG_docs/extract_recs_refactored.R` (the extraction machinery without the wrapper). `data/UPR_WG_docs/classify_provisional.qmd` is stale — it reads a file that no longer exists and predates the unified pipeline. Delete these once you no longer need them for comparison.
+- Converting legacy `.doc` matrix files depends on Microsoft Word (COM automation, Windows only). On other systems, open the file in Word or LibreOffice, save as `.docx`, and extract from that.
 - Bilingual labels must stay in sync. `theme_labels.R` now carries English and French labels, and `manual_plots_themes_profiles.R` uses both. If you add a theme, add both labels, or the French figures will break.
 - There is no test or validation code in the repository. The earlier `validation_*` scripts, which compared the automated classifier against manual coding, were removed. Keep a copy elsewhere and re-run it whenever the keyword dictionaries change.
 - Live and manual data dependencies. `external_data_OData.R` depends on the WHO GHO OData API and on several manually downloaded files (World Bank, OECD, UNFPA, UCDP, UNDP). Indicator codes and file formats change upstream, so re-run and spot-check after each refresh.
