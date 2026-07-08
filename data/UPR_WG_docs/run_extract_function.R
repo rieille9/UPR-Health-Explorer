@@ -3,13 +3,17 @@ pacman::p_load(
   tidyverse
 )
 
+source(here("data", "UPR_WG_docs", "extract_recs_function.R"))
+
 # Run the extract function for each country as needed
 extract_upr_recs(
-  input = "https://docs.un.org/en/A/HRC/12/2",
-  state_under_review = "Central African Republic", 
-  upr_session = 5, 
-  document_symbol = "A/HRC/12/2",
-  provisional = TRUE, mode = "auto"
+  input = "https://uprmeetings.ohchr.org/Sessions/52/SierraLeone/Documents/Sierra%20Leone%20-%20full%20draft%20report%20for%20circulation%20-%20ad%20referendum.docx",
+  state_under_review = "Sierra Leone", 
+  upr_session = 52, 
+  document_symbol = "A/HRC/63/16",
+  provisional = TRUE, 
+  mode = "auto", 
+  output_dir = here("data", "UPR_WG_docs", "extracted_recs")
 )
 
 # Inspect the extracted file for any issues
@@ -19,7 +23,7 @@ recs2 <- readRDS(here("data", "UPR_WG_docs", "extracted_recs", "Central African 
 # Uncomment below code for first run
 recs_combined <-
   # List the filenames of each rds file in the folder
-  list.files(path = here("data", "UPR_WG_docs", "extracted_recs"),
+  list.files(path = here("data", "UPR_WG_docs", "extracted_recs", "dashboard"),
              pattern = "\\.rds$") |> 
   # Read each file into a list
   map(~readRDS(here("data", "UPR_WG_docs", "extracted_recs", .))) |>
