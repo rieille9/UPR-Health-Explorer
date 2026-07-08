@@ -288,7 +288,7 @@ summarise_upr_themes <- function(data, by_cycle = FALSE) {
       ) |>
       group_by(cycle2, theme) |>
       mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr != "Response not available"]) * 100), "%)"),
+        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
         n_sup = case_when(
           response_upr == "Response not available" ~ "",
           n_tot_theme == 0 ~ "", 
@@ -320,7 +320,7 @@ summarise_upr_themes <- function(data, by_cycle = FALSE) {
       ) |>
       group_by(theme) |>
       mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr != "Response not available"]) * 100), "%)"),
+        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
         n_sup = case_when(
           response_upr == "Response not available" ~ "",
           n_tot_theme == 0 ~ "", 
