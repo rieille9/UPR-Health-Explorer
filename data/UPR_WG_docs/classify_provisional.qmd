@@ -51,7 +51,7 @@ pacman::p_load(
 ```
 
 ```{r}
-recs <- readRDS(here("data", "UPR_WG_docs", "Egypt_matrix_c2_upr_recommendations.rds"))
+recs <- readRDS(here("data", "UPR_WG_docs", "extracted_recs", "Egypt_20.rds"))
 provisional_data <- recs |> 
   # mutate(response = factor(case_when(
   #   str_starts(paragraph, "6") ~ "Supported",
@@ -59,7 +59,7 @@ provisional_data <- recs |>
   #   str_starts(paragraph, "7") ~ "Under consideration"
   # ), levels = c("Supported", "Noted", "Under consideration"))) |>
   mutate(text_2 = tolower(recommendation),
-         states = str_remove(states, "2025; "),
+         states = str_remove(recommending_states, "2025; "),
          rec_count = str_count(states, ";")+1,
   )
 ```
@@ -956,7 +956,7 @@ a |>
   ) +
   labs(
     x = "Proportion of all recommendations (%)", y = NULL,
-    title = paste0("Health-related recommendations of the UPR 4th cycle: Latvia"),
+    title = paste0("Health-related recommendations of the UPR 4th cycle: Egypt"),
   ) +
   theme_classic() +
   scale_x_continuous(
@@ -988,7 +988,7 @@ a |>
 #   # vjust = 0.25
 # )
 
-ggsave(here("data", "UPR_WG_docs", "Latvia_profile.png"), dpi = 500, width = 6.3, height = 3.5)
+ggsave(here("data", "UPR_WG_docs", "Egypt_profile.png"), dpi = 500, width = 6.3, height = 3.5)
 ```
 
 
@@ -1023,8 +1023,8 @@ a |> ggplot(aes(y = theme_label))+
   # scale_fill_manual(values = c("tomato2", "#F0C807", "#31007e"))+
   labs(
     x = "Number of recommendations", y = NULL,
-    # fill = "Latvia's response",
-    title = paste0("Health-related recommendations of the UPR 4th cycle: Latvia"),
+    # fill = "Egypt's response",
+    title = paste0("Health-related recommendations of the UPR 4th cycle: Egypt"),
   )+
   theme_classic() +
   scale_x_continuous(
@@ -1051,7 +1051,7 @@ a |> ggplot(aes(y = theme_label))+
     panel.grid = element_blank()
   )
 
-ggsave(here("data", "UPR_WG_docs", "Latvia_profile_response.png"), dpi = 400, width = 6.3, height = 3.5)
+ggsave(here("data", "UPR_WG_docs", "Egypt_profile_response.png"), dpi = 400, width = 6.3, height = 3.5)
 ```
 
 
@@ -1072,4 +1072,3 @@ abab <- provisional_classifications |>
   #        )
   filter(GBV != "Other") |> arrange(paragraph)
 ```
-
