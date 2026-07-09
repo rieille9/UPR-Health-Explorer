@@ -1402,8 +1402,8 @@ Under the Right to Health, States have the following obligations:
             )
   ),
   
-  ## Constitutions  ------------------
-  nav_panel(title = "Constitutions", icon = icon("building-columns"),
+  ## Legal framework  ------------------
+  nav_panel(title = "Legal framework", icon = icon("building-columns"),
             # "Family planning",
             layout_column_wrap(
               full_screen = TRUE,
@@ -1416,14 +1416,31 @@ Under the Right to Health, States have the following obligations:
                 leafletOutput("const_anyhealth_map_interactive")
                 # plotOutput("constitution_const_anyhealth")
               ),
-              card(
+              # card(
+              #   full_screen = TRUE,
+              #   card_header("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)"),
+              #   markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
+              #   leafletOutput("ICESCR_status_map_interactive")
+              # ),
+              navset_card_tab(
+                # title = "Causes of Maternal Death",
                 full_screen = TRUE,
-                card_header("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)"),
-                markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
-                leafletOutput("ICESCR_status_map_interactive")
-              )
-              
+                nav_panel("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)", 
+                          markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
+                          leafletOutput("ICESCR_status_map_interactive")),
+                nav_panel(
+                  shiny::icon("circle-info"),
+                  markdown(
+                    "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in <a href='https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights#article-12' target='_blank'>Article 12 of the International Convenant on Economic, Social and Cultural Rights</a>, is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+                           
+Under the Right to Health, States have the following obligations:  
+-  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
+-  **Protect**: take effective measures to prevent third parties from undermining or violating the guarantees of the right to health.  
+-  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health."
+                  )
+                )
             )
+  )
   ),
   
   nav_spacer(),
