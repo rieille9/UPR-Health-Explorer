@@ -16,7 +16,9 @@ sdg_data <- sdg_data |> select(-any_of(c("SRHR", "SOCED",
                                          "essential_medicines","TB_malaria", 
                                          "NTD","vaccinations")))
 
-sdg_data |> 
+
+# Plot of proportion health-related for each cycle ----
+by_health <- sdg_data |> 
   filter(state_under_review == "Togo") |> 
   group_by(cycle) |> count(health_related) |> 
   mutate(
@@ -29,7 +31,9 @@ sdg_data |>
   ungroup() |> 
   mutate(health_related_fr = fct_recode(
     health_related, "Autres" = "Other", "Liées à la santé" = "Health-related"
-  )) |> 
+  ))
+
+by_health |> 
   ggplot(aes(x = cycle, y = n, fill = health_related_fr)) +
   # scale_fill_manual(values = c("Health-related" = "#E69F00", "Other" = "grey80")) +
   geom_bar(stat = "identity") +
@@ -74,8 +78,7 @@ ggsave(
   bg="transparent"
 )
 
-
-
+# Theme plots ----
 a1 <- sdg_data |> 
   filter(state_under_review == "Togo") |> 
   mutate(
@@ -83,7 +86,7 @@ a1 <- sdg_data |>
   ) |> 
   pivot_longer(health_related:other_health_related, names_to = "theme", values_to = "value") |> 
   mutate(n_tot = n_distinct(rowid)) |> 
-  group_by(theme, value, n_tot) |> count(response_upr, .drop = FALSE) |> 
+  group_by(theme, value, n_tot) |> count(response_upr) |> 
   mutate(perc_supported = n/sum(n)*100) |> 
   filter(value) |> 
   group_by(theme) |> mutate(n_tot_theme = sum(n)) |> 
@@ -95,11 +98,12 @@ a1 <- sdg_data |>
   filter(theme != "health_related") |> 
   mutate(theme_label_fr = fct_inorder(theme_label_fr),
          response_upr = fct_relevel(response_upr, "Noted"),
-         response_upr = fct_recode(response_upr, "Acceptées" = "Supported", "Notées" = "Noted"))
+         response_upr_fr = fct_recode(response_upr, "Acceptées" = "Supported", "Notées" = "Noted"))
 
 a1 |> 
-  ggplot(aes(x = n, y = theme_label_fr, fill = response_upr))+geom_col(alpha = 0.8, width = 0.85)+
-  scale_fill_manual(values = c("#ec5557", "#1c164d"))+
+  droplevels() |> 
+  ggplot(aes(x = n, y = theme_label_fr, fill = response_upr_fr))+geom_col(alpha = 0.8, width = 0.85)+
+  scale_fill_manual(values = c("#ec5557", "#1c164d", "grey"))+
   labs(
     x = paste0(
       "Nombre de recommandations"
@@ -111,7 +115,7 @@ a1 |>
     fill = NULL
   ) +
   geom_text(
-    data = a1 |> filter(response_upr == "Acceptées"),
+    data = a1 |> filter(response_upr_fr == "Acceptées"),
     aes(label = label_n, x = n_tot_theme),
     hjust = -0.05,
     size = 3, color = "#1c164d"

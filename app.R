@@ -238,123 +238,101 @@ upr_excluded_themes <- c(
 )
 
 # Count Supported/Noted recommendations per theme (optionally per cycle) and
-# compute the percentages and "N (% supported)" labels used by the bar charts
+# compute the percentages and "N (% supported)" labels used by the bar charts.
+#
+# One pass: turn each theme column into a logical (tagged with the theme or
+# not), pivot to long, then count tagged/untagged per response (per cycle),
+# per theme. Themes are ordered by total tagged count, ties broken by the
+# original column order.
 summarise_upr_themes <- function(data, by_cycle = FALSE) {
-  group_vars <- if (by_cycle) c("cycle", "response_upr") else "response_upr"
+  # Theme columns, in document order (used to break ties in the theme ranking)
+  theme_cols <- names(dplyr::select(data, health_related:other_health_related))
 
-  # n = recommendations tagged with the theme; n_other = untagged
-  a_1 <- data |>
-    select(cycle, state_under_review, health_related:other_health_related, response_upr) |>
-    group_by(across(all_of(group_vars))) |>
-    summarise(across(c(health_related:other_health_related), ~ sum(.x != "Other"))) |>
-    ungroup() |>
-    # filter(response_upr %in% c("Supported", "Noted")) |>
-    pivot_longer(
-      cols = health_related:other_health_related,
-      names_to = "theme",
-      values_to = "n"
-    )
-
-  a_2 <- data |>
-    select(cycle, state_under_review, health_related:other_health_related, response_upr) |>
-    group_by(across(all_of(group_vars))) |>
-    summarise(across(c(health_related:other_health_related), ~ sum(.x == "Other"))) |>
-    ungroup() |>
-    # filter(response_upr %in% c("Supported", "Noted")) |>
-    pivot_longer(
-      cols = health_related:other_health_related,
-      names_to = "theme",
-      values_to = "n_other"
+  prepped <- data |>
+    mutate(
+      response_upr = fct_relevel(response_upr, "Noted"),
+      across(all_of(theme_cols), ~ .x != "Other")   # TRUE = tagged with the theme
     )
 
   if (by_cycle) {
-    a_3 <- data |>
-      group_by(cycle) |>
-      summarise(health_n = sum(health_related != "Other")) |>
-      ungroup()
-
-    left_join(a_1, a_2) |>
-      left_join(a_3) |>
-      mutate(cycle2 = fct_recode(cycle, "1" = "Cycle 1", "2" = "Cycle 2", "3" = "Cycle 3", "4" = "Cycle 4")) |>
-      group_by(cycle2, theme) |>
-      mutate(
-        n_tot = sum(n) + sum(n_other),
-        n_tot_theme = sum(n)
-      ) |>
-      mutate(
-        perc = n / n_tot * 100,
-        perc_theme = n_tot_theme / n_tot * 100,
-        theme_perc_health = n_tot_theme / health_n * 100
-      ) |>
-      group_by(cycle2, theme) |>
-      mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
-        n_sup = case_when(
-          response_upr == "Response not available" ~ "",
-          n_tot_theme == 0 ~ "", 
-          n_sup == "(NaN%)" ~ "",
-          .default = n_sup)
-        # n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
-        # n_sup = case_when(n_tot_theme == 0 ~ "(NA)", .default = n_sup)
-      ) |>
-      ungroup() |>
-      filter(!theme %in% upr_excluded_themes) |>
-      left_join(theme_labels, by = c("theme" = "variable")) |>
-      mutate(theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label)) |>
-      group_by(theme) |>
-      mutate(perc_tot = sum(n_tot_theme)) |>
-      ungroup() |>
-      arrange(-perc_tot) |>
-      mutate(theme_label = fct_inorder(theme_label))
+    prepped    <- mutate(prepped, cycle2 = fct_recode(
+      cycle, "1" = "Cycle 1", "2" = "Cycle 2", "3" = "Cycle 3", "4" = "Cycle 4"))
+    id_cols    <- c("cycle", "cycle2", "response_upr")
+    stat_group <- c("cycle2", "theme")
   } else {
-    left_join(a_1, a_2) |>
-      mutate(response_upr = fct_relevel(response_upr, "Noted")) |>
-      group_by(theme) |>
-      mutate(
-        n_tot = sum(n) + sum(n_other),
-        n_tot_theme = sum(n)
-      ) |>
-      mutate(
-        perc = n / n_tot * 100,
-        perc_theme = n_tot_theme / n_tot * 100
-      ) |>
-      group_by(theme) |>
-      mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
-        n_sup = case_when(
-          response_upr == "Response not available" ~ "",
-          n_tot_theme == 0 ~ "", 
-          n_sup == "(NaN%)" ~ "",
-          .default = n_sup)
-      ) |>
-      ungroup() |>
-      filter(!theme %in% upr_excluded_themes) |>
-      left_join(theme_labels, by = c("theme" = "variable")) |>
-      arrange(-n_tot_theme) |>
-      mutate(
-        theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
-        theme_label = fct_inorder(theme_label)
-      )
+    id_cols    <- "response_upr"
+    stat_group <- "theme"
   }
+
+  prepped |>
+    select(all_of(c(id_cols, theme_cols))) |>
+    pivot_longer(all_of(theme_cols), names_to = "theme", values_to = "tagged") |>
+    # n = recommendations tagged with the theme; n_other = untagged
+    group_by(across(all_of(c(id_cols, "theme")))) |>
+    summarise(n = sum(tagged), n_other = sum(!tagged), .groups = "drop") |>
+    group_by(across(all_of(stat_group))) |>
+    mutate(
+      n_tot       = sum(n) + sum(n_other),   # total recommendations in the group
+      n_tot_theme = sum(n),                  # recommendations tagged with the theme
+      perc        = n / n_tot * 100,
+      perc_theme  = n_tot_theme / n_tot * 100,
+      # "(% supported)" label: share of this response among recs that got a
+      # response (Supported/Noted); blank when there is no response or no recs
+      n_sup = paste0("(", sprintf("%1.0f",
+               n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
+      n_sup = case_when(
+        response_upr == "Response not available" ~ "",
+        n_tot_theme == 0 ~ "",
+        n_sup == "(NaN%)" ~ "",
+        .default = n_sup)
+    ) |>
+    ungroup() |>
+    filter(!theme %in% upr_excluded_themes) |>
+    left_join(theme_labels, by = c("theme" = "variable")) |>
+    # keep an English and a French label; fall back to the raw variable name
+    mutate(theme_label    = coalesce(theme_label, theme),
+           theme_label_fr = coalesce(theme_label_fr, theme)) |>
+    # Order themes by total tagged count (across cycles/responses), ties by
+    # original column order, then lock that order into the label factors
+    group_by(theme) |>
+    mutate(order_metric = sum(n_tot_theme)) |>
+    ungroup() |>
+    arrange(desc(order_metric), match(theme, theme_cols)) |>
+    mutate(theme_label    = fct_inorder(theme_label),
+           theme_label_fr = fct_inorder(theme_label_fr))
 }
 
 # Horizontal bar chart of all themes ("Health-related Recommendations" tab);
-# takes summarise_upr_themes() output plus the total N for the axis label
-build_upr_themes_plot <- function(theme_summary, total_n) {
+# takes summarise_upr_themes() output plus the total N for the axis label.
+# lang = "fr" produces a French version for the PNG download (French theme
+# labels, legend, and x-axis); on-screen plotly stays English (lang = "en").
+build_upr_themes_plot <- function(theme_summary, total_n, lang = "en") {
+  fr <- lang == "fr"
+  theme_summary <- theme_summary |>
+    mutate(
+      theme_label_disp = if (fr) theme_label_fr else theme_label,
+      response_disp = if (fr) fct_recode(response_upr,
+                        "Acceptées" = "Supported", "Notées" = "Noted",
+                        "Réponse non disponible" = "Response not available")
+                      else response_upr
+    )
+  x_lab <- if (fr) {
+    paste0("% de toutes les recommandations\n(N total = ",
+           format(total_n, big.mark = ","), ")")
+  } else {
+    paste0("% of all recommendations\n(Total N = ",
+           format(total_n, big.mark = ","), ")")
+  }
   theme_summary |>
     ggplot(aes(
-      x = perc, y = fct_rev(theme_label),
+      x = perc, y = fct_rev(theme_label_disp),
       customdata = paste(theme_label, response_upr, sep = "|"),
       text = paste0(response_upr, ": n = ", n, " ", n_sup,"\n(click to view text)")
     )) +
-    geom_col(aes(fill = response_upr), alpha = 0.8, width = 0.85) +
+    geom_col(aes(fill = response_disp), alpha = 0.8, width = 0.85) +
     scale_fill_manual(values = c("#ec5557", "#1c164d", "grey"))+
     labs(
-      x = paste0(
-        "% of all recommendations",
-        "\n",
-        "(Total N = ", format(total_n, big.mark = ","), ")"
-      ),
+      x = x_lab,
       y = NULL,
       fill = NULL
     ) +
@@ -579,30 +557,40 @@ upr_ggplotly <- function(p, title_text, fix_strip_labels = FALSE,
 
 # PNG downloadHandler for the "Health-related Recommendations" plots.
 # plot_reactive is the plot-object reactive; name_reactive supplies the
-# selected region/state for the filename and title
-upr_png_download <- function(plot_reactive, name_reactive, expand_right = 0.2) {
+# selected region/state for the filename and title. lang = "fr" writes a
+# French title/caption/filename (the plot object itself must be built with
+# build_upr_themes_plot(..., lang = "fr")).
+upr_png_download <- function(plot_reactive, name_reactive, expand_right = 0.2,
+                             lang = "en") {
+  fr <- lang == "fr"
   downloadHandler(
     filename = function() {
-      paste0("health-recommendations-", name_reactive(), ".png")
+      prefix <- if (fr) "recommandations-sante-" else "health-recommendations-"
+      paste0(prefix, name_reactive(), ".png")
     },
     content = function(file) {
       p <- plot_reactive()
+      title_txt <- if (fr) {
+        paste0("Recommandations liées à la santé de l'EPU\n", name_reactive())
+      } else {
+        paste0("Health-related recommendations of the UPR\n", name_reactive())
+      }
+      caption_txt <- if (fr) {
+        "*Les nombres après les barres indiquent N (% accepté, lorsqu'une réponse est disponible)"
+      } else {
+        "*Numbers after the bars indicate N (% supported, where a response is available)"
+      }
       ggsave(
         file,
         plot = p +
           theme(
-            plot.background = element_rect(color = "#1c164d", fill = "#F9F9F6"),
-            panel.background = element_rect(color = NA, fill="#F9F9F6")
+            plot.background = element_rect(color = "#1c164d", fill = "transparent"),
+            panel.background = element_rect(color = NA, fill="transparent")
           )+
           scale_x_continuous(
             expand = expansion(mult = c(0, expand_right))
           ) +
-          labs(
-            title = paste0("Health-related recommendations of the UPR"
-                           , "\n"
-                           , name_reactive()),
-            caption = "*Numbers after the bars indicate N (% supported, where a response is available)"
-          )+
+          labs(title = title_txt, caption = caption_txt)+
           geom_text(
             data = p@data |> filter(response_upr == "Supported"),
             aes(label = paste0(n_tot_theme, " ", n_sup), x = perc_theme),
@@ -613,6 +601,116 @@ upr_png_download <- function(plot_reactive, name_reactive, expand_right = 0.2) {
         height = 5,
         dpi = 400,
         units = "in"
+      )
+    }
+  )
+}
+
+# Stacked bar chart of the (median) number of recommendations per UPR cycle,
+# split into health-related vs other, used by the "Proportion Health-Related"
+# tabs. by_state = FALSE is the regional plot (median across the region's
+# states, a single facet named region_name); by_state = TRUE is the By-State
+# plot (faceted per selected state). lang = "fr" translates the legend, title,
+# and y-axis; hr_color sets the health-related fill (on-screen orange, the PNG
+# downloads red). Callers add their own theme() overrides on top.
+build_health_proportion_plot <- function(data, by_state = FALSE,
+                                         region_name = NULL, lang = "en",
+                                         hr_color = "#E69F00") {
+  fr <- lang == "fr"
+  hr_lab <- if (fr) "Liées à la santé" else "Health-related"
+  ot_lab <- if (fr) "Autres" else "Other"
+
+  med_group <- if (by_state) c("cycle", "state_under_review", "health_related")
+               else          c("cycle", "health_related")
+  tot_group <- if (by_state) c("cycle", "state_under_review") else "cycle"
+
+  d <- data |>
+    droplevels() |>
+    group_by(cycle, state_under_review) |>
+    count(health_related, .drop = FALSE) |>
+    group_by(across(all_of(med_group))) |>
+    mutate(med_n = median(n)) |>
+    select(all_of(c(tot_group, "health_related", "med_n"))) |>
+    distinct() |>
+    group_by(across(all_of(tot_group))) |>
+    mutate(
+      n_tot = sum(med_n),
+      perc = (med_n / n_tot) * 100,
+      perc = case_when(
+        health_related == "Other" ~ paste0(med_n),
+        .default = paste0(med_n, " (", sprintf("%1.0f", perc), "%)")
+      )
+    ) |>
+    ungroup() |>
+    mutate(
+      health_disp = fct_recode(health_related, !!hr_lab := "Health-related",
+                               !!ot_lab := "Other"),
+      facet_var = if (by_state) state_under_review else region_name
+    )
+
+  title_txt <- if (by_state) NULL
+               else if (fr) "Nombre médian de recommandations reçues par les États"
+               else "Median recommendations received by States"
+  y_lab <- if (by_state) {
+    if (fr) "Nombre de recommandations" else "Number of recommendations"
+  } else {
+    if (fr) "Nombre médian de recommandations" else "Median # of recommendations"
+  }
+
+  d |>
+    ggplot(aes(x = cycle, y = med_n, fill = health_disp)) +
+    scale_fill_manual(values = setNames(c(hr_color, "grey80"), c(hr_lab, ot_lab))) +
+    geom_bar(stat = "identity") +
+    labs(y = y_lab, x = "UPR Cycle", title = title_txt, fill = NULL) +
+    geom_text(aes(label = perc), position = position_stack(vjust = 0.5),
+              size = if (by_state) 5 else 4.5) +
+    theme_bw() +
+    facet_wrap(. ~ facet_var, nrow = if (by_state) 2 else 1)
+}
+
+# PNG downloadHandler for the "Proportion Health-Related" plots. data_reactive
+# is the filtered-data reactive; name_reactive supplies the region/state for
+# the filename. Builds a fresh plot with the download styling (red fill,
+# framed export theme). y_lab overrides the axis label; keep_strip shows the
+# facet strip (the region name, on the regional plot).
+proportion_png_download <- function(data_reactive, name_reactive, by_state,
+                                    lang = "en", y_lab = NULL, keep_strip = FALSE) {
+  fr <- lang == "fr"
+  downloadHandler(
+    filename = function() {
+      prefix <- if (fr) "recommandations-sante-" else "health-recommendations-"
+      paste0(prefix, name_reactive(), ".png")
+    },
+    content = function(file) {
+      p <- build_health_proportion_plot(
+        data_reactive(), by_state = by_state,
+        region_name = if (by_state) NULL else name_reactive(),
+        lang = lang, hr_color = "#ec5557")
+      if (!is.null(y_lab)) p <- p + labs(y = y_lab)
+      ggsave(
+        file,
+        plot = p +
+          theme(
+            panel.grid = element_blank(),
+            axis.text.x = element_text(size = 12, color = "#1c164d"),
+            axis.text.y = element_text(size = 12, color = "#1c164d"),
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(size = 14, color = "#1c164d"),
+            legend.position = c(0, 1),
+            legend.justification = c("left", "top"),
+            legend.text = element_text(size = 11, colour = "#1c164d"),
+            legend.key.size = unit(15, "pt"),
+            plot.background = element_rect(color = "#1c164d", fill = NA),
+            panel.border = element_rect(color = "#1c164d"),
+            axis.ticks = element_line(color = "#1c164d"),
+            panel.background = element_blank(),
+            legend.background = element_blank(),
+            strip.background = element_blank(),
+            strip.text = if (keep_strip) element_text(size = 14, color = "#1c164d")
+                         else element_blank(),
+            plot.title = element_blank()
+          ),
+        width = 5, height = 3.4, dpi = 300, bg = "transparent"
       )
     }
   )
@@ -978,6 +1076,10 @@ Under the Right to Health, States have the following obligations:
                                        downloadButton(
                                          outputId = "download_plotly_UPR_regional",
                                          label = "Download as PNG"
+                                       ),
+                                       downloadButton(
+                                         outputId = "download_plotly_UPR_regional_fr",
+                                         label = "Télécharger (français)"
                                        )
                                      )
                                    )),
@@ -993,7 +1095,17 @@ Under the Right to Health, States have the following obligations:
                                    card(
                                      full_screen = TRUE,
                                      fill = FALSE,
-                                     card_body(plotOutput("global_plot"))
+                                     card_body(plotOutput("global_plot")),
+                                     card_footer(
+                                       downloadButton(
+                                         outputId = "download_global_plot",
+                                         label = "Download as PNG"
+                                       ),
+                                       downloadButton(
+                                         outputId = "download_global_plot_fr",
+                                         label = "Télécharger (français)"
+                                       )
+                                     )
                                    )
                          ),
                          nav_panel("Recommending states",
@@ -1035,6 +1147,10 @@ Under the Right to Health, States have the following obligations:
                                        downloadButton(
                                          outputId = "download_plotly_UPR_SUR",
                                          label = "Download as PNG"
+                                       ),
+                                       downloadButton(
+                                         outputId = "download_plotly_UPR_SUR_fr",
+                                         label = "Télécharger (français)"
                                        )
                                      )
                                    )),
@@ -1055,11 +1171,15 @@ Under the Right to Health, States have the following obligations:
                                        downloadButton(
                                          outputId = "download_rec_plot_object",
                                          label = "Download as PNG"
+                                       ),
+                                       downloadButton(
+                                         outputId = "download_rec_plot_object_fr",
+                                         label = "Télécharger (français)"
                                        )
                                      )
                                    )
                          ),
-                         nav_panel("Data Table", 
+                         nav_panel("Data Table",
                                    card(fill=TRUE,
                                         card_body(DTOutput("DT_table")),
                                         card_footer(
@@ -1282,8 +1402,8 @@ Under the Right to Health, States have the following obligations:
             )
   ),
   
-  ## Constitutions  ------------------
-  nav_panel(title = "Constitutions", icon = icon("building-columns"),
+  ## Legal framework  ------------------
+  nav_panel(title = "Legal framework", icon = icon("building-columns"),
             # "Family planning",
             layout_column_wrap(
               full_screen = TRUE,
@@ -1296,14 +1416,31 @@ Under the Right to Health, States have the following obligations:
                 leafletOutput("const_anyhealth_map_interactive")
                 # plotOutput("constitution_const_anyhealth")
               ),
-              card(
+              # card(
+              #   full_screen = TRUE,
+              #   card_header("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)"),
+              #   markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
+              #   leafletOutput("ICESCR_status_map_interactive")
+              # ),
+              navset_card_tab(
+                # title = "Causes of Maternal Death",
                 full_screen = TRUE,
-                card_header("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)"),
-                markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
-                leafletOutput("ICESCR_status_map_interactive")
-              )
-              
+                nav_panel("Status of ratification of the International Covenant on Economic, Social and Cultural Rights (as of October 2025)", 
+                          markdown("Data: <a href='https://indicators.ohchr.org' target='_blank'>OHCHR</a>"),
+                          leafletOutput("ICESCR_status_map_interactive")),
+                nav_panel(
+                  shiny::icon("circle-info"),
+                  markdown(
+                    "The <a href='https://www.ohchr.org/en/health' target='_blank'>**Right to Health**</a>, as enshrined in <a href='https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights#article-12' target='_blank'>Article 12 of the International Convenant on Economic, Social and Cultural Rights</a>, is an inclusive human right that extends beyond timely and appropriate health care to encompass the underlying determinants of health. It forms an essential part of States’ obligations under international human rights law and provides a binding normative framework for advancing well-being, equity, and dignity across all sectors of society.  
+                           
+Under the Right to Health, States have the following obligations:  
+-  **Respect**: refrain from directly or indirectly interfering with the enjoyment of the right to health.  
+-  **Protect**: take effective measures to prevent third parties from undermining or violating the guarantees of the right to health.  
+-  **Fulfill**: adopt appropriate legislative, administrative, budgetary, judicial, promotional, and other measures toward the full realization of the right to health."
+                  )
+                )
             )
+  )
   ),
   
   nav_spacer(),
@@ -1731,46 +1868,11 @@ server <- function(input, output, session) {
   ### General plot ----------------
   output$global_plot <- renderPlot({
     req(nrow(filtered_upr_region()) > 0) # pause execution until filtered data is ready
-    
-    upr_rec_global <- filtered_upr_region() |>
-      droplevels() |>
-      group_by(cycle, state_under_review) |>
-      count(health_related, .drop = FALSE) |>
-      group_by(cycle, health_related) |> mutate(med_n = median(n)) |>
-      select(cycle, health_related, med_n) |> distinct() |>
-      group_by(cycle) |>
-      mutate(
-        med_n_tot = sum(med_n),
-        perc = (med_n / med_n_tot) * 100,
-        perc = case_when(
-          health_related == "Other" ~ paste0(med_n),
-          .default = paste0(med_n, " (", sprintf("%1.0f", perc), "%)")
-        )
-      )
-    
-    rec_max <- max(upr_rec_global$med_n_tot)
-    
-    upr_rec_global |>
-      mutate(region = input$selected_region) |> 
-      ggplot(aes(x = cycle, y = med_n, fill = health_related)) +
-      scale_fill_manual(values = c("Health-related" = "#E69F00", "Other" = "grey80")) +
-      geom_bar(stat = "identity") +
-      labs(
-        y = "Median # of recommendations", x = "UPR Cycle",
-        title = paste0("Median recommendations received by States"),
-        fill = NULL
-        # ,caption = "*Cycle 4 is currently underway"
-      ) +
-      geom_text(aes(label = perc), position = position_stack(vjust = 0.5)
-                , size = 4.5
-      ) +
-      # geom_text(aes(label = sprintf("%1.0f", med_n_tot), y = med_n_tot, vjust = -0.2), 
-      #           size = 5,
-      #           fontface = "bold") +
-      # scale_y_continuous(limits = c(0,rec_max+25),
-      #                    expand = expansion(mult = c(0, 0.05)))+
-      theme_bw() +
-      facet_wrap(.~region)+
+
+    build_health_proportion_plot(
+      filtered_upr_region(), by_state = FALSE,
+      region_name = input$selected_region, lang = "en"
+    ) +
       theme(
         panel.grid = element_blank(),
         axis.text.x = element_text(angle = 30, hjust = 0.8,
@@ -1792,7 +1894,17 @@ server <- function(input, output, session) {
         )
       )
   })
-  
+
+  #### Plot downloaders -------------------
+  output$download_global_plot <- proportion_png_download(
+    filtered_upr_region, reactive(input$selected_region), by_state = FALSE,
+    lang = "en", keep_strip = TRUE
+  )
+  output$download_global_plot_fr <- proportion_png_download(
+    filtered_upr_region, reactive(input$selected_region), by_state = FALSE,
+    lang = "fr", keep_strip = TRUE
+  )
+
   ### Plotly ---------------------
   
   #### All  ---------------
@@ -1816,7 +1928,21 @@ server <- function(input, output, session) {
     reactive(input$selected_region),
     expand_right = 0.2
   )
-  
+
+  # French version (for PNG download only)
+  plotly_UPR_regional_object_fr <- reactive({
+    req(nrow(filtered_upr_region()) > 0)
+    filtered_upr_region() |>
+      summarise_upr_themes() |>
+      build_upr_themes_plot(total_n = nrow(filtered_upr_region()), lang = "fr")
+  })
+  output$download_plotly_UPR_regional_fr <- upr_png_download(
+    plotly_UPR_regional_object_fr,
+    reactive(input$selected_region),
+    expand_right = 0.2,
+    lang = "fr"
+  )
+
   #### Cycles  ---------------
   
   ##### Plot object -------------------
@@ -1877,7 +2003,21 @@ server <- function(input, output, session) {
     reactive(input$selected_SUR),
     expand_right = 0.25
   )
-  
+
+  # French version (for PNG download only)
+  plotly_UPR_SUR_object_fr <- reactive({
+    req(nrow(filtered_upr()) > 0)
+    filtered_upr() |>
+      summarise_upr_themes() |>
+      build_upr_themes_plot(total_n = nrow(filtered_upr()), lang = "fr")
+  })
+  output$download_plotly_UPR_SUR_fr <- upr_png_download(
+    plotly_UPR_SUR_object_fr,
+    reactive(input$selected_SUR),
+    expand_right = 0.25,
+    lang = "fr"
+  )
+
   #### Cycles  ---------------
   
   ##### Plot object -------------------
@@ -1918,38 +2058,7 @@ server <- function(input, output, session) {
   #### Plot object ----------------------------
   rec_plot_object <- reactive({
     req(nrow(filtered_upr()) > 0)
-    upr_rec_countries <- filtered_upr() |>
-      droplevels() |>
-      group_by(cycle, state_under_review) |>
-      count(health_related, .drop = FALSE) |>
-      group_by(cycle, state_under_review, health_related) |> mutate(med_n = median(n)) |>
-      select(cycle, state_under_review, health_related, med_n) |> distinct() |>
-      group_by(cycle, state_under_review) |>
-      mutate(
-        n_tot = sum(med_n),
-        perc = (med_n / n_tot) * 100,
-        perc = case_when(
-          health_related == "Other" ~ paste0(med_n),
-          .default = paste0(med_n, " (", sprintf("%1.0f", perc), "%)")
-        )
-      )
-    
-    p<-upr_rec_countries |>
-      ggplot(aes(x = cycle, y = med_n, fill = health_related)) +
-      scale_fill_manual(values = c("Health-related" = "#E69F00", "Other" = "grey80")) +
-      geom_bar(stat = "identity") +
-      labs(
-        y = "Number of recommendations", x = "UPR Cycle",
-        title = "Number of recommendations received by States",
-        fill = NULL
-      ) +
-      geom_text(aes(label = perc), position = position_stack(vjust = 0.5), size = 5) +
-      # geom_text(aes(label = sprintf("%1.0f", n_tot), y = n_tot, vjust = -0.2), size = 5, fontface = "bold") +
-      theme_bw() +
-      facet_wrap(. ~ state_under_review, nrow = 2) +
-      # scale_y_continuous(
-      #   expand = expansion(mult = c(0, 0.15))
-      # )+
+    build_health_proportion_plot(filtered_upr(), by_state = TRUE, lang = "en") +
       theme(
         panel.grid = element_blank(),
         axis.text.x = element_text(size = 12),
@@ -1967,9 +2076,8 @@ server <- function(input, output, session) {
         # ),
         plot.title= element_blank()
       )
-    p
   })
-  
+
   #### Output --------------------
   output$plot <- renderPlot({
     rec_plot_object()
@@ -2015,13 +2123,19 @@ server <- function(input, output, session) {
         width = 5,
         height = 3.3,
         dpi = 300,
-        # units = "in", 
+        # units = "in",
         bg="transparent"
       )
     }
   )
-  
-  
+
+  # French version (for PNG download only)
+  output$download_rec_plot_object_fr <- proportion_png_download(
+    filtered_upr, reactive(input$selected_SUR), by_state = TRUE, lang = "fr",
+    y_lab = "Recommandations (N)", keep_strip = FALSE
+  )
+
+
   ### All cycles themes ----------------------------
   #### Plot object -------------------
   upr_themes_all_object <- reactive({
