@@ -84,8 +84,34 @@ df_0 <- readRDS(here("data", "UHRI_extract_raw.rds"))
 # (see the folder data/UPR_WG_docs/)
 df_0_merged <- bind_rows(df_0, readRDS(here("data", "UPR_WG_docs", "recs_combined.rds"))) |> 
   mutate(
-    across(c(provisional, manual_upload), \(x) case_when(is.na(x) ~ FALSE, .default = x))
-    )
+    across(c(provisional, manual_upload), \(x) case_when(is.na(x) ~ FALSE, .default = x)),
+    countries_concerned = str_remove(countries_concerned, "- "),
+    upr_session        = str_split_i(str_remove(upr_session, "- "), " - ", 1),
+    upr_session_number = as.numeric(str_extract(upr_session, "\\d+"))
+     )
+
+# check for duplicates in manually extracted recommendations present in raw extract.
+overlap_check <- df_0_merged |>
+  group_by(countries_concerned, upr_session_number) |>
+  summarise(
+    has_official = any(manual_upload == FALSE),
+    has_manual   = any(manual_upload == TRUE),
+    .groups = "drop"
+  ) |>
+  filter(has_official & has_manual)
+
+if (nrow(overlap_check) > 0) {
+  msg <- overlap_check |>
+    mutate(line = paste0("- ", countries_concerned, " (session number ", upr_session_number, ")")) |>
+    pull(line) |>
+    paste(collapse = "\n")
+  
+  stop(
+    "Duplicate coverage detected: the following country/session pairs have both an official ",
+    "and a manual entry. Please check the corresponding files before proceeding:\n",
+    msg
+  )
+}
 
 # Country/region reference layer (ISO codes) used to enrich the recommendations.
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))
@@ -274,7 +300,7 @@ sub-number) which are retained as columns for compatibility with downstream use.
 #| label: build-full
 df <- df_0_merged |>
   mutate(
-    countries_concerned = str_remove(countries_concerned, "- "),
+    # countries_concerned = str_remove(countries_concerned, "- "),
     reccomending_body   = str_remove(reccomending_body, "- ")
   ) |>
   # Clean the recommendation text; keep the pre-clean version in `text1`.
@@ -290,8 +316,8 @@ df <- df_0_merged |>
   # Parse identifiers and UPR session/cycle metadata.
   mutate(
     paragraph          = derive_paragraph(text),
-    upr_session        = str_split_i(str_remove(upr_session, "- "), " - ", 1),
-    upr_session_number = as.numeric(str_extract(upr_session, "\\d+")),
+    # upr_session        = str_split_i(str_remove(upr_session, "- "), " - ", 1),
+    # upr_session_number = as.numeric(str_extract(upr_session, "\\d+")),
     upr_cycle = case_when(
       upr_session_number <= 12 ~ "Cycle 1",
       upr_session_number <= 26 ~ "Cycle 2",
