@@ -13,7 +13,7 @@ extract_upr_recs(
   document_symbol = "A/HRC/61/12",
   provisional = FALSE, 
   mode = "auto", 
-  output_dir = here("data", "UPR_WG_docs", "extracted_recs", "dashboard")
+  output_dir = here("data", "UPR_WG_docs", "extracted_recs")
 )
 
 # Inspect the extracted file for any issues
