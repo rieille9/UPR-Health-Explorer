@@ -238,104 +238,65 @@ upr_excluded_themes <- c(
 )
 
 # Count Supported/Noted recommendations per theme (optionally per cycle) and
-# compute the percentages and "N (% supported)" labels used by the bar charts
+# compute the percentages and "N (% supported)" labels used by the bar charts.
+#
+# One pass: turn each theme column into a logical (tagged with the theme or
+# not), pivot to long, then count tagged/untagged per response (per cycle),
+# per theme. Themes are ordered by total tagged count, ties broken by the
+# original column order.
 summarise_upr_themes <- function(data, by_cycle = FALSE) {
-  group_vars <- if (by_cycle) c("cycle", "response_upr") else "response_upr"
+  # Theme columns, in document order (used to break ties in the theme ranking)
+  theme_cols <- names(dplyr::select(data, health_related:other_health_related))
 
-  # n = recommendations tagged with the theme; n_other = untagged
-  a_1 <- data |>
-    select(cycle, state_under_review, health_related:other_health_related, response_upr) |>
-    group_by(across(all_of(group_vars))) |>
-    summarise(across(c(health_related:other_health_related), ~ sum(.x != "Other"))) |>
-    ungroup() |>
-    # filter(response_upr %in% c("Supported", "Noted")) |>
-    pivot_longer(
-      cols = health_related:other_health_related,
-      names_to = "theme",
-      values_to = "n"
-    )
-
-  a_2 <- data |>
-    select(cycle, state_under_review, health_related:other_health_related, response_upr) |>
-    group_by(across(all_of(group_vars))) |>
-    summarise(across(c(health_related:other_health_related), ~ sum(.x == "Other"))) |>
-    ungroup() |>
-    # filter(response_upr %in% c("Supported", "Noted")) |>
-    pivot_longer(
-      cols = health_related:other_health_related,
-      names_to = "theme",
-      values_to = "n_other"
+  prepped <- data |>
+    mutate(
+      response_upr = fct_relevel(response_upr, "Noted"),
+      across(all_of(theme_cols), ~ .x != "Other")   # TRUE = tagged with the theme
     )
 
   if (by_cycle) {
-    a_3 <- data |>
-      group_by(cycle) |>
-      summarise(health_n = sum(health_related != "Other")) |>
-      ungroup()
-
-    left_join(a_1, a_2) |>
-      left_join(a_3) |>
-      mutate(cycle2 = fct_recode(cycle, "1" = "Cycle 1", "2" = "Cycle 2", "3" = "Cycle 3", "4" = "Cycle 4")) |>
-      group_by(cycle2, theme) |>
-      mutate(
-        n_tot = sum(n) + sum(n_other),
-        n_tot_theme = sum(n)
-      ) |>
-      mutate(
-        perc = n / n_tot * 100,
-        perc_theme = n_tot_theme / n_tot * 100,
-        theme_perc_health = n_tot_theme / health_n * 100
-      ) |>
-      group_by(cycle2, theme) |>
-      mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
-        n_sup = case_when(
-          response_upr == "Response not available" ~ "",
-          n_tot_theme == 0 ~ "", 
-          n_sup == "(NaN%)" ~ "",
-          .default = n_sup)
-        # n_sup = paste0("(", sprintf("%1.0f", n / sum(n) * 100), "%)"),
-        # n_sup = case_when(n_tot_theme == 0 ~ "(NA)", .default = n_sup)
-      ) |>
-      ungroup() |>
-      filter(!theme %in% upr_excluded_themes) |>
-      left_join(theme_labels, by = c("theme" = "variable")) |>
-      mutate(theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label)) |>
-      group_by(theme) |>
-      mutate(perc_tot = sum(n_tot_theme)) |>
-      ungroup() |>
-      arrange(-perc_tot) |>
-      mutate(theme_label = fct_inorder(theme_label))
+    prepped    <- mutate(prepped, cycle2 = fct_recode(
+      cycle, "1" = "Cycle 1", "2" = "Cycle 2", "3" = "Cycle 3", "4" = "Cycle 4"))
+    id_cols    <- c("cycle", "cycle2", "response_upr")
+    stat_group <- c("cycle2", "theme")
   } else {
-    left_join(a_1, a_2) |>
-      mutate(response_upr = fct_relevel(response_upr, "Noted")) |>
-      group_by(theme) |>
-      mutate(
-        n_tot = sum(n) + sum(n_other),
-        n_tot_theme = sum(n)
-      ) |>
-      mutate(
-        perc = n / n_tot * 100,
-        perc_theme = n_tot_theme / n_tot * 100
-      ) |>
-      group_by(theme) |>
-      mutate(
-        n_sup = paste0("(", sprintf("%1.0f", n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
-        n_sup = case_when(
-          response_upr == "Response not available" ~ "",
-          n_tot_theme == 0 ~ "", 
-          n_sup == "(NaN%)" ~ "",
-          .default = n_sup)
-      ) |>
-      ungroup() |>
-      filter(!theme %in% upr_excluded_themes) |>
-      left_join(theme_labels, by = c("theme" = "variable")) |>
-      arrange(-n_tot_theme) |>
-      mutate(
-        theme_label = case_when(is.na(theme_label) ~ theme, .default = theme_label),
-        theme_label = fct_inorder(theme_label)
-      )
+    id_cols    <- "response_upr"
+    stat_group <- "theme"
   }
+
+  prepped |>
+    select(all_of(c(id_cols, theme_cols))) |>
+    pivot_longer(all_of(theme_cols), names_to = "theme", values_to = "tagged") |>
+    # n = recommendations tagged with the theme; n_other = untagged
+    group_by(across(all_of(c(id_cols, "theme")))) |>
+    summarise(n = sum(tagged), n_other = sum(!tagged), .groups = "drop") |>
+    group_by(across(all_of(stat_group))) |>
+    mutate(
+      n_tot       = sum(n) + sum(n_other),   # total recommendations in the group
+      n_tot_theme = sum(n),                  # recommendations tagged with the theme
+      perc        = n / n_tot * 100,
+      perc_theme  = n_tot_theme / n_tot * 100,
+      # "(% supported)" label: share of this response among recs that got a
+      # response (Supported/Noted); blank when there is no response or no recs
+      n_sup = paste0("(", sprintf("%1.0f",
+               n / sum(n[response_upr %in% c("Supported", "Noted")]) * 100), "%)"),
+      n_sup = case_when(
+        response_upr == "Response not available" ~ "",
+        n_tot_theme == 0 ~ "",
+        n_sup == "(NaN%)" ~ "",
+        .default = n_sup)
+    ) |>
+    ungroup() |>
+    filter(!theme %in% upr_excluded_themes) |>
+    left_join(theme_labels, by = c("theme" = "variable")) |>
+    mutate(theme_label = coalesce(theme_label, theme)) |>
+    # Order themes by total tagged count (across cycles/responses), ties by
+    # original column order, then lock that order into the label factor
+    group_by(theme) |>
+    mutate(order_metric = sum(n_tot_theme)) |>
+    ungroup() |>
+    arrange(desc(order_metric), match(theme, theme_cols)) |>
+    mutate(theme_label = fct_inorder(theme_label))
 }
 
 # Horizontal bar chart of all themes ("Health-related Recommendations" tab);
