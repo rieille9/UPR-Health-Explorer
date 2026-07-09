@@ -85,7 +85,35 @@ df_0 <- readRDS(here("data", "UHRI_extract_raw.rds"))
 df_0_merged <- bind_rows(df_0, readRDS(here("data", "UPR_WG_docs", "recs_combined.rds"))) |> 
   mutate(
     across(c(provisional, manual_upload), \(x) case_when(is.na(x) ~ FALSE, .default = x))
-    )
+     )
+
+df_0_merged_test <- df_0_merged |>
+  mutate(countries_concerned = str_remove(countries_concerned, "- "),
+    upr_session        = str_split_i(str_remove(upr_session, "- "), " - ", 1),
+    upr_session_number = as.numeric(str_extract(upr_session, "\\d+")))
+
+# check for duplicates in manually extracted recommendations present in raw extract.
+overlap_check <- df_0_merged_test |>
+  group_by(countries_concerned, upr_session_number) |>
+  summarise(
+    has_official = any(manual_upload == FALSE),
+    has_manual   = any(manual_upload == TRUE),
+    .groups = "drop"
+  ) |>
+  filter(has_official & has_manual)
+
+if (nrow(overlap_check) > 0) {
+  msg <- overlap_check |>
+    mutate(line = paste0("- ", countries_concerned, " (session number ", upr_session_number, ")")) |>
+    pull(line) |>
+    paste(collapse = "\n")
+  
+  stop(
+    "Duplicate coverage detected: the following country/session pairs have both an official ",
+    "and a manual entry. Please check the corresponding files before proceeding:\n",
+    msg
+  )
+}
 
 # Country/region reference layer (ISO codes) used to enrich the recommendations.
 state_geo <- readRDS(here("output", "state_geo_enhanced.rds"))

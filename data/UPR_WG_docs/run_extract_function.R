@@ -7,11 +7,11 @@ source(here("data", "UPR_WG_docs", "extract_recs_function.R"))
 
 # Run the extract function for each country as needed
 extract_upr_recs(
-  input = "https://uprmeetings.ohchr.org/Sessions/52/SierraLeone/Documents/Sierra%20Leone%20-%20full%20draft%20report%20for%20circulation%20-%20ad%20referendum.docx",
-  state_under_review = "Sierra Leone", 
-  upr_session = 52, 
-  document_symbol = "A/HRC/63/16",
-  provisional = TRUE, 
+  input = "https://www.ohchr.org/sites/default/files/documents/hrbodies/upr/sessions/session50/hnd/upr50-honduras-thematic-list-recommendatio.docx",
+  state_under_review = "Honduras", 
+  upr_session = 50, 
+  document_symbol = "A/HRC/61/12",
+  provisional = FALSE, 
   mode = "auto", 
   output_dir = here("data", "UPR_WG_docs", "extracted_recs")
 )
@@ -26,7 +26,7 @@ recs_combined <-
   list.files(path = here("data", "UPR_WG_docs", "extracted_recs", "dashboard"),
              pattern = "\\.rds$") |> 
   # Read each file into a list
-  map(~readRDS(here("data", "UPR_WG_docs", "extracted_recs", .))) |>
+  map(~readRDS(here("data", "UPR_WG_docs", "extracted_recs", "dashboard", .))) |>
   # row-bind each dataframe into a single dataframe
   list_rbind() |> 
   # rename the variables to be consistent with `df_0` object, so that it can easily be appended
