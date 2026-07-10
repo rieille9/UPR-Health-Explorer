@@ -80,6 +80,28 @@ keeps the pipeline fully reproducible between refreshes.
 
 df_0 <- readRDS(here("data", "UHRI_extract_raw.rds"))
 
+df_0 <- df_0 |> 
+  mutate(countries_concerned = countries_concerned |> 
+           replace_when(document_symbol == "A/HRC/22/3" ~ "Czechia")) # fixes "- Uzbekistan \n - Czechia" issue
+
+# 1st cycle's report for South-Sudan/Sudan contains 3 types of recommendations:
+# 1. reco. destined to Sudan
+# 2. reco. destined to South Sudan
+# 3. reco. destined to South Sudan and Sudan -> assign these to Sudan, duplicate rows and assign to South Sudan
+sudan_southSudan <- df_0 |> 
+  filter(document_symbol == "A/HRC/18/16", 
+         str_detect(countries_concerned,"South Sudan\r") == TRUE) |> 
+  mutate(countries_concerned = "South Sudan") 
+
+df_0 <- df_0 |> 
+  mutate(countries_concerned = countries_concerned |>  
+           replace_when(
+  str_detect(countries_concerned,"South Sudan\r") ~ "Sudan"
+))
+
+df_0 <- df_0 |> 
+  bind_rows(sudan_southSudan)
+
 # combine the raw extract with manually extracted recommendations
 # (see the folder data/UPR_WG_docs/)
 df_0_merged <- bind_rows(df_0, readRDS(here("data", "UPR_WG_docs", "recs_combined.rds"))) |> 
